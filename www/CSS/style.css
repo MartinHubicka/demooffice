@@ -1,0 +1,8 @@
+.disabled {
+    pointer-events: none;
+    opacity: 0.4;
+}
+	body {
+  			padding-top: 3.5rem;
+		}
+.row { margin-bottom: 1.5rem; }
