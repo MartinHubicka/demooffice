@@ -1,5 +1,38 @@
 
 {block content}
+{if $user->isInRole('tw')}
+<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+  <a class="navbar-brand" href="{link Homepage:}">Hlavní menu</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item active">
+        <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#">Link</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link disabled" href="#">Disabled</a>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Dropdown</a>
+        <div class="dropdown-menu" aria-labelledby="dropdown01">
+          <a class="dropdown-item" href="#">Action</a>
+          <a class="dropdown-item" href="#">Another action</a>
+          <a class="dropdown-item" href="#">Something else here</a>
+        </div>
+      </li>
+    </ul>
+    <form class="form-inline my-2 my-lg-0">
+      <input class="form-control mr-sm-2" type="text" placeholder="Hledaný text" aria-label="Hledat">
+      <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Hledat</button>
+    </form>
+  </div>
+</nav>
 
 <div id="content">
 
@@ -119,11 +152,40 @@
   
 
 </main>
-
-
-	
 	
 </div>
+{else}
+  <div class="container">
+<form class="form">
+  
+    <div class="input-group mb-2 mr-sm-2">
+    <div class="input-group-prepend">
+      <div class="input-group-text text-center w4rem">Email</div>
+    </div>
+    <input type="text" class="form-control  form-control-lg" id="loginEmail" placeholder="zadejte svůj registrovaný email">
+  </div>
+
+  
+  <div class="input-group mb-2 mr-sm-2">
+    <div class="input-group-prepend">
+      <div class="input-group-text textc w4rem">Klíč</div>
+    </div>
+    <input type="text" class="form-control  form-control-lg" id="loginKey" placeholder="vložte přidělený klíč">
+  </div>
+    	  
+  <div class="input-group mb-2 mr-sm-2">
+    <div class="input-group-prepend">
+      <div class="input-group-text textc w4rem">Heslo</div>
+    </div>
+    <input type="password" class="form-control  form-control-lg" id="loginPass" placeholder="zadejte své heslo">
+  </div>
+    
+  <button type="submit" class="btn btn-primary btn-lg mt-3 mb-5">Přihlásit</button>
+  <a type="link" class="btn btn-link mt-3 mb-5" href="{link Reset:}">Zapomenuté heslo</a>  
+
+</form>
+</div>
+{/if}
 <script>
 //$("#modul-reporty").addClass("disabled");
 </script>
