@@ -1,15 +1,37 @@
-parameters:
+session:
+	expiration: 14 days
+	autoStart: true
 
+parameters:
+    database:
+        host: localhost
+        dbname: office
+        user: root
+        pass: 1234
+#	database:
+#		host: localhost
+#		dbname: TW
+#		user: admin
+#		pass: eba865c4-bbde-4c98-999d-a46c2349f8fe-06
+    konstanty:	
+        dph1: 0.21
+        admin: martin.hubicka@gmail.com
+        obchemail: jihlava@thermowhite.cz
+
+		  
+database:
+	dsn: 'mysql:host=%database.host%;dbname=%database.dbname%'
+	user: %database.user%
+	password: %database.pass%
 
 application:
 	errorPresenter: Error
 	mapping:
 		*: App\*Module\Presenters\*Presenter
 
-
-session:
-	expiration: 14 days
-
-
 services:
 	router: App\Router\RouterFactory::createRouter
+	- App\Presenters\BasePresenter
+	authenticator: App\Model\MyAuthenticator	
+	authorizator: App\Model\MyAuthorizator
+	tempStorage: App\Model\TempStorage
