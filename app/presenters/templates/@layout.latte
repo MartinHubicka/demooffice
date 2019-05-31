@@ -37,6 +37,27 @@
 <body>
 	<div n:foreach="$flashes as $flash" n:class="flash, $flash->type">{$flash->message}</div>
 
+    
+<!-- Informační modal okno -->
+<div class="modal fade" id="modalFlashMessage" tabindex="-1" role="dialog" aria-labelledby="modalFlashMessage" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalFlashMessageTitle">Info</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" id="modalFlashMessageHtml">
+            <!-- obsah sdělení -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Ok</button>        
+      </div>
+    </div>
+  </div>
+</div>
+    
 	{include content}
 
 <footer class="container">
@@ -57,7 +78,12 @@
     });
 	  
 });	
-		
+function infoModal(htmlMessage="", title="Info"){
+   $("#modalFlashMessageHtml").html(htmlMessage);    
+   $("#modalFlashMessageTitle").text(title);    
+    
+    $('#modalFlashMessage').modal('show');
+}
 	</script>
 	{/block}
 </body>

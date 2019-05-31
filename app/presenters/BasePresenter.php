@@ -25,7 +25,8 @@ CONST NOTALLOW_SOURCE_MESSAGE = "Pro zobrazení požadované stránky nemáte p�
 /** @var Container */
     protected $container;
     /** @var tempStorage */
-    public $tempStorage;	
+    public $tempStorage;
+    protected $parameters;	
 /**
  * @var \App\Model\MyAuthenticator
  * @inject
@@ -51,6 +52,7 @@ public $username;
 		$this->url = new Url((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]");// \Nette\Http\Url;
 		$this->tempStorage = $tempStorage;
 		$this->username = ''; //identifikace jména uživatele				
+      //  $this->parameters = $container->getParameters()["konstanty"];
 		 parent::__construct();
     $this->container = $container;
 	}
@@ -58,68 +60,26 @@ public $username;
         parent::startup(); //V každém presenteru je NUTNÉ volat startup předka, pokud je startup v presenteru použitý.
     }
 
-	static function password_smart($length = 9) { 
-    $vowels = 'aeiou'; 
-    $consonants = 'bdghjlmnpqrstvwx'; 
-    $password = ''; 
-    mt_srand((double)microtime() * 1000000); 
-    $alt = mt_rand() % 2; 
-    $number = mt_rand() % $length; 
-    for ($i = 0; $i < $length; $i++) { 
-        if ($number == $i) { 
-            $password .= mt_rand() % 9; 
-        } else if ($alt == 1) { 
-            $password .= $consonants[(mt_rand() % strlen($consonants))]; 
-            $alt = 0; 
-        } else { 
-            $password .= $vowels[(mt_rand() % strlen($vowels))]; 
-            $alt = 1; 
-        } 
-    } 
-    return $password; 
-} 
 
-static function password_brutal($length = 8, $upper = 2, $digit = 1, $spec = 1) { 
-    mt_srand((double)microtime() * 1000000); 
-    $count = $length; 
-    $sp = '!"#$%&' . "'" . '()*+,-./:;<=>?@[\]^_`{|}~'; 
-    $up = !$upper; 
-    $password = str_repeat(' ', $length); 
-    // spec 
-    while ($count && $spec) { 
-        $i = mt_rand() % $length; 
-        if ($password[$i] == ' ') { 
-            $password[$i] = $sp[mt_rand() % strlen($sp)]; 
-            $spec--; 
-            $count--; 
-        } 
-    } 
-    // digit 
-    while ($count && $digit) { 
-        $i = mt_rand() % $length; 
-        if ($password[$i] == ' ') { 
-            $password[$i] = chr(mt_rand(ord('0'), ord('9'))); 
-            $digit--; 
-            $count--; 
-        } 
-    } 
-    // upper 
-    while ($count && $upper) { 
-        $i = mt_rand() % $length; 
-        if ($password[$i] == ' ') { 
-            $password[$i] = chr(mt_rand(ord('A'), ord('Z'))); 
-            $upper--; 
-            $count--; 
-        } 
-    } 
-    // other 
-    for ($i = 0; $i < $length; $i++) { 
-        if ($password[$i] == ' ') { 
-            $a = ord($up && mt_rand(0, 1) ? 'A' : 'a'); 
-            $password[$i] = chr(mt_rand($a, $a + 25)); 
-        } 
-    } 
-    return $password; 
+public function handleresetPass ($email=NULL, $key=NULL){
+    $chyba = true;
+    $chybatext = "";
+    $result = false;
+	if (!$this->isAjax()) {
+					 $this->redirect('this');
+	} else {
+        if($email !== NULL && substr_count($email, '@') == 1 && substr_count($email, '.') > 0 && $key !== NULL && $key !== '') {
+            $result = ($this->MyAuthenticator->generateTemppass($email, $key));		
+            $chyba = false;
+            
+        } else {
+            $chybatext = "Email nebo klíč byly zadány v nepřípustném formátu.";            
+        }
+    $this->payload->chyba = $chyba;
+    $this->payload->chybatext = $chybatext;        
+    $this->payload->result = $result;            
+   	$this->sendPayload();			   
+    }    
 }
 
 	

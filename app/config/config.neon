@@ -1,5 +1,5 @@
 session:
-	expiration: 14 days
+	expiration: 30 days
 	autoStart: true
 
 parameters:
@@ -15,6 +15,7 @@ parameters:
 #		pass: eba865c4-bbde-4c98-999d-a46c2349f8fe-06
     konstanty:	
         dph1: 0.21
+        systemmail: noreply@twoffice.app
         adminmail: martin.hubicka@gmail.com
         obchemail: jihlava@thermowhite.cz
 

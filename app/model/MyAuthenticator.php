@@ -11,8 +11,8 @@ class MyAuthenticator  implements IAuthenticator
      * @var \Nette\Database\Context
      */
     private $db;
-	
-	 const EXPIRYMIN = 30; // expiration pro temp heslo v minutách 
+	 
+	 const EXPIRYMIN = 60; // expiration pro temp heslo v minutách 
 	 const TABLE_USER = 'users';	
 	 const USERS_UID = 'uid'; //auto incr int(11) 
 	 const USERS_USEREXP = 'userexp'; //NULL - platný uživatel nebo time expirace uzivatele 
@@ -25,11 +25,11 @@ class MyAuthenticator  implements IAuthenticator
 	 const USERS_LABELS = 'labels'; // sting/y oddělené čárkou
 	 const USERS_REGISTRACE = 'registrace'; // datum registrace unix time
 	 const USERS_SOUHLAS_GDPR = 'souhlas_gdpr'; // string  text verze gdpr
-	  
+
     public function __construct(\Nette\Database\Connection $db)		 
     {				 		 
-		 	 $this->db = $db;
-		    
+		 	  $this->db = $db;
+		   
 
     }
 	/**
@@ -84,6 +84,20 @@ class MyAuthenticator  implements IAuthenticator
 		$tempstatus = ( $row->heslozmena > 0)  ? AUTH_OK_PASSCHANGE  : AUTH_OK;
 		return [$tempstatus, $identita];
     }
+    
+    public function checkUserRecord($email,$key) {
+        		if (!defined('DUPLICITY_EXCEPTION')) define('DUPLICITY_EXCEPTION', 0);  // chyba
+		if (!defined('DUPLICITY_NODUPLICITY')) define('DUPLICITY_NODUPLICITY', 1); // není duplicitní je to ok
+		if (!defined('DUPLICITY_DUPLICITY')) define('DUPLICITY_DUPLICITY', 2);  // je duplicitní 
+        try {			            
+            $rec = $this->db->fetch("SELECT COUNT(*) AS CNT FROM users WHERE email = ? AND klic = ?",  $email, $key);            
+			return ($rec->CNT > 0) ? DUPLICITY_DUPLICITY : DUPLICITY_NODUPLICITY;		
+		} catch (Nette\Database\Exception $e) {
+			throw new Exception;
+			return DUPLICITY_EXCEPTION;
+		}		
+    }
+    
     /**
 	 *	kontrola, zda existuje záznam/y v dané tabulce dle daného fieldu a hodnoty
 	 * param u $value je třeba typ hodnoty, např. string předat obalený v uvozovkách
@@ -177,28 +191,31 @@ class MyAuthenticator  implements IAuthenticator
 				return CHANGEPASS_NOUSER;		
 	}
 	
-	public function generateTemppass ($email, $password) {
+	public function generateTemppass ($email, $key) {
 		if (!defined('TEMPPASS_EXCEPTION')) define('TEMPPASS_EXCEPTION', 0); //chyba
 		if (!defined('TEMPPASS_SUCCESS')) define('TEMPPASS_SUCCESS', 1);  //ok
 		if (!defined('TEMPPASS_NOUSER')) define('TEMPPASS_NOUSER', 2);  //email neexistuje
-		$duplicity = $this->checkRecordDupplicity(self::TABLE_USER, self::USERS_EMAIL, $email); 
+		$duplicity = $this->checkUserRecord($email,$key); 
 		if($duplicity==2) { //email existuje
 		try {
-			  $expiry = strtotime("+".self::EXPIRYMIN." minutes", time());
+             $password = $this->password_brutal();
+			 $expiry = strtotime("+".self::EXPIRYMIN." minutes", time());
 			 $fields = [				 			
-			 			   self::USERS_HESLO  =>  Passwords::hash($password), 
+			 			    self::USERS_HESLO  =>  Passwords::hash($password), 
 				  			self::USERS_HESLOEXP  => $expiry,
 				 			self::USERS_HESLOZMENA  => 1,                						    		
 			 			   ]; 			 
-			  $this->db->query("UPDATE ". self::TABLE_USER ." SET ", $fields, " WHERE " . self::USERS_EMAIL . " = ?",  $email);				  
+			  $this->db->query("UPDATE ". self::TABLE_USER ." SET ", $fields, " WHERE email = ? AND klic = ?" ,  $email, $key);				  
+            $mail = new EmailModel($this->db);
+            $mail->sendTempPass($email, $key);
+            
 			 return TEMPPASS_SUCCESS;				  
         } catch (Nette\Database\UniqueConstraintViolationException $e) {
              throw new DuplicateNameException;
 			 	 return TEMPPASS_EXCEPTION;
         } 
 		}	else {
-			return TEMPPASS_NOUSER;
-			
+			return TEMPPASS_NOUSER;			
 		}
 	}
 	
@@ -259,5 +276,68 @@ public function UpdateKontakt($uid=NULL, $html=""){
 		return $res;
 	} 	
 }
+static function password_smart($length = 9) { 
+    $vowels = 'aeiou'; 
+    $consonants = 'bdghjlmnpqrstvwx'; 
+    $password = ''; 
+    mt_srand((double)microtime() * 1000000); 
+    $alt = mt_rand() % 2; 
+    $number = mt_rand() % $length; 
+    for ($i = 0; $i < $length; $i++) { 
+        if ($number == $i) { 
+            $password .= mt_rand() % 9; 
+        } else if ($alt == 1) { 
+            $password .= $consonants[(mt_rand() % strlen($consonants))]; 
+            $alt = 0; 
+        } else { 
+            $password .= $vowels[(mt_rand() % strlen($vowels))]; 
+            $alt = 1; 
+        } 
+    } 
+    return $password; 
+} 
+
+static function password_brutal($length = 8, $upper = 2, $digit = 1, $spec = 1) { 
+    mt_srand((double)microtime() * 1000000); 
+    $count = $length; 
+    $sp = '!"#$%&' . "'" . '()*+,-./:;<=>?@[\]^_`{|}~'; 
+    $up = !$upper; 
+    $password = str_repeat(' ', $length); 
+    // spec 
+    while ($count && $spec) { 
+        $i = mt_rand() % $length; 
+        if ($password[$i] == ' ') { 
+            $password[$i] = $sp[mt_rand() % strlen($sp)]; 
+            $spec--; 
+            $count--; 
+        } 
+    } 
+    // digit 
+    while ($count && $digit) { 
+        $i = mt_rand() % $length; 
+        if ($password[$i] == ' ') { 
+            $password[$i] = chr(mt_rand(ord('0'), ord('9'))); 
+            $digit--; 
+            $count--; 
+        } 
+    } 
+    // upper 
+    while ($count && $upper) { 
+        $i = mt_rand() % $length; 
+        if ($password[$i] == ' ') { 
+            $password[$i] = chr(mt_rand(ord('A'), ord('Z'))); 
+            $upper--; 
+            $count--; 
+        } 
+    } 
+    // other 
+    for ($i = 0; $i < $length; $i++) { 
+        if ($password[$i] == ' ') { 
+            $a = ord($up && mt_rand(0, 1) ? 'A' : 'a'); 
+            $password[$i] = chr(mt_rand($a, $a + 25)); 
+        } 
+    } 
+    return $password; 
+}    
 	}    
 class DuplicateNameException extends \Exception{}
