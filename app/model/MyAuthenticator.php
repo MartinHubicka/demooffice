@@ -5,12 +5,9 @@ use Nette\Database\Connection;
 use Nette\Security\Passwords;
 use Nette\Security\AuthenticationException;
 use Nette\Security\Identity;
-class MyAuthenticator  implements IAuthenticator
+class MyAuthenticator extends BaseModel  implements IAuthenticator 
 {
-    /**
-     * @var \Nette\Database\Context
-     */
-    private $db;
+
 	 
 	 const EXPIRYMIN = 60; // expiration pro temp heslo v minutách 
 	 const TABLE_USER = 'users';	
@@ -26,12 +23,7 @@ class MyAuthenticator  implements IAuthenticator
 	 const USERS_REGISTRACE = 'registrace'; // datum registrace unix time
 	 const USERS_SOUHLAS_GDPR = 'souhlas_gdpr'; // string  text verze gdpr
 
-    public function __construct(\Nette\Database\Connection $db)		 
-    {				 		 
-		 	  $this->db = $db;
-		   
 
-    }
 	/**
 	* @param array //email password uid
 	* @return array	
@@ -150,7 +142,7 @@ class MyAuthenticator  implements IAuthenticator
 		 $duplicity = $this->checkRecordDupplicity(self::TABLE_USER, self::USERS_EMAIL, $email);
 		 if( $duplicity == 1) { // pokud neníchyba nebo duplicita
 		 try {
-			  $expiry = strtotime("+".self::EXPIRYMIN." minutes", time());
+			  $expiry = strtotime("+".$this->konstanty["temppassmin"]." minutes", time());
 			 $fields = [
 				 			self::USERS_EMAIL => $email,
 			 			   self::USERS_HESLO  =>  Passwords::hash($password), 
@@ -195,19 +187,19 @@ class MyAuthenticator  implements IAuthenticator
 		if (!defined('TEMPPASS_EXCEPTION')) define('TEMPPASS_EXCEPTION', 0); //chyba
 		if (!defined('TEMPPASS_SUCCESS')) define('TEMPPASS_SUCCESS', 1);  //ok
 		if (!defined('TEMPPASS_NOUSER')) define('TEMPPASS_NOUSER', 2);  //email neexistuje
-		$duplicity = $this->checkUserRecord($email,$key); 
+		$duplicity = $this->checkUserRecord($email,$key);         
 		if($duplicity==2) { //email existuje
 		try {
              $password = $this->password_brutal();
-			 $expiry = strtotime("+".self::EXPIRYMIN." minutes", time());
+			 $expiry = strtotime("+".$this->konstanty["temppassmin"]." minutes", time());
 			 $fields = [				 			
 			 			    self::USERS_HESLO  =>  Passwords::hash($password), 
 				  			self::USERS_HESLOEXP  => $expiry,
 				 			self::USERS_HESLOZMENA  => 1,                						    		
 			 			   ]; 			 
-			  $this->db->query("UPDATE ". self::TABLE_USER ." SET ", $fields, " WHERE email = ? AND klic = ?" ,  $email, $key);				  
-            $mail = new EmailModel($this->db);
-            $mail->sendTempPass($email, $key);
+			$this->db->query("UPDATE ". self::TABLE_USER ." SET ", $fields, " WHERE email = ? AND klic = ?" ,  $email, $key);				  
+            $mail = new EmailModel($this->db, $this->container);
+            $mail->sendTempPass($email, $password);
             
 			 return TEMPPASS_SUCCESS;				  
         } catch (Nette\Database\UniqueConstraintViolationException $e) {

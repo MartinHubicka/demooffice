@@ -243,13 +243,13 @@ $("#submit-pass-reset").on("click", function(ev){
         },
         success: function(payload)
         {		
-            console.log(payload.chyba);
+           
            if(!payload.chyba) {
               // console.log(payload.result);
                
                     //$('#passResetForm')[0].submit();//resi reset  
                     $('#resetPassModal').modal('hide');   
-                        infoModal("<p>Vygenerované heslo bylo zasláno na váš email.</p><p><strong>Platnost vygenerovaného hesla je 60 minut.</strong></p><p>Pokud se přihlásíte po této dobe, nebude záložní heslo již platné a bude třeba ho vygenerovat znovu.</p>");
+                        infoModal(payload.chybatext);
 				  } else {
                     $('#resetPassModal').modal('hide');   
                         infoModal(payload.chybatext, "Chyba");

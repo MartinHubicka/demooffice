@@ -26,7 +26,8 @@ CONST NOTALLOW_SOURCE_MESSAGE = "Pro zobrazení požadované stránky nemáte p�
     protected $container;
     /** @var tempStorage */
     public $tempStorage;
-    protected $parameters;	
+    /** @var Array */
+    protected $konstanty;	
 /**
  * @var \App\Model\MyAuthenticator
  * @inject
@@ -47,6 +48,7 @@ public $user;
   public  $db;	 //sporný public, dořešit	
 public $username;
 	public function __construct(NS\User $user,TempStorage $tempStorage, \Nette\Database\Connection $db, Container $container ) {
+        		parent::__construct();	
 		$this->user = $user;		
 		$this->db = $db;
 		$this->url = new Url((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]");// \Nette\Http\Url;
@@ -54,7 +56,10 @@ public $username;
 		$this->username = ''; //identifikace jména uživatele				
       //  $this->parameters = $container->getParameters()["konstanty"];
 		 parent::__construct();
-    $this->container = $container;
+        $this->container = $container;
+        $this->konstanty = $container->getParameters()["konstanty"];
+        //var_dump($container->getParameters()["konstanty"]);
+        
 	}
     public function startup() {
         parent::startup(); //V každém presenteru je NUTNÉ volat startup předka, pokud je startup v presenteru použitý.
@@ -70,8 +75,13 @@ public function handleresetPass ($email=NULL, $key=NULL){
 	} else {
         if($email !== NULL && substr_count($email, '@') == 1 && substr_count($email, '.') > 0 && $key !== NULL && $key !== '') {
             $result = ($this->MyAuthenticator->generateTemppass($email, $key));		
+            if($result==1){
             $chyba = false;
-            
+            $chybatext = "<p>Vygenerované heslo bylo zasláno na váš email.</p><p><strong>Platnost vygenerovaného hesla je ".$this->konstanty["temppassmin"]." minut.</strong></p><p>Pokud se přihlásíte po této době, nebude záložní heslo již platné a bude třeba ho vygenerovat znovu.</p>";
+            } else {
+            $chyba = true;
+            $chybatext = "<p>Neregistrovaný uživatel, nebo klíč.</p><p>Nemáte oprávnění k přístupu</p>";        
+            }
         } else {
             $chybatext = "Email nebo klíč byly zadány v nepřípustném formátu.";            
         }

@@ -11,8 +11,10 @@ public function sendTempPass($email, $temppass){
     $mail = new Message;
     $latte = new Engine;	
      $params = [
-    'temppass' => $temppass
+    'temppass' => $temppass,
+    'temppassmin' => $this->konstanty["temppassmin"]     
 ];
+   
     
 	//$mail->setFrom($this->parameters["systemmail"])
     $mail->setFrom('noreply@twoffice.app')

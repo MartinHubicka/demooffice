@@ -18,6 +18,7 @@ parameters:
         systemmail: noreply@twoffice.app
         adminmail: martin.hubicka@gmail.com
         obchemail: jihlava@thermowhite.cz
+        temppassmin: 60
 
 		  
 database:
@@ -32,7 +33,9 @@ application:
 
 services:
 	router: App\Router\RouterFactory::createRouter
-	- App\Presenters\BasePresenter
+	- App\Presenters\BasePresenter()
+	#- App\Presenters\BasePresenter(%konstanty%)
+	#- App\Model\BaseModel(%konstanty%)
 	authenticator: App\Model\MyAuthenticator	
 	authorizator: App\Model\MyAuthorizator
 	tempStorage: App\Model\TempStorage
