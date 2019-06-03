@@ -36,28 +36,26 @@
   <!-- Main jumbotron for a primary marketing message or call to action -->
   <div class="jumbotron">
     <div class="container">
-          <div class="row">
-		  <div class="col-md-6">
-      <h1 class="display-3">{$user->getIdentity()->username}</h1>              
-          </div>
-    <div class="col-md-6">
-     <div class="card bg-light mb-3" style="max-width: 100%;">
-        <div class="card-header">Vaše struktura</div>
-        <div class="card-body">
-            <h5 class="card-title">%subject name%</h5>
-            <p class="card-text">%subject attr + roles%</p>
-        </div>
-        </div>
-      </div>
-   
-        </div>
-      </div>
-      <div class="container">
-          <p>
-          <a class="btn btn-danger mr-5" href="#" id="user-logout-button" role="button">Odhlášení</a>
-          <a class="btn btn-info" href="#" role="button">Nastavení Vašich údajů &raquo;</a> 
+        <div class="row">
+            <div class="col-md-6">
+                <h1 class="display-3">{$user->getIdentity()->username}</h1>              
+                <p>Nastavená práva: 
+                {foreach $user->roles as $item}
+                    <strong> {$item} </strong>
+                {/foreach}
+                </p>
+              <p>
+          <a class="btn btn-danger mr-5 mt-5" href="#" id="user-logout-button" role="button">Odhlášení</a>
+          <a class="btn btn-info mt-5" href="#" role="button">Nastavení Vašich údajů &raquo;</a> 
             </p>
+            </div>
+        <div class="col-md-6">
+            {control cardParentIdentity}
+        </div>
+
+        </div>
       </div>
+
       
 	  <div class="rem-summernote" style="display:none;"></div>
   </div>

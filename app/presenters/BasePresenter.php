@@ -108,7 +108,7 @@ public function handlepassChange($newPass){
             default:
                 $chybatext = "Heslo bylo úspěšně změněno.";
                 $this->user->getIdentity()->zmenahesla = 0;
-                $this->MyAuthorizator->afterLoginRedirect($this->user, $this);
+                
         }    
             
             $this->payload->chyba = $chyba;
