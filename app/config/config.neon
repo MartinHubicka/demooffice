@@ -6,13 +6,8 @@ parameters:
     database:
         host: localhost
         dbname: office
-        user: root
-        pass: 1234
-#	database:
-#		host: localhost
-#		dbname: TW
-#		user: admin
-#		pass: eba865c4-bbde-4c98-999d-a46c2349f8fe-06
+        user: martinhubicka 
+        pass: Admin75@
     konstanty:	
         dph1: 0.21
         systemmail: noreply@twoffice.app

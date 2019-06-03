@@ -74,6 +74,7 @@ class MyAuthenticator extends BaseModel  implements IAuthenticator
                                                                                                 'klic' => $credentials["key"], 
 																								'parentid' => $row->parent, 
 																								'tags' => (array) explode(",",$row->tags)]);
+                                                                                                
 		$tempstatus = ( $row->heslozmena > 0)  ? AUTH_OK_PASSCHANGE  : AUTH_OK;
 		return [$tempstatus, $identita];
     }
