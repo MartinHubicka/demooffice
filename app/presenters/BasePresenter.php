@@ -91,6 +91,86 @@ public function handleresetPass ($email=NULL, $key=NULL){
    	$this->sendPayload();			   
     }    
 }
+public function handlepassChange($newPass){
 
-	
+    if (!$this->isAjax()) {
+					 $this->redirect('this');
+	} else {
+        $chyba = true;
+        $result = ($this->MyAuthenticator->changePassword($this->user->id, $newPass));
+        switch($result) {
+            case 0: 
+                $chybatext = "Neočekávaná chyba. Chyba byla zaznamenána a bude odstraněna.";
+            break;
+            case 2:
+                $chybatext = "Chyba v identitě uživatele. Heslo nebylo změněno.";
+            break;
+            default:
+                $chybatext = "Heslo bylo úspěšně změněno.";
+                $this->user->getIdentity()->zmenahesla = 0;
+                $this->MyAuthorizator->afterLoginRedirect($this->user, $this);
+        }    
+            
+            $this->payload->chyba = $chyba;
+            $this->payload->chybatext = $chybatext;                            
+   	        $this->sendPayload();
+    }
+}
+public function handleLogin($email, $key, $pass)
+     {	
+        if (!$this->isAjax()) {
+					 $this->redirect('this');
+	} else {
+		$credentials = array(); 
+	   
+       $credentials["email"] = $email;
+       $credentials["key"] = $key;
+       $credentials["password"] = $pass;
+       $credentials["uid"] = null;
+      	 	
+	    $chyba = true;
+        $chybatext = "";
+    
+		$result = $this->MyAuthenticator->authenticate($credentials);	 	
+       //$this->user->setExpiration($values->remember ? '14 days' : '20 minutes');			
+		 list($status, $identita) = $result;
+		
+			 switch($status) {
+			case 2:
+			case 3:
+				$chybatext = 'Neevidovaný email nebo chybný klíč, či heslo.';	
+				break;
+			case 4:
+				$chybatext ='Platnost generovaného hesla vypršela, vygenerujte si do emailu nové.';				
+				break;
+			default:
+		 if($identita !==NULL) {
+				//!!!!!!!!!!!!!!!!!!!!!!!!!
+             
+		 $this->user->setExpiration($this->konstanty["loginexpdays"].' days');						 
+		 if($this->user->isLoggedIn()	) {			 
+		  $this->user->logout(true); //parametr vymaze identitu ze storage
+		 }
+		 $this->user->login($identita,$pass);  		
+			 
+		$this->MyAuthorizator->afterLoginRedirect($this->user, $this);//přesměruje po loginu uřiv na správné místo
+             $this->payload->chyba = $chyba;
+            $this->payload->chybatext = $chybatext;        
+            $this->payload->status = $status;            
+   	        $this->sendPayload();	
+		 //$this->flashMessage('Vítejte, byli jste úspěšně přihlášeni.');	
+		  $chyba = false;
+		 }	
+   	
+       }    
+            $this->payload->chyba = $chyba;
+            $this->payload->chybatext = $chybatext;        
+            $this->payload->status = $status;            
+   	        $this->sendPayload();	
+}}
+public function handleLogout()    {
+        $this->user->logout(true); //parametr vymaze identitu ze storage
+		$this->MyAuthorizator->afterLogoutRedirect($this);
+		//$this->flashMessage('Jste odhlášeni. Děkujeme za Váš čas.');
+}
 }

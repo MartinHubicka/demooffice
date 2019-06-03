@@ -25,7 +25,7 @@ class MyAuthenticator extends BaseModel  implements IAuthenticator
 
 
 	/**
-	* @param array //email password uid
+	* @param array //email password key uid
 	* @return array	
 	*/
     public function authenticate(array $credentials)
@@ -33,7 +33,7 @@ class MyAuthenticator extends BaseModel  implements IAuthenticator
 	
 		 //bohužel $credentials dělalo problém s textovým klíčem proto indexováno integerem
 		 // 0- uid 1 - password
-		 //array(3) { ["email"]  ["password"] ["uid"] }
+		 //array(3) { ["email"]  ["password"] ["key"] ["uid"] }
 		if (!defined('AUTH_EXCEPTION')) define('AUTH_EXCEPTION', 0);  // chyba pro try krtere tady není ... já vím :)
 		if (!defined('AUTH_OK')) define('AUTH_OK', 1); // správné údaje
 		if (!defined('AUTH_OK_PASSCHANGE')) define('AUTH_OK_PASSCHANGE', 5); // správné údaje ale s požadavkem na změnu hesla
@@ -44,8 +44,8 @@ class MyAuthenticator extends BaseModel  implements IAuthenticator
 		 
 		 $row = $this->db->fetch("SELECT *  FROM ".self::TABLE_USER." WHERE ("
 										  .self::USERS_EMAIL. " = ? OR " .self::USERS_UID. " = ? ) AND (
-										  ".self::USERS_EMAIL." <> '' AND UID > 0) AND (userexp is NULL OR userexp > ?)",
-										 $credentials['email'], $credentials['uid'], time());
+										  ".self::USERS_EMAIL." <> '' AND UID > 0) AND (klic = ?) AND (userexp is NULL OR userexp > ?)",
+										 $credentials['email'], $credentials['uid'], $credentials['key'] ,time());
 	
         if (!$row) {
            // throw new AuthenticationException('User not found.');
@@ -67,12 +67,13 @@ class MyAuthenticator extends BaseModel  implements IAuthenticator
 		 //zde nevracím AUTH_OK ale pole s názvem uživatele		 
 		 //construct( mixed $id, mixed $roles = null, iterable $data = null )
 		 
-        $identita =  new Identity($row->uid,(array) explode(",",$row->role), ['username' => 'Uživatel ID:'.$row->uid, 
+        $identita =  new Identity($row->uid,(array) explode(",",$row->role), ['username' => $row->nick, 
 																								'zmenahesla' => $row->heslozmena, 		
 																								'email' => $credentials["email"], 
 																								'heslo' => $credentials["password"], 
+                                                                                                'klic' => $credentials["key"], 
 																								'parentid' => $row->parent, 
-																								'label' => (array) explode(",",$row->labels)]);			 		 
+																								'tags' => (array) explode(",",$row->tags)]);
 		$tempstatus = ( $row->heslozmena > 0)  ? AUTH_OK_PASSCHANGE  : AUTH_OK;
 		return [$tempstatus, $identita];
     }

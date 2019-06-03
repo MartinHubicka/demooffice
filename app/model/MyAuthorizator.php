@@ -23,6 +23,7 @@ class MyAuthorizator implements NS\IAuthorizator
         $this->acl->addRole('user', 'registered'); //přihlášený uživat TW
         $this->acl->addRole('participant', 'user'); //přihlášený pro užživatele s provizní smlouvou
 		$this->acl->addRole('obchod', 'user'); //zakázky, nabídky
+        $this->acl->addRole('fakturace', 'user'); //fakturace
         //$this->acl->addRole('crew', 'user'); //posádka vozu/technologie - zejména ve spojení s plánovačem termínů a termínů k dispozici
 		$this->acl->addRole('pokladna', 'user' ); //práva pro práci s pokladnou pokladnou        
         $this->acl->addRole('admin', 'user'); // administrátor
@@ -47,13 +48,8 @@ class MyAuthorizator implements NS\IAuthorizator
         return $this->acl->isAllowed($role, $resource, $privilege);		 
     }
 	function afterLoginRedirect(NS\user $user,NUI\presenter $presenter) {
-			if($user->isInRole('customer')) {
-					$presenter->redirect("Customer:");
-			} elseif ($user->isInRole('user')) {
-					$presenter->redirect("User:");
-			} else {
-				 $presenter->redirect("Homepage:"); //toto by po loginu nemělo nastat
-			} 
+        	 $presenter->redirect("Homepage:"); //toto by po loginu nemělo nastat
+        
 	}
 	function afterLogoutRedirect(NUI\presenter $presenter) {
 	 $presenter->redirect("Homepage:");

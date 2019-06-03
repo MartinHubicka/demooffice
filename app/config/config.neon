@@ -19,7 +19,7 @@ parameters:
         adminmail: martin.hubicka@gmail.com
         obchemail: jihlava@thermowhite.cz
         temppassmin: 60
-
+        loginexpdays: 30 #musí být <= bež seesion expiration
 		  
 database:
 	dsn: 'mysql:host=%database.host%;dbname=%database.dbname%'
