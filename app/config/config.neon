@@ -1,15 +1,36 @@
-parameters:
+session:
+	expiration: 30 days
+	autoStart: true
 
+parameters:
+    database:
+        host: localhost
+        dbname: office
+        user: martinhubicka 
+        pass: Admin75@
+    konstanty:	
+        dph1: 0.21
+        systemmail: noreply@twoffice.app
+        adminmail: martin.hubicka@gmail.com
+        obchemail: jihlava@thermowhite.cz
+        temppassmin: 60
+        loginexpdays: 30 #musí být <= bež seesion expiration
+		  
+database:
+	dsn: 'mysql:host=%database.host%;dbname=%database.dbname%'
+	user: %database.user%
+	password: %database.pass%
 
 application:
 	errorPresenter: Error
 	mapping:
 		*: App\*Module\Presenters\*Presenter
 
-
-session:
-	expiration: 14 days
-
-
 services:
 	router: App\Router\RouterFactory::createRouter
+	- App\Presenters\BasePresenter()
+	#- App\Presenters\BasePresenter(%konstanty%)
+	#- App\Model\BaseModel(%konstanty%)
+	authenticator: App\Model\MyAuthenticator	
+	authorizator: App\Model\MyAuthorizator
+	tempStorage: App\Model\TempStorage

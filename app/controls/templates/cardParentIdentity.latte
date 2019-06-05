@@ -1,0 +1,15 @@
+{ifset $subject}
+<div class="card bg-light mb-3" style="max-width: 100%;">
+    <div class="card-header">IČ: {$subject['ico']} DIČ: {$subject['dic']}</div>
+    <div class="card-body">
+    <h5 class="card-title">{$subject['name']}</h5>
+    <h6 class="card-text">{$subject['podnazev']}</h6>
+    <p class="card-text">
+        {$subject['ulicecp']}<br>
+        {$subject['misto']}<br>        
+        {$subject['psc']} {$subject['mesto']}<br>
+        {$subject['stat']}<br>
+        </p>
+    </div>
+</div>
+{/ifset}

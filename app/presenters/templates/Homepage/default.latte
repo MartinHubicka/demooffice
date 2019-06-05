@@ -1,5 +1,32 @@
 
 {block content}
+{var $passChange = false}
+{ifset $user->getIdentity()->zmenahesla} {var $passChange=$user->getIdentity()->zmenahesla} {/ifset}
+{if $user->isInRole('tw')}
+
+<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+  <a class="navbar-brand" href="{link Homepage:}">Hlavní menu</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsDefault" aria-controls="navbarsDefault" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarsDefault">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{$user->getIdentity()->username}</a>
+        <div class="dropdown-menu" aria-labelledby="dropdown01">
+          <a class="dropdown-item" href="#">Nastavení údajů</a>
+          <a class="dropdown-item" href="#" id="drop-item-menu-pass-change">Změna hesla</a>
+          <a class="dropdown-item" id="dropdown-item-logout" href="#">Odhlášení</a>
+        </div>
+      </li>
+    </ul>
+    <form class="form-inline my-2 my-lg-0">
+      <input class="form-control mr-sm-2" type="text" placeholder="Hledaný text nebo doklad" aria-label="Hledat">
+      <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Hledat</button>
+    </form>
+  </div>
+</nav>
 
 <div id="content">
 
@@ -9,11 +36,28 @@
   <!-- Main jumbotron for a primary marketing message or call to action -->
   <div class="jumbotron">
     <div class="container">
-      <h1 class="display-3">Vítejte, {}</h1>
-      <p>Moduly, ke kterým máte oprávnění jsou Vám k dispozici, ostatní jsou deaktivovány.</p>
-      <p><a class="btn btn-info" href="#" role="button">Nastavení Vašich údajů &raquo;</a></p>
-    </div>
-	  <div class="summernote"></div>
+        <div class="row">
+            <div class="col-md-6">
+                <h1 class="display-3">{$user->getIdentity()->username}</h1>              
+                <p>Nastavená práva: 
+                {foreach $user->roles as $item}
+                    <strong> {$item} </strong>
+                {/foreach}
+                </p>
+              <p>
+          <a class="btn btn-danger mr-5 mt-5" href="#" id="user-logout-button" role="button">Odhlášení</a>
+          <a class="btn btn-info mt-5" href="#" role="button">Nastavení Vašich údajů &raquo;</a> 
+            </p>
+            </div>
+        <div class="col-md-6">
+            {control cardParentIdentity}
+        </div>
+
+        </div>
+      </div>
+
+      
+	  <div class="rem-summernote" style="display:none;"></div>
   </div>
 
   <div class="container">
@@ -119,12 +163,283 @@
   
 
 </main>
-
-
-	
 	
 </div>
+
+<!-- Modal -->
+<div class="modal fade" id="changePassModal" tabindex="-1" role="dialog" aria-labelledby="changePassModal" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="ModalLabel">Změna hesla</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+                <p id="changePassInfo">
+                </p>
+                <form class="form" id="changePassForm">
+                <div class="input-group mb-2 mr-sm-2">
+                <div class="input-group-prepend">
+                <div class="input-group-text textc w8rem">Nové heslo</div>
+                </div>
+                <input type="password" class="form-control  form-control-lg" id="newPass" placeholder="zadejte nové heslo">
+                </div>                
+                </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Zavřít</button>
+        <button type="button" class="btn btn-primary" id="submit-pass-change">Uložit heslo</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{else}
+  <div class="container">
+<form class="form">
+  
+    <div class="input-group mb-2 mr-sm-2">
+    <div class="input-group-prepend">
+      <div class="input-group-text text-center w4rem">Email</div>
+    </div>
+    <input type="text" class="form-control  form-control-lg" id="loginEmail" placeholder="zadejte svůj registrovaný email">
+  </div>
+
+  
+  <div class="input-group mb-2 mr-sm-2">
+    <div class="input-group-prepend">
+      <div class="input-group-text textc w4rem">Klíč</div>
+    </div>
+    <input type="text" class="form-control  form-control-lg" id="loginKey" placeholder="vložte přidělený klíč">
+  </div>
+    	  
+  <div class="input-group mb-2 mr-sm-2">
+    <div class="input-group-prepend">
+      <div class="input-group-text textc w4rem">Heslo</div>
+    </div>
+    <input type="password" class="form-control  form-control-lg" id="loginPass" placeholder="zadejte své heslo">
+  </div>
+    
+  <button type="button" class="btn btn-primary btn-lg mt-3 mb-5" id="loginSubmit" >Přihlásit</button>  
+    <button type="button" class="btn btn-secondary mt-3 mb-5" data-toggle="modal" data-target="#resetPassModal">
+        Zapomenuté heslo
+    </button>
+</form>
+</div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="resetPassModal" tabindex="-1" role="dialog" aria-labelledby="resetPass" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="ModalLabel">Reset hesla</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+                <form class="form" id="passResetForm">
+
+                <div class="input-group mb-2 mr-sm-2">
+                <div class="input-group-prepend">
+                <div class="input-group-text text-center w4rem">Email</div>
+                </div>
+                <input type="text" class="form-control  form-control-lg" id="regEmail" placeholder="zadejte svůj registrovaný email">
+                </div>
+
+                <div class="input-group mb-2 mr-sm-2">
+                <div class="input-group-prepend">
+                <div class="input-group-text textc w4rem">Klíč</div>
+                </div>
+                <input type="text" class="form-control  form-control-lg" id="userKey" placeholder="vložte přidělený klíč">
+                </div>                
+                </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Zavřít</button>
+        <button type="button" class="btn btn-primary" id="submit-pass-reset">Generovat heslo</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+{/if}
 <script>
+      if({$passChange} == true){
+          showModalPassChange("<p>Jste přihlášeni pod dočasným heslem.</p><p>Změnte si heslo dle svého vkusu a zabráníte vypršení polatnosti hesla.</p>"); 
+        }
 //$("#modul-reporty").addClass("disabled");
+$("#submit-pass-reset").on("click", function(ev){
+    event.preventDefault();     
+    var t = new Date();       
+		 $.nette.ajax(
+        {			 	        
+		  url: "/?do=resetPass",
+        type: "POST",
+		  off: ['unique'],
+        data: {
+            "t": t.getTime(),
+		  "email": $("#regEmail").val(),	  
+		  "key": $("#userKey").val()	
+            
+        },
+        success: function(payload)
+        {		
+           
+           if(!payload.chyba) {
+              // console.log(payload.result);
+               
+                    //$('#passResetForm')[0].submit();//resi reset  
+                    $('#resetPassModal').modal('hide');   
+                        infoModal(payload.chybatext);
+				  } else {
+                    $('#resetPassModal').modal('hide');   
+                        infoModal(payload.chybatext, "Chyba");
+				  }
+        },
+        error: function(xhr, ajaxOptions, thrownError)
+        {
+            infoModal("Neočekávaná chyba programu. Chyba byla zaznamenána a bude opravena.", "Chyba v běhu programu");
+         //	jsFlashMessage('Koncept nebyl z důvodu chyby uložen. Chyba byla logována. Opakujte akci později.');		
+			   //console.warn(xhr.status);
+            //console.warn(thrownError);
+        }
+    });    
+   
+});
+    
+$('#resetPassModal').on('hidden.bs.modal', function (e) {
+    
+})
+$("#loginSubmit").on("click", function (ev){
+   event.preventDefault();     
+    var t = new Date();    
+    		 $.nette.ajax(
+        {			 	        
+		  url: "/?do=Login",
+        type: "POST",
+		  off: ['unique'],
+        data: {
+            "t": t.getTime(),
+		  "email": $("#loginEmail").val(),	  
+		  "key": $("#loginKey").val(),
+          "pass": $("#loginPass").val()
+        },
+        success: function(payload)
+        {		
+           
+           if(!payload.chyba) {
+               /*
+              // console.log(payload.result);
+                       if(payload.status == 5) {
+                           //požadována změna hesla
+                           showModalPassChange("<p>Jste přihlášeni pod dočasným heslem.</p><p>Změnte si heslo dle svého vkusu a již nebudete vyzýváni ke změně hesla.</p>"); 
+                       }
+               */
+				  } else {
+
+                        infoModal(payload.chybatext, "Chyba");
+				  }
+        },
+        error: function(xhr, ajaxOptions, thrownError)
+        {
+            infoModal("Neočekávaná chyba programu. Chyba byla zaznamenána a bude opravena.", "Chyba v běhu programu");
+         //	jsFlashMessage('Koncept nebyl z důvodu chyby uložen. Chyba byla logována. Opakujte akci později.');		
+			   //console.warn(xhr.status);
+            //console.warn(thrownError);
+        }
+    }); 
+});
+    $("#dropdown-item-logout").on("click", function(ev) {        
+        event.preventDefault();     
+        logOut();
+    });
+    $("#user-logout-button").on("click", function(ev) {        
+        event.preventDefault();     
+        logOut();
+    });
+    
+    $("#drop-item-menu-pass-change").on("click", function(ev){
+       event.preventDefault();    
+       showModalPassChange();
+    });
+    $("#submit-pass-change").on("click", function(ev){
+        event.preventDefault();    
+        passChange($("#newPass").val());
+    });
+function showModalPassChange(info = ""){
+        $("#changePassInfo").html(info); 
+        $("#changePassModal").modal('show');
+}    
+    
+function passChange(newPass){
+    console.log($("#newPass").val());
+     var t = new Date();    
+    		 $.nette.ajax(
+        {			 	        
+		  url: "/?do=passChange",
+        type: "POST",
+		  off: ['unique'],
+        data: {
+            "t": t.getTime(),		
+            "newPass": $("#newPass").val()
+        },
+        success: function(payload)
+        {		
+            $("#changePassModal").modal('hide');
+           if(!payload.chyba) {
+                        infoModal(payload.chybatext, "Info");
+                        
+				  } else {            
+                        infoModal(payload.chybatext, "Chyba");
+				  }
+        },
+        error: function(xhr, ajaxOptions, thrownError)
+        {
+            infoModal("Neočekávaná chyba programu. Chyba byla zaznamenána a bude opravena.", "Chyba v běhu programu");
+        }
+    }); 
+}
+    
+function logOut()  {
+    
+      var t = new Date();    
+    		 $.nette.ajax(
+        {			 	        
+		  url: "/?do=Logout",
+        type: "POST",
+		  off: ['unique'],
+        data: {
+            "t": t.getTime()		
+        },
+        success: function(payload)
+        {		
+           
+           if(!payload.chyba) {
+              // console.log(payload.result);
+               
+                    //$('#passResetForm')[0].submit();//resi reset  
+                    $('#resetPassModal').modal('hide');   
+                        infoModal(payload.chybatext);
+				  } else {
+                    $('#resetPassModal').modal('hide');   
+                        infoModal(payload.chybatext, "Chyba");
+				  }
+        },
+        error: function(xhr, ajaxOptions, thrownError)
+        {
+            infoModal("Neočekávaná chyba programu. Chyba byla zaznamenána a bude opravena.", "Chyba v běhu programu");
+         //	jsFlashMessage('Koncept nebyl z důvodu chyby uložen. Chyba byla logována. Opakujte akci později.');		
+			   //console.warn(xhr.status);
+            //console.warn(thrownError);
+        }
+    }); 
+    
+}
 </script>
 
