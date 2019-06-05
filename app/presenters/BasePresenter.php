@@ -91,6 +91,14 @@ public function handleresetPass ($email=NULL, $key=NULL){
    	$this->sendPayload();			   
     }    
 }
+    
+/**
+ * @return ModalPrijemEET
+ */
+protected function createComponentModalPrijemEET () {		
+    return new AC\ModalPrijemEET($this->db, $this->container,$this->user);    
+}
+    
 public function handlepassChange($newPass){
 
     if (!$this->isAjax()) {
@@ -173,4 +181,5 @@ public function handleLogout()    {
 		$this->MyAuthorizator->afterLogoutRedirect($this);
 		//$this->flashMessage('Jste odhlášeni. Děkujeme za Váš čas.');
 }
+    
 }

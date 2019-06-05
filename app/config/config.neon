@@ -15,6 +15,7 @@ parameters:
         obchemail: jihlava@thermowhite.cz
         temppassmin: 60
         loginexpdays: 30 #musí být <= bež seesion expiration
+        aresurl: 'http://wwwinfo.mfcr.cz/cgi-bin/ares/darv_bas.cgi?aktivni=true'
 		  
 database:
 	dsn: 'mysql:host=%database.host%;dbname=%database.dbname%'

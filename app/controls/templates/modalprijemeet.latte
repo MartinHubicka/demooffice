@@ -1,0 +1,109 @@
+<!-- Modal -->
+<div class="modal fade" id="modalEetPrijem" tabindex="-1" role="dialog" aria-labelledby="modalEetPrijem" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="ModalLabel">Příjem do pokladny</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+                <form class="form" id="formEetPrijem">
+
+            <div class="btn-group">
+              <button type="button" class="btn btn-secondary dropdown-toggle mb-2 mr-sm-2" certid="-1" id="form-eet-prijem-dropdown-btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Pokladna (certifikát EET)
+              </button>
+              <div class="dropdown-menu">
+                  {foreach $data as $item}
+                <a class="dropdown-item form-eet-prijem-dropdown-btn-item {if $item[subj_id]===NULL}bg-danger{/if}" certid="{$item['certid']}" href="#">{$item["nazev"]}</a>
+                  {/foreach}                
+              </div>
+            </div>   
+
+                    
+                <div class="input-group mb-2 mr-sm-2">
+                <div class="input-group-prepend">
+                <div class="input-group-text text-center w8rem">Zákazník/Firma</div>
+                </div>
+                <input type="text" class="form-control  form-control-lg" id="input-ico-firma" placeholder="IČO, nebo část jména">
+                     <div class="input-group-append">
+    <div class="input-group-prepend">
+    <button class="btn btn-outline-secondary dropdown-toggle btn-secondary" type="button" id="adresa-find-btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
+    <div class="dropdown-menu">
+      <a class="dropdown-item disabled" id="adresa-find-by-ico" href="#">Vyhledat dle IČO</a>
+      <a class="dropdown-item disabled" href="#">Vyhledat v adresáři</a>
+        <div role="separator" class="dropdown-divider"></div>
+      <a class="dropdown-item" href="#">Otevřít adresář</a>
+    </div>
+  </div>
+  </div>
+                </div>
+
+                <div class="input-group mb-2 mr-sm-2">
+                <div class="input-group-prepend">
+                <div class="input-group-text textc w4rem">Klíč</div>
+                </div>
+                <input type="text" class="form-control  form-control-lg" id="REMuserKey" placeholder="vložte přidělený klíč">
+                </div>                
+                </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Zavřít</button>
+        <button type="button" class="btn btn-primary" id="REMsubmit-pass-reset">Generovat heslo</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+$(".form-eet-prijem-dropdown-btn-item").on("click", function (ev){
+    event.preventDefault();       
+    $("#form-eet-prijem-dropdown-btn").text($(ev.delegateTarget).text());  
+        if($(ev.delegateTarget).hasClass("bg-danger")) {            
+            $("#form-eet-prijem-dropdown-btn").removeClass("bg-success");
+            $("#form-eet-prijem-dropdown-btn").addClass("bg-danger");
+        } else {
+            $("#form-eet-prijem-dropdown-btn").removeClass("bg-danger");
+            $("#form-eet-prijem-dropdown-btn").addClass("bg-success");
+        } 
+    $("#form-eet-prijem-dropdown-btn").attr("certid", $(ev.delegateTarget).attr("certid"));
+});
+$("#adresa-find-btn").on("click", function(ev){
+    event.preventDefault();       
+    var tempIcoFirma = $("#input-ico-firma").val();
+    if(tempIcoFirma.length == 8 && !isNaN(tempIcoFirma)) {        
+        //jde li o formát ičo
+        $("#adresa-find-by-ico").removeClass("disabled");
+        // 1. zkusí nalézt dle ič aqvdresáři
+        // 2. zkusí nalézt ve veřejném rejstříku                
+    } else {
+        $("#adresa-find-by-ico").addClass("disabled");
+    }
+    
+});
+
+$("#adresa-find-by-ico").on("click", function(ev){
+    event.preventDefault();     
+     var t = new Date();    
+    		 $.nette.ajax(
+        {			 	        
+		  url: "/ciselniky/?do=findAdresByIco",
+        type: "POST",
+		  off: ['unique'],
+        data: {
+            "t": t.getTime(),
+            "ico": $("#input-ico-firma").val()
+        },
+        success: function(payload)
+        {		
+            
+        },
+        error: function(xhr, ajaxOptions, thrownError)
+        {
+            infoModal("Neočekávaná chyba programu. Chyba byla zaznamenána a bude opravena.", "Chyba v běhu programu");
+        }
+    });  
+});
+
+</script>

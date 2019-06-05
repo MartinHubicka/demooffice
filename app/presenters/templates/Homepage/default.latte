@@ -91,13 +91,16 @@
   <div class="card-body">
     <h5 class="card-title">POKLADNA</h5>
     <p class="card-text" style="min-height: 10rem">Evidence pohybů v pokladně. Zejména evidence EET při příjmu hotovosti či platbě kartou. Vytváří mj. příjmový pokladní doklad.</p>
-     <button type="button" class="btn btn-danger">EET - příjem hotovosti</button>
+     <button type="button" class="btn btn-danger" id="butt-pokladna-prijem">EET - příjem hotovosti</button>
 	  <button type="button" class="btn btn-link">Přehled pokl.</button>
   </div>
 </div>
 </div>				  
 </div>
-	  
+
+{control modalPrijemEET}      
+      
+      
 <div class="row">
 		  <div class="col-md-4 disabled">
 <div class="card" style="width: 100%;">
@@ -372,13 +375,42 @@ $("#loginSubmit").on("click", function (ev){
         event.preventDefault();    
         passChange($("#newPass").val());
     });
+    
+    $("#butt-pokladna-prijem").on("click", function(ev){
+        event.preventDefault();    
+          $("#modalEetPrijem").modal('show');
+        // eetPrijem();
+    });
+    
+function eetPrijem()    {
+     var t = new Date();    
+    		 $.nette.ajax(
+        {			 	        
+		  url: "/pokladna/?do=eetPrijem",
+        type: "POST",
+		  off: ['unique'],
+        data: {
+            "t": t.getTime()
+        },
+        success: function(payload)
+        {		
+            
+        },
+        error: function(xhr, ajaxOptions, thrownError)
+        {
+            infoModal("Neočekávaná chyba programu. Chyba byla zaznamenána a bude opravena.", "Chyba v běhu programu");
+        }
+    });  
+    
+}
 function showModalPassChange(info = ""){
         $("#changePassInfo").html(info); 
         $("#changePassModal").modal('show');
 }    
+
     
 function passChange(newPass){
-    console.log($("#newPass").val());
+   
      var t = new Date();    
     		 $.nette.ajax(
         {			 	        

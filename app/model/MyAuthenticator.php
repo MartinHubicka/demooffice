@@ -219,7 +219,8 @@ class MyAuthenticator extends BaseModel  implements IAuthenticator
 		}
 		return $rec;
 	}	
-	public function getParent($uid=NULL){		
+	public function getParent($uid=NULL){	
+        
 		if($uid && $uid!==NULL) {
 		$rec = $this->db->fetch("SELECT * FROM subjects WHERE subj_id = (SELECT parent FROM users WHERE uid = ?)",  $uid);		
 		return $rec;
