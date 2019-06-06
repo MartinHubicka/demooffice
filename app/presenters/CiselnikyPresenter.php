@@ -28,5 +28,11 @@ public function handlefindAdresByIco($ico=NULL, $icofirma=NULL){
     }
 }    
 
+/**
+ * @return tableAdresar
+ */
+protected function createComponentTableAdresar() {		
+    return new AC\TableAdresar($this->db, $this->container,$this->user);    
+}    
     
 }

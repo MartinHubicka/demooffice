@@ -4,6 +4,18 @@ use Nette\Database\Connection;
 use Latte\Engine;
 use Nette\Utils;
 class Adresar extends BaseModel {
+
+public function getAdresy($subjid=NULL, $filter=NULL){
+    //todo zapracovat filter
+    $result = NULL;
+   if($subjid!==NULL) {
+  $res = $this->db->fetchAll("SELECT * FROM adresar WHERE subject_id = ? " ,  $subjid);
+        if($res) {            
+            $result = (object)$res;
+        }  
+    }   
+    return $result;
+}    
     
 public function getFirmaByIco ($subjid=NULL,$ico=NULL, $icofirma=NULL){
 $result = NULL;
@@ -12,7 +24,7 @@ if($icofirma !== NULL && strlen($icofirma) >=3 && $subjid!==NULL) { //ico nebo Ä
 //------
 //krok 1-vyhledani  v adresari    
 
-  $res = $this->db->fetchAll("SELECT * FROM adresar WHERE subject_id = ? AND (ico = ? OR firma LIKE ?) " .  $subjid, $icofirma,$icofirma);
+  $res = $this->db->fetchAll("SELECT * FROM adresar WHERE subject_id = ? AND (ico = ? OR firma LIKE ?) " ,  $subjid, $icofirma,$icofirma);
         if($res) {            
             $result = (object)$res;
         }
