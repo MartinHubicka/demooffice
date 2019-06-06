@@ -33,25 +33,81 @@
     <button class="btn btn-outline-secondary dropdown-toggle btn-secondary" type="button" id="adresa-find-btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
     <div class="dropdown-menu">
       <a class="dropdown-item disabled" id="adresa-find-by-ico" href="#">Vyhledat dle IČO</a>
-      <a class="dropdown-item disabled" href="#">Vyhledat v adresáři</a>
+        <div role="separator" class="dropdown-divider"></div>
+        <div id="context-addresses">
+            <div class="progress" id="ajax-get-context-indicator">
+                <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="100" aria-valuemin="100" aria-valuemax="100" style="width: 100%"></div>
+            </div>
+        </div>
         <div role="separator" class="dropdown-divider"></div>
       <a class="dropdown-item" href="#">Otevřít adresář</a>
     </div>
   </div>
   </div>
                 </div>
-
-                <div class="input-group mb-2 mr-sm-2">
-                <div class="input-group-prepend">
-                <div class="input-group-text textc w4rem">Klíč</div>
+                
+                <div class="form-row">   
+                    <div class="col-md-6 mb-3">
+                    <div class="input-group mb-2 mr-sm-2">
+                    <div class="input-group-prepend">
+                    <div class="input-group-text text-center w3rem">IČO</div>
+                    </div>
+                    <input type="text" class="form-control  form-control-lg" id="input-ico" placeholder="">
+                    </div>    
+                    </div>
+                    <div class="col-md-6 mb-3">
+                    <div class="input-group mb-2 mr-sm-2">
+                    <div class="input-group-prepend">
+                    <div class="input-group-text text-center w3rem">DIČ</div>
+                    </div>
+                    <input type="text" class="form-control  form-control-lg" id="input-dic" placeholder="">
+                    </div>    
+                    </div>
                 </div>
-                <input type="text" class="form-control  form-control-lg" id="REMuserKey" placeholder="vložte přidělený klíč">
-                </div>                
+                    <div class="input-group mb-2 mr-sm-2">
+                    <div class="input-group-prepend">
+                    <div class="input-group-text text-center w5rem">Ulice, č.p.</div>
+                    </div>
+                    <input type="text" class="form-control  form-control-lg" id="input-ulicecp" placeholder="">
+                    </div>    
+                 
+                     <div class="input-group mb-2 mr-sm-2">
+                    <div class="input-group-prepend">
+                    <div class="input-group-text text-center w5rem">Místo</div>
+                    </div>
+                    <input type="text" class="form-control  form-control-lg" id="input-misto" placeholder="">
+                    </div> 
+                <div class="form-row">   
+                    <div class="col-md-4 mb-3">
+                    <div class="input-group mb-2 mr-sm-2">
+                    <div class="input-group-prepend">
+                    <div class="input-group-text text-center w3rem">PSČ</div>
+                    </div>
+                    <input type="text" class="form-control  form-control-lg" id="input-psc" placeholder="">
+                    </div>    
+                    </div>
+                    <div class="col-md-8 mb-3">
+                    <div class="input-group mb-2 mr-sm-2">
+                    <div class="input-group-prepend">
+                    <div class="input-group-text text-center w5rem">Město</div>
+                    </div>
+                    <input type="text" class="form-control  form-control-lg" id="input-mesto" placeholder="">
+                    </div>    
+                    </div>
+                </div>     
+                    <div class="input-group mb-2 mr-sm-2">
+                    <div class="input-group-prepend">
+                    <div class="input-group-text text-center w5rem">Stát</div>
+                    </div>
+                    <input type="text" class="form-control  form-control-lg" id="input-stat" placeholder="">
+                    </div> 
+                    
+                    
                 </form>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Zavřít</button>
-        <button type="button" class="btn btn-primary" id="REMsubmit-pass-reset">Generovat heslo</button>
+        <button type="button" class="btn btn-primary" id="REMsubmit-pass-reset">Vytvořit PPD a registrovat do EET</button>
       </div>
     </div>
   </div>
@@ -68,6 +124,7 @@ $(".form-eet-prijem-dropdown-btn-item").on("click", function (ev){
             $("#form-eet-prijem-dropdown-btn").addClass("bg-success");
         } 
     $("#form-eet-prijem-dropdown-btn").attr("certid", $(ev.delegateTarget).attr("certid"));
+    
 });
 $("#adresa-find-btn").on("click", function(ev){
     event.preventDefault();       
@@ -80,7 +137,7 @@ $("#adresa-find-btn").on("click", function(ev){
     } else {
         $("#adresa-find-by-ico").addClass("disabled");
     }
-    
+  //zkusí nalézt adresu v databázi a zobrazit výsledek/schovat progressbar  
 });
 
 $("#adresa-find-by-ico").on("click", function(ev){

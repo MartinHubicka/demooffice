@@ -5,10 +5,21 @@ use Latte\Engine;
 use Nette\Utils;
 class Adresar extends BaseModel {
     
-public function getFirmaByIco ($ico=NULL){
-    
+public function getFirmaByIco ($ico=NULL, $subjid=NULL){
 $result = NULL;
-if($ico!==NULL) {
+    
+    
+if($subjid !== NULL) {
+//------
+//krok 1-vyhledani ico v adresari    
+
+    
+}    
+    
+
+if($ico!==NULL && $result === NULL) { 
+//------
+//pokud nebylo ico nalezeno v adresari následuje krok 2 - vyhledání v aresu
 
      $xmldom = new \DOMDocument(); //lomítko je tam proto, yb to nehledal v modelu ale v stanartně v php třídě
     if($xmldom) {

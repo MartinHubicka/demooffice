@@ -19,9 +19,8 @@ public function handlefindAdresByIco($ico=NULL){
 	} else {
         $chyba = true;
         $adresar = new Model\Adresar($this->db, $this->container);
-        $dataJson = $adresar->getFirmaByIco($ico);
-        var_dump($dataJson);
-        die();
+        $userm = new \App\Model\MyAuthenticator($this->db, $this->container); 
+        $dataJson = $adresar->getFirmaByIco($ico, $userm->getParent($this->user->getId())["subj_id"]); 
             $this->payload->chyba = $chyba;
             $this->payload->chybatext = $chybatext;                            
    	        $this->sendPayload();
