@@ -5,21 +5,24 @@ use Latte\Engine;
 use Nette\Utils;
 class Adresar extends BaseModel {
     
-public function getFirmaByIco ($ico=NULL, $subjid=NULL){
+public function getFirmaByIco ($subjid=NULL,$ico=NULL, $icofirma=NULL){
 $result = NULL;
     
-    
-if($subjid !== NULL) {
+if($icofirma !== NULL && strlen($icofirma) >=3 && $subjid!==NULL) { //ico nebo část názvu firmy a řetězec má alespoň 3 znaky
 //------
-//krok 1-vyhledani ico v adresari    
+//krok 1-vyhledani  v adresari    
 
+  $res = $this->db->fetchAll("SELECT * FROM adresar WHERE subject_id = ? AND (ico = ? OR firma LIKE ?) " .  $subjid, $icofirma,$icofirma);
+        if($res) {            
+            $result = (object)$res;
+        }
     
 }    
     
 
-if($ico!==NULL && $result === NULL) { 
+if($ico!==NULL && $result===NULL) { 
 //------
-//pokud nebylo ico nalezeno v adresari následuje krok 2 - vyhledání v aresu
+//pokud nebylo nalezeno v adresari následuje krok 2 - vyhledání v aresu dle ič
 
      $xmldom = new \DOMDocument(); //lomítko je tam proto, yb to nehledal v modelu ale v stanartně v php třídě
     if($xmldom) {

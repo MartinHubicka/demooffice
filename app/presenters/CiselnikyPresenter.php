@@ -12,7 +12,7 @@ final class CiselnikyPresenter extends BasePresenter
 //control v basepresenrteru modal okno ModalPrijemEET	
 
     
-public function handlefindAdresByIco($ico=NULL){
+public function handlefindAdresByIco($ico=NULL, $icofirma=NULL){
 
     if (!$this->isAjax()) {
 					 $this->redirect('this');
@@ -20,9 +20,10 @@ public function handlefindAdresByIco($ico=NULL){
         $chyba = true;
         $adresar = new Model\Adresar($this->db, $this->container);
         $userm = new \App\Model\MyAuthenticator($this->db, $this->container); 
-        $dataJson = $adresar->getFirmaByIco($ico, $userm->getParent($this->user->getId())["subj_id"]); 
-            $this->payload->chyba = $chyba;
-            $this->payload->chybatext = $chybatext;                            
+        $dataObj = $adresar->getFirmaByIco($userm->getParent($this->user->getId())["subj_id"],$ico, $icofirma); 
+            //$this->payload->chyba = $chyba;
+            //$this->payload->chybatext = $chybatext;                            
+            $this->payload->adresy = $dataObj;
    	        $this->sendPayload();
     }
 }    

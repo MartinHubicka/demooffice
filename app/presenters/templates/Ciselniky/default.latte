@@ -1,0 +1,252 @@
+
+{block content}
+{if $user->isInRole('tw')}
+
+<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+  <a class="navbar-brand" href="{link Homepage:}">Hlavní menu</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsDefault" aria-controls="navbarsDefault" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  
+  <div class="collapse navbar-collapse" id="navbarsDefault">   
+      <ul class="navbar-nav mr-auto">
+      </ul>
+    <form class="form-inline my-2 my-lg-0">
+      <input class="form-control mr-sm-2" type="text" placeholder="Název firmy, ičo, město apod." aria-label="Hledat">
+      <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Hledat</button>
+    </form>
+  </div>
+</nav>
+
+<div id="content">
+<div class="container">
+<ul class="nav nav-tabs" id="myTab" role="tablist">
+  <li class="nav-item">
+    <a class="nav-link active" id="home-tab" data-toggle="tab" href="#tab-adresar" role="tab" aria-controls="home" aria-selected="true">Adresář</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" id="profile-tab" data-toggle="tab" href="#tab-skarty" role="tab" aria-controls="profile" aria-selected="false">Skladové karty</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" id="contact-tab" data-toggle="tab" href="#tab-docsnr" role="tab" aria-controls="contact" aria-selected="false">Číselné řady</a>
+  </li>
+</ul>
+<div class="tab-content" id="myTabContent">
+    <div class="tab-pane fade show active" id="tab-adresar" role="tabpanel" aria-labelledby="tab-adresar-tab">
+      
+    </div>
+    <div class="tab-pane fade" id="tab-skarty" role="tabpanel" aria-labelledby="tab-skarty-tab">...</div>
+    <div class="tab-pane fade" id="tab-docsnr" role="tabpanel" aria-labelledby="tab-docsnr-tab">...</div>
+</div>    
+    
+</div>
+</div>
+{else}
+<div id="content">
+<div class="container">
+    <h1 class="display-3">Nemáte oprávnění k zobrazení obsahu.</h1>  
+    <a class="btn btn-info mb-4 mt-4" role="button" href="{link Homepage:}">úvodní stránka</a>	  
+</div>
+</div>
+{/if}
+<script>
+
+//$("#modul-reporty").addClass("disabled");
+$("#submit-pass-reset").on("click", function(ev){
+    event.preventDefault();     
+    var t = new Date();       
+		 $.nette.ajax(
+        {			 	        
+		  url: "/?do=resetPass",
+        type: "POST",
+		  off: ['unique'],
+        data: {
+            "t": t.getTime(),
+		  "email": $("#regEmail").val(),	  
+		  "key": $("#userKey").val()	
+            
+        },
+        success: function(payload)
+        {		
+           
+           if(!payload.chyba) {
+              // console.log(payload.result);
+               
+                    //$('#passResetForm')[0].submit();//resi reset  
+                    $('#resetPassModal').modal('hide');   
+                        infoModal(payload.chybatext);
+				  } else {
+                    $('#resetPassModal').modal('hide');   
+                        infoModal(payload.chybatext, "Chyba");
+				  }
+        },
+        error: function(xhr, ajaxOptions, thrownError)
+        {
+            infoModal("Neočekávaná chyba programu. Chyba byla zaznamenána a bude opravena.", "Chyba v běhu programu");
+         //	jsFlashMessage('Koncept nebyl z důvodu chyby uložen. Chyba byla logována. Opakujte akci později.');		
+			   //console.warn(xhr.status);
+            //console.warn(thrownError);
+        }
+    });    
+   
+});
+    
+$('#resetPassModal').on('hidden.bs.modal', function (e) {
+    
+})
+$("#loginSubmit").on("click", function (ev){
+   event.preventDefault();     
+    var t = new Date();    
+    		 $.nette.ajax(
+        {			 	        
+		  url: "/?do=Login",
+        type: "POST",
+		  off: ['unique'],
+        data: {
+            "t": t.getTime(),
+		  "email": $("#loginEmail").val(),	  
+		  "key": $("#loginKey").val(),
+          "pass": $("#loginPass").val()
+        },
+        success: function(payload)
+        {		
+           
+           if(!payload.chyba) {
+               /*
+              // console.log(payload.result);
+                       if(payload.status == 5) {
+                           //požadována změna hesla
+                           showModalPassChange("<p>Jste přihlášeni pod dočasným heslem.</p><p>Změnte si heslo dle svého vkusu a již nebudete vyzýváni ke změně hesla.</p>"); 
+                       }
+               */
+				  } else {
+
+                        infoModal(payload.chybatext, "Chyba");
+				  }
+        },
+        error: function(xhr, ajaxOptions, thrownError)
+        {
+            infoModal("Neočekávaná chyba programu. Chyba byla zaznamenána a bude opravena.", "Chyba v běhu programu");
+         //	jsFlashMessage('Koncept nebyl z důvodu chyby uložen. Chyba byla logována. Opakujte akci později.');		
+			   //console.warn(xhr.status);
+            //console.warn(thrownError);
+        }
+    }); 
+});
+    $("#dropdown-item-logout").on("click", function(ev) {        
+        event.preventDefault();     
+        logOut();
+    });
+    $("#user-logout-button").on("click", function(ev) {        
+        event.preventDefault();     
+        logOut();
+    });
+    
+    $("#drop-item-menu-pass-change").on("click", function(ev){
+       event.preventDefault();    
+       showModalPassChange();
+    });
+    $("#submit-pass-change").on("click", function(ev){
+        event.preventDefault();    
+        passChange($("#newPass").val());
+    });
+    
+    $("#butt-pokladna-prijem").on("click", function(ev){
+        event.preventDefault();    
+          $("#modalEetPrijem").modal('show');
+        // eetPrijem();
+    });
+    
+function eetPrijem()    {
+     var t = new Date();    
+    		 $.nette.ajax(
+        {			 	        
+		  url: "/pokladna/?do=eetPrijem",
+        type: "POST",
+		  off: ['unique'],
+        data: {
+            "t": t.getTime()
+        },
+        success: function(payload)
+        {		
+            
+        },
+        error: function(xhr, ajaxOptions, thrownError)
+        {
+            infoModal("Neočekávaná chyba programu. Chyba byla zaznamenána a bude opravena.", "Chyba v běhu programu");
+        }
+    });  
+    
+}
+function showModalPassChange(info = ""){
+        $("#changePassInfo").html(info); 
+        $("#changePassModal").modal('show');
+}    
+
+    
+function passChange(newPass){
+   
+     var t = new Date();    
+    		 $.nette.ajax(
+        {			 	        
+		  url: "/?do=passChange",
+        type: "POST",
+		  off: ['unique'],
+        data: {
+            "t": t.getTime(),		
+            "newPass": $("#newPass").val()
+        },
+        success: function(payload)
+        {		
+            $("#changePassModal").modal('hide');
+           if(!payload.chyba) {
+                        infoModal(payload.chybatext, "Info");
+                        
+				  } else {            
+                        infoModal(payload.chybatext, "Chyba");
+				  }
+        },
+        error: function(xhr, ajaxOptions, thrownError)
+        {
+            infoModal("Neočekávaná chyba programu. Chyba byla zaznamenána a bude opravena.", "Chyba v běhu programu");
+        }
+    }); 
+}
+    
+function logOut()  {
+    
+      var t = new Date();    
+    		 $.nette.ajax(
+        {			 	        
+		  url: "/?do=Logout",
+        type: "POST",
+		  off: ['unique'],
+        data: {
+            "t": t.getTime()		
+        },
+        success: function(payload)
+        {		
+           
+           if(!payload.chyba) {
+              // console.log(payload.result);
+               
+                    //$('#passResetForm')[0].submit();//resi reset  
+                    $('#resetPassModal').modal('hide');   
+                        infoModal(payload.chybatext);
+				  } else {
+                    $('#resetPassModal').modal('hide');   
+                        infoModal(payload.chybatext, "Chyba");
+				  }
+        },
+        error: function(xhr, ajaxOptions, thrownError)
+        {
+            infoModal("Neočekávaná chyba programu. Chyba byla zaznamenána a bude opravena.", "Chyba v běhu programu");
+         //	jsFlashMessage('Koncept nebyl z důvodu chyby uložen. Chyba byla logována. Opakujte akci později.');		
+			   //console.warn(xhr.status);
+            //console.warn(thrownError);
+        }
+    }); 
+    
+}
+</script>
+

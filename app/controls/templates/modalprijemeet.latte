@@ -136,11 +136,38 @@ $("#adresa-find-btn").on("click", function(ev){
         // 2. zkusí nalézt ve veřejném rejstříku                
     } else {
         $("#adresa-find-by-ico").addClass("disabled");
+        //zkusí nalézt adresu v databázi (na zaklade IC nebo nazvu) a zobrazit výsledek/schovat progressbar  
+        
+            event.preventDefault();     
+     var t = new Date();    
+    		 $.nette.ajax(
+        {			 	        
+		  url: "/ciselniky/?do=findAdresByIco",
+        type: "POST",
+		  off: ['unique'],
+        data: {
+            "t": t.getTime(),
+            "ico": null,
+            "icofirma": $("#input-ico-firma").val()
+        },
+        success: function(payload)
+        {		
+            if(payload.adresy){
+               
+            }
+            
+        },
+        error: function(xhr, ajaxOptions, thrownError)
+        {
+        //    infoModal("Neočekávaná chyba programu. Chyba byla zaznamenána a bude opravena.", "Chyba v běhu programu");
+        }
+        });  
+        
     }
-  //zkusí nalézt adresu v databázi a zobrazit výsledek/schovat progressbar  
+  
 });
 
-$("#adresa-find-by-ico").on("click", function(ev){
+$("#adresa-find-by-ico").on("click", function(ev){ //hledani poze dle IC
     event.preventDefault();     
      var t = new Date();    
     		 $.nette.ajax(
@@ -154,7 +181,9 @@ $("#adresa-find-by-ico").on("click", function(ev){
         },
         success: function(payload)
         {		
-            
+            if(payload.adresy){
+                doplnPoleAdresy(payload.adresy);  //doplnime pole, protože na základě IČ je jedna adresa
+            }    
         },
         error: function(xhr, ajaxOptions, thrownError)
         {
@@ -162,5 +191,15 @@ $("#adresa-find-by-ico").on("click", function(ev){
         }
     });  
 });
+    function doplnPoleAdresy(objAdresa) {
+        $("#input-ico-firma").val(objAdresa.FIRMA);
+        $("#input-ico").val(objAdresa.ICO);
+        $("#input-dic").val(objAdresa.DIC);
+        $("#input-ulicecp").val(objAdresa.ULICECP);
+        $("#input-misto").val(objAdresa.MISTO);
+        $("#input-psc").val(objAdresa.PSC);
+        $("#input-mesto").val(objAdresa.MESTO);
+        $("#input-stat").val(objAdresa.STAT);
+    }
 
 </script>
