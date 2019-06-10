@@ -63,27 +63,24 @@
 <footer class="container">
     <p>ThermoWhite Moravia s.r.o &copy; Martin Hubička 2018-{="now"|date:'Y'}</p>
 </footer>	
-	{block scripts}
-	<script src="https://nette.github.io/resources/js/netteForms.min.js"></script>
+
+	
 	<script>
+        	{block scripts}
+      $(function () {
+            $.nette.init();
+        });
 	$(document).ready(function() {
 		
-  $('.summernote').summernote({        
-        lang: "cs-CZ",
-	  popover: {
-		  image: [],
-		  link: [],
-		  air: []
-	  	}
-    });
+
 	  
 });	
 function infoModal(htmlMessage="", title="Info"){
    $("#modalFlashMessageHtml").html(htmlMessage);    
-   $("#modalFlashMessageTitle").text(title);    
-    
-    $('#modalFlashMessage').modal('show');
+   $("#modalFlashMessageTitle").text(title);        
+   $('#modalFlashMessage').modal('show');
 }
+
 	</script>
 	{/block}
 </body>

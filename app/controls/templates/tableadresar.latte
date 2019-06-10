@@ -1,7 +1,6 @@
-
 <button type="button" class="btn btn-primary mt-4 mb-4 ml-4 mr-4" id="adresar-add-new-adr-btn">Nový kontakt</button>
 <button type="button" class="btn btn-danger mt-4 mb-4 ml-4 mr-4 disabled" id="adresar-delete-adr-btn">Vymazat označené kontakty</button>
-<span class="badge badge-light mt-4 mb-4 ml-4 mr-4">! Kontakt upravíte dvojklikem na vybraný řádek</span>
+<span class="badge badge-light mt-4 mb-4 ml-4 mr-4">! Kontakt upravíte dvojklikem na vybraný řádek</span> 
 <table class="table table-striped table-responsive table-hover">
   <thead class="thead-dark">
     <tr>
@@ -17,8 +16,6 @@
       <th scope="col">stát</th>
       <th scope="col">poznámky/kontakty</th>
       <th scope="col">hlavní email</th>
-      <th scope="col">email 2</th>
-      <th scope="col">email 3</th>
         
     </tr>
   </thead>
@@ -42,10 +39,9 @@
       <td>{$item->PSC}</td>
       <td>{$item->MESTO}</td>
       <td>{$item->STAT}</td>      
-      <td>{$item->poznamky}</td>    
+      <td>{$item->poznamky|noescape}</td>    
       <td>{$item->email}</td>    
-      <td>{$item->email2}</td>    
-      <td>{$item->email3}</td>    
+  
     </tr>   
         {/foreach}            
       {/ifset}
@@ -54,8 +50,8 @@
 </table>
 
 <!-- Modal -->
-<div class="modal fade" id="modalKontakt" tabindex="-1" role="dialog" aid="-1" aria-labelledby="modalKontakt" aria-hidden="true">
-  <div class="modal-dialog" role="document">
+<div class="modal " id="modalKontakt" tabindex="-1" role="dialog" aid="-1" aria-labelledby="modalKontakt" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable" role="document">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="ModalLabel">Kontakt</h5>
@@ -172,24 +168,54 @@
   </div>
 </div>
 <script>
+$('#input-poznamky').summernote({        
+        lang: "cs-CZ",
+        toolbar: [
+  ['style', ['style']],
+  ['font', ['bold', 'underline', 'clear','superscript', 'subscript']],
+  ['fontname', ['fontname']],
+  ['color', ['color']],
+  ['para', ['ul', 'ol', 'paragraph']],
+  ['table', ['table']],
+  ['insert', ['link', 'picture']],
+  ['view', ['fullscreen', 'codeview', 'help']],
+],      
+	  popover: {
+		  image: [],
+		  link: [],
+          dialogsInBody: true,
+		  air: []
+	  	},
+        maximumImageFileSize: 524288 
+    });
+    //1024 * 512KB = 524288
+
+    
 $("#adresar-add-new-adr-btn").on("click", function(){
      event.preventDefault(); 
      $("#modalKontakt").attr("aid", -1); //jedná se o nový kontakt
-     clearInputs(); //vymaže pole    
+   //  clearInputs(); //vymaže pole    
+    $("#modalKontakt").on("bs.modal.show", function(){
+     
+});
      $("#modalKontakt").modal("show");
 });
+    
 $("#submit-edit-adress").on("click", function(){
        event.preventDefault();    
             var t = new Date();  
             // když aid = null (resp. -1) jedná se o nový kontakt, jinak aid určuje číslo id kontaktu v adresáři
-            var aid = ($("#modalKontakt").attr("aid")>=0) ? $("#modalKontakt").attr("aid") : null;
-            var arrData = []; 
+            var aid = ($("#modalKontakt").attr("aid")<0) ? -1 : $("#modalKontakt").attr("aid");
+            var arrData =[];
             arrData["poznamky"] =$("#input-poznamky").summernote("code");
             $("[field]").each(function( index ) {                
                 arrData[$(this).attr("field")] = $(this).val();
-            });                                    
-            console.log(arrData);
-            /*
+            }); 
+            
+            
+            //console.log(  Array.isArray(arrData));
+            //nize Object.assign({}, arrData) je predan object (konverze z array na object a do presenteru dorazi array - its magic)     
+            
     		 $.nette.ajax(
         {			 	        
 		  url: "/ciselniky/?do=updateAdress",
@@ -197,26 +223,147 @@ $("#submit-edit-adress").on("click", function(){
 		  off: ['unique'],
         data: {
             "t": t.getTime(),
-            "aid": aid,
-            "arrData": arrData
+            "arrdata": Object.assign({}, arrData),
+            "aid": aid            
         },
         success: function(payload)
-        {		
+        {
+            console.log(payload);
+            if(payload.result) {
+                console.log(payload.result);
+       
+                   infoModal(payload.result.zpravatext, "Záznam uložen");    
+                }    
+            
             
         },
         error: function(xhr, ajaxOptions, thrownError)
         {
-            infoModal("Neočekávaná chyba programu. Chyba byla zaznamenána a bude opravena.", "Chyba v běhu programu");
+            //infoModal("Neočekávaná chyba programu. Chyba byla zaznamenána a bude opravena.", "Chyba v běhu programu");
         }
        
     });
-     */
+    //    clearInputs();
+        $("#modalKontakt").modal("hide");
 });  
+$("#adresa-find-btn").on("click", function(ev){
+    event.preventDefault();       
+    var tempIcoFirma = $("#input-ico-firma").val();
+    if(tempIcoFirma.length == 8 && !isNaN(tempIcoFirma)) {        
+        //jde li o formát ičo
+        $("#adresa-find-by-ico").removeClass("disabled");
+        // 1. zkusí nalézt dle ič aqvdresáři
+        // 2. zkusí nalézt ve veřejném rejstříku                
+    } else {
+        $("#adresa-find-by-ico").addClass("disabled");
+        //zkusí nalézt adresu v databázi (na zaklade IC nebo nazvu) a zobrazit výsledek/schovat progressbar  
+        
+            event.preventDefault();     
+     var t = new Date();    
+    		 $.nette.ajax(
+        {			 	        
+		  url: "/ciselniky/?do=findAdresByIco",
+        type: "POST",
+		  off: ['unique'],
+        data: {
+            "t": t.getTime(),
+            "ico": null,
+            "icofirma": $("#input-ico-firma").val()
+        },
+        success: function(payload)
+        {		
+            if(payload.adresy){
+               
+            }
+            
+        },
+        error: function(xhr, ajaxOptions, thrownError)
+        {
+        //    infoModal("Neočekávaná chyba programu. Chyba byla zaznamenána a bude opravena.", "Chyba v běhu programu");
+        }
+        });  
+        
+    }
+  
+});    
+$("#adresa-find-by-ico").on("click", function(ev){ //hledani poze dle IC
+    event.preventDefault();     
+     var t = new Date();    
+    		 $.nette.ajax(
+        {			 	        
+		  url: "/ciselniky/?do=findAdresByIco",
+        type: "POST",
+		  off: ['unique'],
+        data: {
+            "t": t.getTime(),
+            "ico": $("#input-ico-firma").val()
+        },
+        success: function(payload)
+        {		
+            if(payload.adresy){
+                doplnPoleAdresy(payload.adresy);  //doplnime pole, protože na základě IČ je jedna adresa
+            }    
+        },
+        error: function(xhr, ajaxOptions, thrownError)
+        {
+           // infoModal("Neočekávaná chyba programu. Chyba byla zaznamenána a bude opravena.", "Chyba v běhu programu");
+        }
+    });  
+});   
+        function doplnPoleAdresy(objAdresa) {
+        $("#input-ico-firma").val(objAdresa.FIRMA);
+        $("#input-ico").val(objAdresa.ICO);
+        $("#input-dic").val(objAdresa.DIC);
+        $("#input-ulicecp").val(objAdresa.ULICECP);
+        $("#input-misto").val(objAdresa.MISTO);
+        $("#input-psc").val(objAdresa.PSC);
+        $("#input-mesto").val(objAdresa.MESTO);
+        $("#input-stat").val(objAdresa.STAT);
+    }
+    
 $("tr td input[type='checkbox']").change(function(){
    
    ($("tr td input[type='checkbox']:checked").length>0) ?  $("#adresar-delete-adr-btn").removeClass("disabled") : $("#adresar-delete-adr-btn").addClass("disabled");
 });
+    
+$("#adresar-delete-adr-btn").on("click", function() {
+    event.preventDefault();  
+    var aidToDelete = [];
+       $("tr td input[type='checkbox']:checked").parents("tr").each(function(){
+           aidToDelete.push($( this ).attr('adresaid'));
+       });
+    if(aidToDelete.length > 0) {
+        var faktDelete = window.confirm("Skutečně vymazat vybrané kontakty? (" + aidToDelete.length + ")");   
+        if(faktDelete===true){
+         var t = new Date();    
+    		 $.nette.ajax(
+        {			 	        
+		  url: "/ciselniky/?do=deleteAdresses",
+        type: "POST",
+		  off: ['unique'],
+        data: {
+            "t": t.getTime(),
+            "aids": Object.assign({}, aidToDelete)
+        },
+        success: function(payload)
+        {		
+            if(payload.adresy){
+               
+            }
+            
+        },
+        error: function(xhr, ajaxOptions, thrownError)
+        {
+        //    infoModal("Neočekávaná chyba programu. Chyba byla zaznamenána a bude opravena.", "Chyba v běhu programu");
+        }
+        });  
+            
+            
+        }
+    }                  
+});  
+    
     function clearInputs(){
-        
+   //     $("#input-poznamky").summernote('destroy');     
     }
 </script>

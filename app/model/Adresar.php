@@ -16,6 +16,56 @@ public function getAdresy($subjid=NULL, $filter=NULL){
     }   
     return $result;
 }    
+
+public function saveKontakt($subjid=NULL, $aid, $arrData){
+//využití obj z BaseModelu $this->result
+if($subjid===NULL){
+    $this->result->chyba = true;
+    $this->result->zprava = true;
+    $this->result->zpravatext = 'Chyba toku programu. Nebyl předán subj_id.';
+    $this->result->data = null;    
+} else {
+    if($aid===NULL || $aid < 0 || !is_int($aid)) {
+        //nový kontakt
+ 
+        $arrData["subject_id"] = $subjid; //pridame subjId 
+
+    $this->db->query('INSERT INTO adresar', $arrData);
+    $id = $this->db->getInsertId();
+        if($id) {
+    $this->result->chyba = false;
+    $this->result->zprava = true;
+    $this->result->zpravatext = 'Nový kontakt byl uložen';
+    $this->result->data = $id;           
+        } else {
+    $this->result->chyba = true;
+    $this->result->zprava = true;
+    $this->result->zpravatext = 'Chyba při uložení nového kontaktu';
+    $this->result->data = null;        
+        }
+        
+    } else {
+        //update kontaktu
+    }    
+}
+    return $this->result;
+}   
+    
+public function deleteKontakt($aids=[]) {
+    //zde není nutná parent_id protože uživatel mohl označit pouze kontkty které se mu zobrazují
+    try { 
+    $cnt = $this->db->query('DELETE FROM adresar WHERE ?or', ['aid' => $aids]);    // zajímavý operátor ?or a parametr jako výčet možností u fieldu aid
+    $this->result->chyba = false;
+    $this->result->zprava = true;
+    $this->result->zpravatext = 'Kontakt/y byly vymazány.';
+    $this->result->data = $cnt;           
+        } catch(Exception $e)  {
+    $this->result->chyba = true;
+    $this->result->zprava = true;
+    $this->result->zpravatext = 'Chyba při mazání kontaktu/ů: Popis chyby'.$e;
+    $this->result->data = null;        
+        }
+}    
     
 public function getFirmaByIco ($subjid=NULL,$ico=NULL, $icofirma=NULL){
 $result = NULL;

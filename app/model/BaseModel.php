@@ -12,14 +12,18 @@ class BaseModel  {
    protected $container;
   /** @var Array */
    protected $konstanty;
-    
+   public $result; //vlastní object výsledku volané funkce 
 public function __construct( \Nette\Database\Connection $db, Container $container)		 
     {				 		 
 	 	 	$this->db = $db;
             $this->container = $container;
             $this->konstanty = $container->getParameters()["konstanty"];
-		//	var_dump($container->getParameters()["konstanty"]["temppassmin"]);
-        //die();
+            $this->result =(object) [
+                'chyba' => true,
+                'zprava' => false,
+                'zpravatext' => '',
+                'data' => NULL
+                ];		
     }
 
 }
