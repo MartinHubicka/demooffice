@@ -25,6 +25,7 @@ class MyAuthorizator implements NS\IAuthorizator
 		$this->acl->addRole('obchod', 'user'); //zakázky, nabídky
         $this->acl->addRole('fakturace', 'user'); //fakturace
         $this->acl->addRole('demo', 'user'); //demo role - veškeré doklady vč. eet nejsou oficiální, pokud má úživatel mj. roli demo není schopen udělat oficiílní doklad
+        $this->acl->addRole('settings', 'user'); 
         //$this->acl->addRole('crew', 'user'); //posádka vozu/technologie - zejména ve spojení s plánovačem termínů a termínů k dispozici
 		$this->acl->addRole('pokladna', 'user' ); //práva pro práci s pokladnou pokladnou        
         $this->acl->addRole('admin', 'user'); // administrátor

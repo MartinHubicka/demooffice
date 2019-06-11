@@ -1,6 +1,7 @@
+{if $user->isInRole('settings') || $user->isInRole('admin')}
 <div class="container">
 <p class=" mt-5">
-    Nastavení číselných řad nevliňuje existující doklady. Zpravidla není nutno editovat. 
+    Nastavení číselných řad <strong>nevoliňuje existující čísla dokladů</strong>. Zpravidla není nutno editovat. 
 </p>
 <p>
     Editace je pro potřeby změn čísel na začátku nového roku, nebo v případě, že je daná číselná řada nekonzistentní a je třeba ji vyplnit. 
@@ -110,6 +111,15 @@
   </div>
 </div>                     
 </div>  
+{else}
+<div class="container mb-5">
+<div class="jumbotron  mb-5">
+    <h1 class="display-3">Nastavení - číselníky</h1>  
+    <h3 class="mt-5">Nemáte oprávnění k zobrazení obsahu.</h3>  
+    <a class="btn btn-info mb-4 mt-4" role="button" href="/">úvodní stránka</a>	  
+</div>
+</div>
+{/if}
 <script>
 $("button[field]").on("click", function(ev){
     event.preventDefault;
