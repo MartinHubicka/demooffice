@@ -194,13 +194,12 @@ $('#input-poznamky').summernote({
 $("#adresar-add-new-adr-btn").on("click", function(){
      event.preventDefault(); 
      $("#modalKontakt").attr("aid", -1); //jedná se o nový kontakt
-   //  clearInputs(); //vymaže pole    
-    $("#modalKontakt").on("bs.modal.show", function(){
-     
-});
+
      $("#modalKontakt").modal("show");
 });
-    
+ $("#modalKontakt").on("hide.bs.modal", function(){
+        clearInputs();               
+});   
 $("#submit-edit-adress").on("click", function(){
        event.preventDefault();    
             var t = new Date();  
@@ -208,7 +207,7 @@ $("#submit-edit-adress").on("click", function(){
             var aid = ($("#modalKontakt").attr("aid")<0) ? -1 : $("#modalKontakt").attr("aid");
             var arrData =[];
             arrData["poznamky"] =$("#input-poznamky").summernote("code");
-            $("[field]").each(function( index ) {                
+            $("input[field]").each(function( index ) {                
                 arrData[$(this).attr("field")] = $(this).val();
             }); 
             
@@ -230,8 +229,6 @@ $("#submit-edit-adress").on("click", function(){
         {
             console.log(payload);
             if(payload.result) {
-                console.log(payload.result);
-       
                    infoModal(payload.result.zpravatext, "Záznam uložen");    
                 }    
             
@@ -323,6 +320,35 @@ $("#adresa-find-by-ico").on("click", function(ev){ //hledani poze dle IC
             $("#input-poznamky").summernote("code",objAdresa.poznamky);
         }
     }
+  
+$("tr[adresaid]").on("dblclick", function(ev){
+    event.preventDefault();     
+             var t = new Date();    
+    		 $.nette.ajax(
+        {			 	        
+		  url: "/ciselniky/?do=getAdresuByAid",
+        type: "POST",
+		  off: ['unique'],
+        data: {
+            "t": t.getTime(),
+            "aid": $(ev.delegateTarget).attr("adresaid")
+        },
+        success: function(payload)
+        {		
+            if(payload.dataObj){
+              // console.log(payload.dataObj);
+               doplnPoleAdresy(payload.dataObj.data) ;
+               $("#modalKontakt").attr("aid", $(ev.delegateTarget).attr("adresaid")); 
+                $("#modalKontakt").modal("show"); 
+            }
+            
+        },
+        error: function(xhr, ajaxOptions, thrownError)
+        {
+        //    infoModal("Neočekávaná chyba programu. Chyba byla zaznamenána a bude opravena.", "Chyba v běhu programu");
+        }
+        });  
+});
     
 $("tr td input[type='checkbox']").change(function(){
    
@@ -367,7 +393,7 @@ $("#adresar-delete-adr-btn").on("click", function() {
 });  
     
     function clearInputs(){
-          $("[field]").each(function( index ) {                
+          $("input[field]").each(function( index ) {                
                $(this).val("");
             });
        $("#input-poznamky").summernote('code','');     

@@ -46,6 +46,15 @@ if($subjid===NULL){
         
     } else {
         //update kontaktu
+    $recordsUpdated =  $this->db->query('UPDATE adresar SET', 
+        $arrData,
+        'WHERE aid = ?', $aid);
+    if($recordsUpdated->getRowCount())     { 
+        $this->result->chyba = false;
+        $this->result->zprava = true;
+        $this->result->zpravatext = 'Kontakt byl aktualizován';
+        $this->result->data = $recordsUpdated->getRowCount();//pocet ovlivněných řádků           
+    }
     }    
 }
     return $this->result;
@@ -66,6 +75,18 @@ public function deleteKontakt($aids=[]) {
     $this->result->data = null;        
         }
 }    
+    
+public function getAdresaByAid($aid=NULL)  {
+if($aid !== NULL ){
+ $result = $this->db->fetch("SELECT * FROM adresar WHERE aid = ?",$aid);  
+    $this->result->chyba = false;
+    $this->result->zprava = false;
+    $this->result->zpravatext = '';
+    $this->result->data = $result;    
+    
+} 
+    return $this->result;
+}  
     
 public function getFirmaByIco ($subjid=NULL,$ico=NULL, $icofirma=NULL){
 $result = NULL;    

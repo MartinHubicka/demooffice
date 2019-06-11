@@ -15,13 +15,23 @@ public function handlefindAdresByIco($ico=NULL, $icofirma=NULL){
 
     if (!$this->isAjax()) {
 					 $this->redirect('this');
-	} else {
-        $chyba = true;
+	} else {        
         $adresar = new Model\Adresar($this->db, $this->container);
         $userm = new \App\Model\MyAuthenticator($this->db, $this->container); 
         $dataObj = $adresar->getFirmaByIco($userm->getParent($this->user->getId())["subj_id"],$ico, $icofirma); 
         
             $this->payload->adresy = $dataObj;
+   	        $this->sendPayload();
+    }
+}    
+    
+public function handlegetAdresuByAid($aid){
+    if (!$this->isAjax()) {
+					 $this->redirect('this');
+	} else {     
+        $adresar = new Model\Adresar($this->db, $this->container);        
+        $dataObj = $adresar->getAdresaByAid($aid); 
+            $this->payload->dataObj = $dataObj;
    	        $this->sendPayload();
     }
 }    
@@ -60,6 +70,15 @@ public function handledeleteAdresses($aids=[]){
     }
 }    
 }
+ 
+public function handleupdateCisr ($field, $value) {
+    $value = (int)$value; //force converto to int
+    if(($field || $value) && is_int($value)){
+        $this->MyAuthenticator->updateCisr($this->user->getId(), $field, $value);        
+    }
+    
+        $this->redrawControl('redrawtablecisr'); //i když proces neproběhne, není na škodu aktualizovat data -> proto nepodmiňuji
+    }   
     
 /**
  * @return tableAdresar
@@ -67,5 +86,10 @@ public function handledeleteAdresses($aids=[]){
 protected function createComponentTableAdresar() {		
        return new AC\TableAdresar($this->db, $this->container,$this->user);    
 }    
-    
+/**
+ * @return tableCisr
+ */
+protected function createComponentTableCisr() {		
+       return new AC\TableCisr($this->db, $this->container,$this->user);    
+}     
 }
