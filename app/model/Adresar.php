@@ -68,14 +68,13 @@ public function deleteKontakt($aids=[]) {
 }    
     
 public function getFirmaByIco ($subjid=NULL,$ico=NULL, $icofirma=NULL){
-$result = NULL;
-    
-if($icofirma !== NULL && strlen($icofirma) >=3 && $subjid!==NULL) { //ico nebo část názvu firmy a řetězec má alespoň 3 znaky
+$result = NULL;    
+if($icofirma !== NULL && strlen($icofirma) >=3   && $subjid!==NULL) { //ico nebo část názvu firmy a řetězec má alespoň 3 znaky
 //------
 //krok 1-vyhledani  v adresari    
-
-  $res = $this->db->fetchAll("SELECT * FROM adresar WHERE subject_id = ? AND (ico = ? OR firma LIKE ?) " ,  $subjid, $icofirma,$icofirma);
-        if($res) {            
+    
+  $res = $this->db->fetchAll("SELECT * FROM adresar WHERE subject_id = ? AND (ico = ? OR firma LIKE ?) " ,  $subjid, $icofirma, $this->db::literal("'%".$icofirma."%'"));
+        if($res) {    
             $result = (object)$res;
         }
     

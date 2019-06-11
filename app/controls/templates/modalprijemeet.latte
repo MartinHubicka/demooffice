@@ -11,7 +11,13 @@
       <div class="modal-body">
                 <form class="form" id="formEetPrijem">
 
-            <div class="btn-group">
+            <div class="btn-group mb-3">                  
+                    <div class="input-group mb-2 sm-2">
+                    <div class="input-group-prepend">
+                    <div class="input-group-text text-center w8rem">Certifikát EET</div>
+                    </div>
+                    
+                    </div>                        
               <button type="button" class="btn btn-secondary dropdown-toggle mb-2 mr-sm-2" certid="-1" id="form-eet-prijem-dropdown-btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 Pokladna (certifikát EET)
               </button>
@@ -33,14 +39,13 @@
     <button class="btn btn-outline-secondary dropdown-toggle btn-secondary" type="button" id="adresa-find-btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
     <div class="dropdown-menu">
       <a class="dropdown-item disabled" id="adresa-find-by-ico" href="#">Vyhledat dle IČO</a>
-        <div role="separator" class="dropdown-divider"></div>
-        <div id="context-addresses">
-            <div class="progress" id="ajax-get-context-indicator">
+        <div role="separator" class="dropdown-divider"></div>        
+            <div class="progress" id="context-adresy-ajax-get-context-indicator">
                 <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="100" aria-valuemin="100" aria-valuemax="100" style="width: 100%"></div>
             </div>
-        </div>
+        <div id="context-addresses"></div>
         <div role="separator" class="dropdown-divider"></div>
-      <a class="dropdown-item" href="#">Otevřít adresář</a>
+      <a class="dropdown-item" target="ciselniky" href="/ciselniky/">Otevřít adresář</a>
     </div>
   </div>
   </div>
@@ -116,6 +121,7 @@
 $(".form-eet-prijem-dropdown-btn-item").on("click", function (ev){
     event.preventDefault();       
     $("#form-eet-prijem-dropdown-btn").text($(ev.delegateTarget).text());  
+    
         if($(ev.delegateTarget).hasClass("bg-danger")) {            
             $("#form-eet-prijem-dropdown-btn").removeClass("bg-success");
             $("#form-eet-prijem-dropdown-btn").addClass("bg-danger");
@@ -127,7 +133,10 @@ $(".form-eet-prijem-dropdown-btn-item").on("click", function (ev){
     
 });
 $("#adresa-find-btn").on("click", function(ev){
+        $("#context-addresses").html("");
+        $("#context-adresy-ajax-get-context-indicator").show();
     event.preventDefault();       
+    
     var tempIcoFirma = $("#input-ico-firma").val();
     if(tempIcoFirma.length == 8 && !isNaN(tempIcoFirma)) {        
         //jde li o formát ičo
@@ -137,6 +146,8 @@ $("#adresa-find-btn").on("click", function(ev){
     } else {
         $("#adresa-find-by-ico").addClass("disabled");
         //zkusí nalézt adresu v databázi (na zaklade IC nebo nazvu) a zobrazit výsledek/schovat progressbar  
+        
+        
         
             event.preventDefault();     
      var t = new Date();    
@@ -153,8 +164,23 @@ $("#adresa-find-btn").on("click", function(ev){
         success: function(payload)
         {		
             if(payload.adresy){
-               
-            }
+                
+             /*   $(payload.adresy).each(function(index){
+                   //$("#context-addresses").after('<a class="dropdown-item" href="#">'+$(this).index.firma+'</a>');  
+                    console.log(payload.adresy[index]);
+                });    
+                */
+                var i = 0;
+                
+              do {                
+                    $("#context-addresses").append('<a class="dropdown-item" adressdata=\''+JSON.stringify(payload.adresy[i])+'\' href="#">'+payload.adresy[i].FIRMA+'</a>');  
+                i++;
+                }
+                    while (payload.adresy[i]);
+            }            
+
+            $("#context-adresy-ajax-get-context-indicator").hide();
+            
             
         },
         error: function(xhr, ajaxOptions, thrownError)
@@ -167,6 +193,16 @@ $("#adresa-find-btn").on("click", function(ev){
   
 });
 
+    $(document).on("click", "a[adressdata]",function(){ //event uvozen zkrze document, kvůli aplikaci appendovaného elementu
+       event.preventDefault();  
+        var obj = JSON.parse($(this).attr("adressdata"));    
+        
+        doplnPoleAdresy(obj);
+        //console.log($(this).attr("adressdata"));
+    });
+    
+    
+    
 $("#adresa-find-by-ico").on("click", function(ev){ //hledani poze dle IC
     event.preventDefault();     
      var t = new Date();    
@@ -192,6 +228,7 @@ $("#adresa-find-by-ico").on("click", function(ev){ //hledani poze dle IC
     });  
 });
     function doplnPoleAdresy(objAdresa) {
+      
         $("#input-ico-firma").val(objAdresa.FIRMA);
         $("#input-ico").val(objAdresa.ICO);
         $("#input-dic").val(objAdresa.DIC);
@@ -200,6 +237,11 @@ $("#adresa-find-by-ico").on("click", function(ev){ //hledani poze dle IC
         $("#input-psc").val(objAdresa.PSC);
         $("#input-mesto").val(objAdresa.MESTO);
         $("#input-stat").val(objAdresa.STAT);
+ /* u EET Neni třeba
+        if(objAdresa.poznamky) {
+            $("#input-poznamky").summernote("code",objAdresa.poznamky);
+            }
+ */       
     }
 
 </script>

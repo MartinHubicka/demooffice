@@ -310,7 +310,7 @@ $("#adresa-find-by-ico").on("click", function(ev){ //hledani poze dle IC
         }
     });  
 });   
-        function doplnPoleAdresy(objAdresa) {
+    function doplnPoleAdresy(objAdresa) {
         $("#input-ico-firma").val(objAdresa.FIRMA);
         $("#input-ico").val(objAdresa.ICO);
         $("#input-dic").val(objAdresa.DIC);
@@ -319,6 +319,9 @@ $("#adresa-find-by-ico").on("click", function(ev){ //hledani poze dle IC
         $("#input-psc").val(objAdresa.PSC);
         $("#input-mesto").val(objAdresa.MESTO);
         $("#input-stat").val(objAdresa.STAT);
+        if(objAdresa.poznamky) {
+            $("#input-poznamky").summernote("code",objAdresa.poznamky);
+        }
     }
     
 $("tr td input[type='checkbox']").change(function(){
@@ -364,6 +367,10 @@ $("#adresar-delete-adr-btn").on("click", function() {
 });  
     
     function clearInputs(){
-   //     $("#input-poznamky").summernote('destroy');     
+          $("[field]").each(function( index ) {                
+               $(this).val("");
+            });
+       $("#input-poznamky").summernote('code','');     
+        
     }
 </script>
