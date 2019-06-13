@@ -1,0 +1,10 @@
+<table>
+     {ifset $skarty}
+        {foreach $skarty as $skarta}
+<tr>
+    <td>{$skarta->skarta}</td>
+    <td>{$skarta->sid}</td>    
+</tr>
+            {/foreach}            
+      {/ifset}
+</table>

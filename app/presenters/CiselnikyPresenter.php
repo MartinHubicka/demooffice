@@ -52,7 +52,28 @@ if (!$this->isAjax()) {
         
        
 }
-}    
+}
+    
+ public function handleupdateSkarta($sid=-1, $arrdata=[]){
+   // COMPONENTA tableAdresar
+   //$aid = id kontaktu v adresáři, je li null nebo -1 jde o nový kontakt
+   //$arrData = key = název fieldu value = hodnota fieldu
+if (!$this->isAjax()) {
+					 $this->redirect('this');
+	} else {
+   
+        $skarty = new Model\Skarty($this->db, $this->container);
+        $userm = new \App\Model\MyAuthenticator($this->db, $this->container); 
+        $resultobj = $skarty->saveSkarta($userm->getParentId($this->user->getId()),$sid, $arrdata); 
+        $this->payload->result = $resultobj;        
+        $this->redrawControl('redrawtableskarty');    
+        $this->redrawControl('redrawsubtableskarty');    
+    
+   	//    $this->sendPayload();
+        
+       
+}
+}   
 
 public function handledeleteAdresses($aids=[]){
     // COMPONENTA tableAdresar
@@ -70,7 +91,43 @@ public function handledeleteAdresses($aids=[]){
     }
 }    
 }
- 
+    
+public function handledeleteSkartu($sids=[]){
+    // COMPONENTA tableSkarty
+    if (!$this->isAjax()) {
+					 $this->redirect('this');
+	} else {
+    if(count($sids) > 0){
+         $skarty = new Model\Skarty($this->db, $this->container);
+         $resultobj = $skarty->deleteSkartu($sids);    
+
+        $this->redrawControl('redrawtableskarty');
+    //    $this->redrawControl('redrawsubtableskarty');
+    $this->payload->result = $resultobj;        
+//   	     $this->sendPayload();
+          
+    }
+}    
+}    
+public function handleaddSkartuAsProdukt($sids=[]){
+    // COMPONENTA tableSkarty
+    if (!$this->isAjax()) {
+					 $this->redirect('this');
+	} else {
+    if(count($sids) > 0){
+         $skarty = new Model\Skarty($this->db, $this->container);
+         $userm = new \App\Model\MyAuthenticator($this->db, $this->container);         
+         $resultobj = $skarty->addSkartuAsProdukt($userm->getParentId($this->user->getId()), $sids);    
+
+        $this->redrawControl('redrawtableskarty');
+        //$this->redrawControl('redrawsubtableskarty');
+    $this->payload->result = $resultobj;        
+//   	     $this->sendPayload();
+          
+    }
+}    
+}     
+    
 public function handleupdateCisr ($field, $value) {
     $value = (int)$value; //force converto to int
     if(($field || $value) && is_int($value)){
@@ -97,5 +154,7 @@ protected function createComponentTableCisr() {
  */
 protected function createComponentTableSkarty() {		
        return new AC\TableSkarty($this->db, $this->container,$this->user);    
-}        
+} 
+
+
 }

@@ -208,7 +208,8 @@ $("#submit-edit-adress").on("click", function(){
             var aid = ($("#modalKontakt").attr("aid")<0) ? -1 : $("#modalKontakt").attr("aid");
             var arrData =[];
             arrData["poznamky"] =$("#input-poznamky").summernote("code");
-            $("input[field]").each(function( index ) {                
+        $("#formKontakt").find("input[field]").each(function( index ) {           
+   
                 arrData[$(this).attr("field")] = $(this).val();
             }); 
             
@@ -351,9 +352,9 @@ $("tr[adresaid]").on("dblclick", function(ev){
         });  
 });
     
-$("tr td input[type='checkbox']").change(function(){
+$("tr[adresaid] td input[type='checkbox']").change(function(){
    
-   ($("tr td input[type='checkbox']:checked").length>0) ?  $("#adresar-delete-adr-btn").removeClass("disabled") : $("#adresar-delete-adr-btn").addClass("disabled");
+   ($("tr[adresaid] td input[type='checkbox']:checked").length>0) ?  $("#adresar-delete-adr-btn").removeClass("disabled") : $("#adresar-delete-adr-btn").addClass("disabled");
 });
     
 $("#adresar-delete-adr-btn").on("click", function() {
