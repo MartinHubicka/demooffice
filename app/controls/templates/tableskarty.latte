@@ -1,29 +1,23 @@
-
-<button type="button" class="btn btn-primary mt-4 mb-4 ml-4 mr-4" id="adresar-add-new-adr-btn">Nový kontakt</button>
-<button type="button" class="btn btn-danger mt-4 mb-4 ml-4 mr-4 disabled" id="adresar-delete-adr-btn">Vymazat označené kontakty</button>
-<span class="badge badge-light mt-4 mb-4 ml-4 mr-4">! Kontakt upravíte dvojklikem na vybraný řádek</span> 
+<div class="container">
+<button type="button" class="btn btn-primary mt-4 mb-4 ml-4 mr-4" id="skarty-add-new-karta-btn">Nová skl.karta</button>
+<button type="button" class="btn btn-danger mt-4 mb-4 ml-4 mr-4 disabled" id="skarty-delete-kartu-btn">Vymazat označené skl. karty</button>
+<span class="badge badge-light mt-4 mb-4 ml-4 mr-4">! Kartu zeditujete dvojklikem na vybraný řádek</span> 
 <table class="table table-striped table-responsive table-hover">
   <thead class="thead-dark">
     <tr>
       <th scope="col text-center"></th>
-      <th scope="col">firma/jméno</th>
-      <th scope="col">podnázev firmy</th>
-      <th scope="col">IČO</th>
-      <th scope="col">DIČ</th>
-      <th scope="col">ulice č.p.</th>
-      <th scope="col">místo</th>
-      <th scope="col">PSČ</th>
-      <th scope="col">město</th>
-      <th scope="col">stát</th>
-      <th scope="col">poznámky/kontakty</th>
-      <th scope="col">hlavní email</th>
-        
+      <th scope="col">Skl. karta</th>
+      <th scope="col">popis na dokladech</th>
+      <th scope="col">mj</th>
+      <th scope="col">sec.mj2</th>
+      <th scope="col">mj2/mj</th>        
+      <th scope="col">kusovník</th>
     </tr>
   </thead>
   <tbody>
-      {ifset $adresy}
-        {foreach $adresy as $item}
-    <tr adresaid='{$item->aid}'>
+      {ifset $skarty}
+        {foreach $skarty as $skarta}
+    <tr adresaid='{$skarta->sid}'>
       <td >
         <div class="input-group-prepend">
             <div class="input-group-text" >
@@ -31,18 +25,12 @@
             </div>
         </div>
       </td>
-      <td>{$item->FIRMA}</td>
-      <td>{$item->PODNAZEV}</td>
-      <td>{$item->ICO}</td>
-      <td>{$item->DIC}</td>
-      <td>{$item->ULICECP}</td>
-      <td>{$item->MISTO}</td>
-      <td>{$item->PSC}</td>
-      <td>{$item->MESTO}</td>
-      <td>{$item->STAT}</td>      
-      <td>{$item->poznamky|noescape}</td>    
-      <td>{$item->email}</td>    
-  
+      <td>{$skarta->skarta}</td>
+      <td>{$skarta->popis|noescape}</td>
+      <td>{$skarta->mj}</td>
+      <td>{if $skarta->mj2 !== null}{$skarta->mj2}{else}-{/if}</td>
+      <td>{if $skarta->mj2 !== null}{$skarta->mj2mj|number:3:',':' '}{$skarta->mj2}/{$skarta->mj}{else}-{/if}</td>      
+      <td>{if $skarta->kid !== null} kusovník č.{$skarta->kid}{else}-{/if}</td>    
     </tr>   
         {/foreach}            
       {/ifset}
@@ -51,17 +39,17 @@
 </table>
 
 <!-- Modal -->
-<div class="modal " id="modalKontakt" tabindex="-1" role="dialog" aid="-1" aria-labelledby="modalKontakt" aria-hidden="true">
+<div class="modal " id="modalSkarta" tabindex="-1" role="dialog" aid="-1" aria-labelledby="modalSkarta" aria-hidden="true">
   <div class="modal-dialog modal-dialog-scrollable" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="ModalLabel">Kontakt</h5>
+        <h5 class="modal-title" id="ModalLabel">Skladová karta</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div class="modal-body">
-                <form class="form" id="formKontakt">
+                <form class="form" id="formSkarta">
   
 
                     
@@ -168,6 +156,7 @@
     </div>
   </div>
 </div>
+</div>    
 <script>
 $('#input-poznamky').summernote({        
         lang: "cs-CZ",

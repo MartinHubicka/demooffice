@@ -91,5 +91,11 @@ protected function createComponentTableAdresar() {
  */
 protected function createComponentTableCisr() {		
        return new AC\TableCisr($this->db, $this->container,$this->user);    
-}     
+}  
+/**
+ * @return tableSkarty
+ */
+protected function createComponentTableSkarty() {		
+       return new AC\TableSkarty($this->db, $this->container,$this->user);    
+}        
 }
