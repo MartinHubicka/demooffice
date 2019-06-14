@@ -18,25 +18,24 @@ public $user;
   public  $db;	 //sporný public, dořešit	
 /** @var Container */
     protected $container;
-private $skarty;    
-    public function __construct( \Nette\Database\Connection $db, Container $container, \Nette\Security\user $user, $skarty=NULL) {		 		 		 		
+private $kid;    
+    public function __construct( \Nette\Database\Connection $db, Container $container, \Nette\Security\user $user,$kid=27) {		 		 		 		
 		$this->user =$user;
 		$this->db =$db;
-        $this->skarty =$skarty;
+        $this->kid =$kid;
 		$this->container =$container;
 	    }
     public function render() {
-        $this->dataUpdate($this->skarty);        
+        $this->dataUpdate();        
     }
-    public function dataUpdate($skarty) {        
-        if($skarty===NULL){
+    public function dataUpdate() {        
+        
         $userm = new \App\Model\MyAuthenticator($this->db, $this->container);      //getParent       
-        $skarty = new \App\Model\Skarty($this->db, $this->container);              
-        $this->getTemplate()->skarty = $skarty->getSkarty($userm->getParentId($this->user->getId()));
-        } else {
-           $this->getTemplate()->skarty = $skarty;
-        }    
+        $skarty = new \App\Model\Skarty($this->db, $this->container);                      
+        $this->getTemplate()->skarty = $skarty->getKidSids($userm->getParentId($this->user->getId()), $this->kid)->data;
+    //  var_dump($this->getTemplate()->skarty);   
         $this->getTemplate()->setFile(__DIR__ . '/templates/subselectskarty.latte');
         $this->getTemplate()->render();
+        
     }
 }

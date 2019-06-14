@@ -69,7 +69,42 @@ if($subjid===NULL){
 }
     return $this->result;
 } 
+public function getKidSids($uid, $kid){
+
+if($uid !== NULL || $kid !== NULL){
+   $sids = [];
+   $cntmj = [];
+    $temp =$this->db->fetch("SELECT arrSids FROM kusovnik WHERE kid = ?",$kid);   
+    $sidy = explode(",",$temp["arrSids"]);
     
+    foreach($sidy as $sid){
+        $tmp = explode(":",$sid); //[0] sid, [1] početmj
+        $sids[] = $tmp[0];
+        $cntmj[$tmp[0]] =  $tmp[1]*1;
+    }
+    
+    
+    $res = $this->db->fetchAll("SELECT * FROM skarty WHERE ?or",['sid' =>$sids]);  
+    $result= [];
+    foreach($res as $child){   
+        
+        $result[]= [
+            "skarta" => $child->skarta,
+            "sid" => $child->sid,
+            "mj" =>$child->mj,
+            "pocetmj" =>  (isset($cntmj[$child->sid])) ? $cntmj[$child->sid] : NULL
+        ];            
+    }
+    
+    $this->result->chyba = false;
+    $this->result->zprava = false;
+    $this->result->zpravatext = '';
+    $this->result->data = $result;    
+    return $this->result;
+} 
+    
+    
+}    
  public function getSkartuBySid($sid=NULL)  {
 if($sid !== NULL ){
  $result = $this->db->fetch("SELECT * FROM skarty WHERE sid = ?",$sid);  
@@ -106,9 +141,8 @@ if($sid !== NULL ){
             if(strlen($arrData)>0) {
                 $arrData .= ', '; 
             }
-            $arrData .= $val . "=>" . 0;
-        }
-    $arrData = '['.$arrData.']';
+            $arrData .= $val . ":" . 0;
+        }    
     
         $this->db->query('INSERT INTO kusovnik', ["arrSids" => $arrData]); // vloží array jako string  
         $kid =$this->db->getInsertId();
