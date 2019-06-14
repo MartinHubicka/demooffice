@@ -193,7 +193,7 @@ $("#adresa-find-btn").on("click", function(ev){
   
 });
 
-    $(document).on("click", "a[adressdata]",function(){ //event uvozen zkrze document, kvůli aplikaci appendovaného elementu
+    $(document).off("click", "a[adressdata]").on("click", "a[adressdata]",function(){ //event uvozen zkrze document, kvůli aplikaci appendovaného elementu a preventivně unbind pomocí off
        event.preventDefault();  
         var obj = JSON.parse($(this).attr("adressdata"));    
         

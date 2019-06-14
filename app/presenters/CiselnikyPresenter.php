@@ -109,7 +109,7 @@ public function handledeleteSkartu($sids=[]){
     }
 }    
 }    
-public function handleaddSkartuAsProdukt($sids=[]){
+public function handleaddSkartuAsProdukt($parentsid, $sids=[]){
     // COMPONENTA tableSkarty
     if (!$this->isAjax()) {
 					 $this->redirect('this');
@@ -117,7 +117,7 @@ public function handleaddSkartuAsProdukt($sids=[]){
     if(count($sids) > 0){
          $skarty = new Model\Skarty($this->db, $this->container);
          $userm = new \App\Model\MyAuthenticator($this->db, $this->container);         
-         $resultobj = $skarty->addSkartuAsProdukt($userm->getParentId($this->user->getId()), $sids);    
+         $resultobj = $skarty->addSkartuAsProdukt($userm->getParentId($this->user->getId()),$parentsid, $sids);    
 
         $this->redrawControl('redrawtableskarty');
         //$this->redrawControl('redrawsubtableskarty');

@@ -27,7 +27,7 @@
             </div>
         </div>
       </td>
-      <td>{$skarta->skarta}</td>
+      <td class="row-skarta">{$skarta->skarta}</td>
       <td>{$skarta->popis|noescape}</td>
       <td>{$skarta->mj}</td>
       <td>{if $skarta->mj2 !== null}{$skarta->mj2}{else}-{/if}</td>
@@ -129,6 +129,49 @@
   </div>
 </div>
 </div>    
+
+<!-- Modal -->
+<div class="modal " id="modalProdukt" tabindex="-1" role="dialog" kid="-1" aria-labelledby="modalProdukt" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="ModalLabel">Struktura produktu</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+          <form class="form" id="formProdukt">
+              <span class="badge badge-light mt-4 mb-4 ml-4 mr-4">! Prohození karty produkt vs. položka provedete dvojklikem na položku.</span> 
+                    <div class="input-group mb-2 mr-2">
+                    <div class="input-group-prepend">
+                    <div class="input-group-text text-center">Skladová karta - produkt:</div>
+                    </div>
+                    <input type="text" readonly class="form-control  form-control-lg" parentsid="" id="input-parentsid" placeholder="">
+                    </div> 
+              
+                    <div class="input-group mb-2 mr-sm-2 ml-5">
+                    <div class="input-group-prepend">
+                    <div class="input-group-text text-center">Skladové karty - položka produktu:</div>
+                    </div>                    
+                    </div>
+              
+                    <div class="input-group mb-2 mr-sm-2 ml-5">
+                    <ul id="produkt-items">
+                        
+                    </ul>
+                    </div>
+          </form>
+        </div>
+ <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Zavřít</button>
+        <button type="button" class="btn btn-primary" id="submit-create-product">Vytvořit produkt</button>
+      </div>
+    
+        </div>
+      </div>
+    </div>
+
 <script>
 $('#input-skarta-popis').summernote({        
         lang: "cs-CZ",
@@ -252,7 +295,7 @@ $("tr[adresaid]").on("dblclick", function(ev){
 $("tr[skartaid] td input[type='checkbox']").change(function(){
    
    ($("tr[skartaid] td input[type='checkbox']:checked").length>0) ?  $("#skarty-delete-kartu-btn").removeClass("disabled") : $("#skarty-delete-kartu-btn").addClass("disabled");
-   ($("tr[skartaid] td input[type='checkbox']:checked").length>0) ?  $("#skarty-create-kusovnik-btn").removeClass("disabled") : $("#skarty-create-kusovnik-btn").addClass("disabled");
+   ($("tr[skartaid] td input[type='checkbox']:checked").length>1) ?  $("#skarty-create-kusovnik-btn").removeClass("disabled") : $("#skarty-create-kusovnik-btn").addClass("disabled");
     
 });
     
@@ -294,10 +337,57 @@ $("#skarty-delete-kartu-btn").on("click", function() {
 });  
 $("#skarty-create-kusovnik-btn").on("click", function() {
     event.preventDefault();  
+    var checkedSkarty = [];
+       $("tr td input[type='checkbox']:checked").parents("tr").each(function(index){
+                if(index ==0) {
+                 $("#input-parentsid").val($(this).find(".row-skarta").text());
+                 $("#input-parentsid").attr("parentsid",$(this).attr("skartaid"));   
+                } else {
+                  $("#produkt-items").append('<li><a class="produkt-item" href="#" sid="'+$(this).attr("skartaid")+'">'+$(this).find(".row-skarta").text()+'</a></li>');      
+                    
+                }
+       });    
+    $("#modalProdukt").modal("show");
+
+});
+    
+$("#submit-create-product").on("click", function(ev){
+    event.preventDefault();    
     var sidToKusovnik = [];
+    $("#produkt-items").find(".produkt-item").each(function(index){        
+        sidToKusovnik.push($( this ).attr('sid')*1);
+    });
+    createProdukt($("#input-parentsid").attr("parentsid"), sidToKusovnik);
+    
+    $("#modalProdukt").modal("hide");
+}); 
+ $("#modalProdukt").on("hide.bs.modal", function(){
+       $("#produkt-items").html("");            
+});   
+  
+$(document).off("dblclick",".produkt-item").on("dblclick",".produkt-item", function(ev){
+    //použito preventivně off aby se neprovedl event dvakrát 
+   event.preventDefault();    
+   switchParent($(this));   
+    
+});
+function switchParent(productItem) {
+    
+    
+    var fromParent = {"text":$("#input-parentsid").val(),"sid":$("#input-parentsid").attr("parentsid")};
+    var toParent = {"text":$(productItem).text(), "sid":$(productItem).attr("sid")};   
+    console.log(fromParent);
+    console.log(toParent);
+        $(productItem).text(fromParent.text);
+        $(productItem).attr("sid",fromParent.sid);
+        $("#input-parentsid").val(toParent.text);
+        $("#input-parentsid").attr("parentsid",toParent.sid);
+}    
+function createProdukt(parentsid, sidToKusovnik)    {
+    /*var sidToKusovnik = [];
        $("tr td input[type='checkbox']:checked").parents("tr").each(function(){
            sidToKusovnik.push($( this ).attr('skartaid'));
-       });
+       });*/
     if(sidToKusovnik.length > 0) {
          var t = new Date();    
     		 $.nette.ajax(
@@ -307,6 +397,7 @@ $("#skarty-create-kusovnik-btn").on("click", function() {
 		  off: ['unique'],
         data: {
             "t": t.getTime(),
+            "parentsid" : parentsid*1,
             "sids": Object.assign({}, sidToKusovnik)
         },
         success: function(payload)
@@ -325,7 +416,7 @@ $("#skarty-create-kusovnik-btn").on("click", function() {
             
         
     }                  
-});      
+};      
 
     
     function clearInputs(){

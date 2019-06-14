@@ -18,7 +18,7 @@ public function getSkarty($subjid=NULL, $filter=NULL){
     return $result;
 }    
 
-public function saveSkarta($subjid=null,$sid, $arrData){
+public function saveSkarta($subjid=null,int $sid, $arrData){
 
 if($subjid===NULL){
     $this->result->chyba = true;
@@ -27,10 +27,15 @@ if($subjid===NULL){
     $this->result->data = null;    
 } else {
     //očista, nebo očistec  
-      $arrData["subj_id"] = $subjid; //pridame subjId 
+
+    
+     if(!isset($arrData["subj_id"])) {
+          $arrData["subj_id"] = $subjid; //pridame subjId 
+      }
+    if(isset($arrData["mj2"]) && isset($arrData["mj2mj"])) {
       $arrData["mj2"] = (trim($arrData["mj2"]) == "") ? NULL : $arrData["mj2"];
       $arrData["mj2mj"] = (trim($arrData["mj2mj"]) == "") ? NULL : str_replace(",", ".", $arrData["mj2mj"]) * 1;
-    
+    }
     if($sid===NULL || $sid < 0 || !is_int($sid)) {
         //nová skl.karta
 
@@ -40,24 +45,24 @@ if($subjid===NULL){
         if($id) {
     $this->result->chyba = false;
     $this->result->zprava = true;
-    $this->result->zpravatext = 'Nový kontakt byl uložen';
+    $this->result->zpravatext = 'Nová skl.karta byla uložen';
     $this->result->data = $id;           
         } else {
     $this->result->chyba = true;
     $this->result->zprava = true;
-    $this->result->zpravatext = 'Chyba při uložení nového kontaktu';
+    $this->result->zpravatext = 'Chyba při uložení nové skl.karty';
     $this->result->data = null;        
         }
         
     } else {
         //update kontaktu
-    $recordsUpdated =  $this->db->query('UPDATE adresar SET', 
+    $recordsUpdated =  $this->db->query('UPDATE skarty SET', 
         $arrData,
-        'WHERE aid = ?', $aid);
+        'WHERE sid = ?', $sid);
     if($recordsUpdated->getRowCount())     { 
         $this->result->chyba = false;
         $this->result->zprava = true;
-        $this->result->zpravatext = 'Kontakt byl aktualizován';
+        $this->result->zpravatext = 'Skladová karta byla aktualizována';
         $this->result->data = $recordsUpdated->getRowCount();//pocet ovlivněných řádků           
     }
     }    
@@ -82,19 +87,29 @@ if($subjid===NULL){
         }
 } 
    
-    public function addSkartuAsProdukt($subjid=NULL, $sids=[]) {
-    if($subjid!== NULL || count($sids) > 0){
+    public function addSkartuAsProdukt($subjid=NULL, $parentsid=NULL,$sids=[]) {
+    if($parentsid !==NULL || $subjid!== NULL || count($sids) > 0){
     try { 
-        $arrData = [];
+        $arrData ='';
         foreach ($sids as $sid => &$val) {
-            $arrData[$val]=0;
+            if(strlen($arrData)>0) {
+                $arrData .= ', '; 
+            }
+            $arrData .= $val . "=>" . 0;
         }
- 
-            
-        $this->db->query('INSERT INTO kusovnik', ["arrSids" => http_build_query($arrData)]); // vloží array jako string  
+    $arrData = '['.$arrData.']';
+    
+        $this->db->query('INSERT INTO kusovnik', ["arrSids" => $arrData]); // vloží array jako string  
         $kid =$this->db->getInsertId();
-        $arrData = ["skarta"=>"Nový produkt", "kid" => $kid, "mj2" => "", "mj2mj" => "", "kodfakturace" => ""];
-        $this->saveSkarta($subjid,-1, $arrData);
+        
+        //$arrData = ["skarta"=>"Nový produkt", "kid" => $kid, "mj2" => "", "mj2mj" => "", "kodfakturace" => ""];
+        $arrData = ["kid" => $kid];
+        $this->saveSkarta($subjid, $parentsid, $arrData);
+        
+        //vymazat nepoužitzé kidy v kusovníku - očista
+        
+        
+        
         /*
     $cnt = $this->db->query('DELETE FROM skarty WHERE ?or', ['sid' => $sids]);    // zajímavý operátor ?or a parametr jako výčet možností u fieldu sid
     $this->result->chyba = false;
