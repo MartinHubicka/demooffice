@@ -191,6 +191,10 @@ $('#input-poznamky').summernote({
         maximumImageFileSize: 524288 
     });
     //1024 * 512KB = 524288
+         if($('#input-poznamky').summernote("code") =="<p></p>"){
+        //hack
+        $('#input-poznamky').summernote("code","");
+    }
 })    ;
     
 $("#adresar-add-new-adr-btn").on("click", function(){
@@ -199,8 +203,8 @@ $("#adresar-add-new-adr-btn").on("click", function(){
 
      $("#modalKontakt").modal("show");
 });
- $("#modalKontakt").on("hide.bs.modal", function(){
-                   
+ $("#modalKontakt").on("hidden.bs.modal", function(){
+    clearInputs(true);
 });   
 $("#submit-edit-adress").on("click", function(){
        event.preventDefault();    
@@ -395,11 +399,14 @@ $("#adresar-delete-adr-btn").on("click", function() {
     }                  
 });  
     
-    function clearInputs(){
+    function clearInputs(onlyAppendet= false){
+        if(!onlyAppendet){
           $("input[field]").each(function( index ) {                
                $(this).val("");
             });
        $("#input-poznamky").summernote('code','');     
-        
+        } else {
+            
+        }
     }
 </script>

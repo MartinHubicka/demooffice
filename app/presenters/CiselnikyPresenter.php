@@ -45,7 +45,16 @@ public function handlegetSkartuBySid($sid){
    	        $this->sendPayload();
     }
 }        
-
+public function handlegetKidSids($kid){
+     if (!$this->isAjax()) {
+					 $this->redirect('this');
+	} else {     
+         $skarty = new Model\Skarty($this->db, $this->container);       
+        $dataObj = $skarty->getKidSids((integer)$kid);
+            $this->payload->dataObj = $dataObj;
+   	        $this->sendPayload();
+    }
+}
 public function handleupdateAdress($aid=-1, $arrdata=[]){
    // COMPONENTA tableAdresar
    //$aid = id kontaktu v adresáři, je li null nebo -1 jde o nový kontakt
@@ -65,7 +74,7 @@ if (!$this->isAjax()) {
 }
 }
     
- public function handleupdateSkarta($sid=-1, $arrdata=[]){
+ public function handleupdateSkarta($sid=-1, $arrdata=[], $arrSids){
    // COMPONENTA tableAdresar
    //$aid = id kontaktu v adresáři, je li null nebo -1 jde o nový kontakt
    //$arrData = key = název fieldu value = hodnota fieldu
@@ -75,10 +84,10 @@ if (!$this->isAjax()) {
    
         $skarty = new Model\Skarty($this->db, $this->container);
         $userm = new \App\Model\MyAuthenticator($this->db, $this->container); 
-        $resultobj = $skarty->saveSkarta($userm->getParentId($this->user->getId()),$sid, $arrdata); 
+        $resultobj = $skarty->saveSkarta($userm->getParentId($this->user->getId()),$sid, $arrdata,  $arrSids); 
         $this->payload->result = $resultobj;        
         $this->redrawControl('redrawtableskarty');    
-        $this->redrawControl('redrawsubtableskarty');    
+      
     
    	//    $this->sendPayload();
         

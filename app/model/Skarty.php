@@ -18,7 +18,7 @@ public function getSkarty($subjid=NULL, $filter=NULL){
     return $result;
 }    
 
-public function saveSkarta($subjid=null,int $sid, $arrData){
+public function saveSkarta($subjid=null,int $sid, $arrData,$arrSids=NULL){
 
 if($subjid===NULL){
     $this->result->chyba = true;
@@ -65,13 +65,22 @@ if($subjid===NULL){
         $this->result->zpravatext = 'Skladová karta byla aktualizována';
         $this->result->data = $recordsUpdated->getRowCount();//pocet ovlivněných řádků           
     }
+    //případný update kusovníku
+        if(isset($arrData["kid"])) {
+        $recordsUpdated =  $this->db->query('UPDATE kusovnik SET', 
+        ["arrSids"=>$arrSids],
+        'WHERE kid = ?', $arrData["kid"]);
+            
+        }
+        
     }    
 }
     return $this->result;
 } 
-public function getKidSids($uid, $kid){
+public function getKidSids($kid){
 
-if($uid !== NULL || $kid !== NULL){
+if($kid !== NULL){
+    
    $sids = [];
    $cntmj = [];
     $temp =$this->db->fetch("SELECT arrSids FROM kusovnik WHERE kid = ?",$kid);   
@@ -100,10 +109,15 @@ if($uid !== NULL || $kid !== NULL){
     $this->result->zprava = false;
     $this->result->zpravatext = '';
     $this->result->data = $result;    
+   
+} else {
+    $this->result->chyba = false;
+    $this->result->zprava = false;
+    $this->result->zpravatext = '';
+    $this->result->data = NULL;    
+}
+    
     return $this->result;
-} 
-    
-    
 }    
  public function getSkartuBySid($sid=NULL)  {
 if($sid !== NULL ){
