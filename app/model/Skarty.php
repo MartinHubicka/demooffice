@@ -70,7 +70,18 @@ if($subjid===NULL){
     return $this->result;
 } 
     
- 
+ public function getSkartuBySid($sid=NULL)  {
+if($sid !== NULL ){
+ $result = $this->db->fetch("SELECT * FROM skarty WHERE sid = ?",$sid);  
+    $this->result->chyba = false;
+    $this->result->zprava = false;
+    $this->result->zpravatext = '';
+    $this->result->data = $result;    
+    
+} 
+    return $this->result;
+}  
+   
     public function deleteSkartu($sids=[]) {
     //zde není nutná parent_id protože uživatel mohl označit pouze kontkty které se mu zobrazují
     try { 

@@ -35,6 +35,17 @@ public function handlegetAdresuByAid($aid){
    	        $this->sendPayload();
     }
 }    
+public function handlegetSkartuBySid($sid){
+    if (!$this->isAjax()) {
+					 $this->redirect('this');
+	} else {     
+         $skarty = new Model\Skarty($this->db, $this->container);       
+        $dataObj = $skarty->getSkartuBySid($sid); 
+            $this->payload->dataObj = $dataObj;
+   	        $this->sendPayload();
+    }
+}        
+
 public function handleupdateAdress($aid=-1, $arrdata=[]){
    // COMPONENTA tableAdresar
    //$aid = id kontaktu v adresáři, je li null nebo -1 jde o nový kontakt

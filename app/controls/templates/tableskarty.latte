@@ -39,7 +39,7 @@
 
   </tbody>
 </table>
-
+</div>
 <!-- Modal -->
 <div class="modal " id="modalSkarta" tabindex="-1" role="dialog" sid="-1" aria-labelledby="modalSkarta" aria-hidden="true">
   <div class="modal-dialog modal-dialog-scrollable" role="document">
@@ -128,7 +128,7 @@
     </div>
   </div>
 </div>
-</div>    
+
 
 <!-- Modal -->
 <div class="modal " id="modalProdukt" tabindex="-1" role="dialog" kid="-1" aria-labelledby="modalProdukt" aria-hidden="true">
@@ -173,6 +173,7 @@
     </div>
 
 <script>
+$("#modalSkarta").on("show.bs.modal", function(){
 $('#input-skarta-popis').summernote({        
         lang: "cs-CZ",
         toolbar: [
@@ -194,7 +195,7 @@ $('#input-skarta-popis').summernote({
         maximumImageFileSize: 524288 
     });
     //1024 * 512KB = 524288
-
+})    ;
     
 $("#skarty-add-new-karta-btn").on("click", function(){
      event.preventDefault(); 
@@ -202,21 +203,22 @@ $("#skarty-add-new-karta-btn").on("click", function(){
 
      $("#modalSkarta").modal("show");
 });
- $("#modalKontakt").on("hide.bs.modal", function(){
-        clearInputs();               
+    
+ $("#modalSkarta").on("hidde.bs.modal", function(){
+      clearInputsSkarta();               
 });   
 $("#submit-edit-skarta").on("click", function(){
        event.preventDefault();    
             var t = new Date();  
             // když aid = null (resp. -1) jedná se o nový kontakt, jinak aid určuje číslo id kontaktu v adresáři
-            var sid = ($("#modalKontakt").attr("sid")<0) ? -1 : $("#modalKontakt").attr("sid");
+            var sid = ($("#modalSkarta").attr("sid")<0) ? -1 : $("#modalSkarta").attr("sid");
             var arrData =[];
             arrData["popis"] =$("#input-skarta-popis").summernote("code");
             $("#formSkarta").find("input[field]").each(function( index ) {                
                 arrData[$(this).attr("field")] = $(this).val();
             }); 
             
-            
+            console.log(arrData);
             //console.log(  Array.isArray(arrData));
             //nize Object.assign({}, arrData) je predan object (konverze z array na object a do presenteru dorazi array - its magic)     
             
@@ -245,43 +247,41 @@ $("#submit-edit-skarta").on("click", function(){
         }
        
     });
-   
+       clearInputsSkarta();  
         $("#modalSkarta").modal("hide");
 });  
 
-    function doplnPoleAdresy(objAdresa) {
-        $("#input-ico-firma").val(objAdresa.FIRMA);
-        $("#input-ico").val(objAdresa.ICO);
-        $("#input-dic").val(objAdresa.DIC);
-        $("#input-ulicecp").val(objAdresa.ULICECP);
-        $("#input-misto").val(objAdresa.MISTO);
-        $("#input-psc").val(objAdresa.PSC);
-        $("#input-mesto").val(objAdresa.MESTO);
-        $("#input-stat").val(objAdresa.STAT);
-        if(objAdresa.poznamky) {
-            $("#input-poznamky").summernote("code",objAdresa.poznamky);
+    function doplnPoleSkarty(objSkarta) {
+        $("#input-skarta").val(objSkarta.skarta);
+        $("#input-mj").val(objSkarta.mj);
+        $("#input-mj2").val(objSkarta.mj2);
+        $("#input-mj2mj").val(objSkarta.mj2mj);
+        $("#input-kodfakturace").val(objSkarta.kodfakturace);     
+        if(objSkarta.popis) {
+            $("#input-skarta-popis").summernote("code",objSkarta.popis);
+          
         }
     }
   
-$("tr[adresaid]").on("dblclick", function(ev){
+$("tr[skartaid]").on("dblclick", function(ev){
     event.preventDefault();     
              var t = new Date();    
     		 $.nette.ajax(
         {			 	        
-		  url: "/ciselniky/?do=getAdresuByAid",
+		  url: "/ciselniky/?do=getSkartuBySid",
         type: "POST",
 		  off: ['unique'],
         data: {
             "t": t.getTime(),
-            "aid": $(ev.delegateTarget).attr("adresaid")
+            "sid": $(ev.delegateTarget).attr("skartaid")
         },
         success: function(payload)
         {		
             if(payload.dataObj){
               // console.log(payload.dataObj);
-               doplnPoleAdresy(payload.dataObj.data) ;
-               $("#modalKontakt").attr("aid", $(ev.delegateTarget).attr("adresaid")); 
-                $("#modalKontakt").modal("show"); 
+               doplnPoleSkarty(payload.dataObj.data) ;
+               $("#modalSkarta").attr("sid", $(ev.delegateTarget).attr("skartaid")); 
+                $("#modalSkarta").modal("show"); 
             }
             
         },
@@ -358,12 +358,10 @@ $("#submit-create-product").on("click", function(ev){
         sidToKusovnik.push($( this ).attr('sid')*1);
     });
     createProdukt($("#input-parentsid").attr("parentsid"), sidToKusovnik);
-    
+       clearInputsSkarta();  
     $("#modalProdukt").modal("hide");
 }); 
- $("#modalProdukt").on("hide.bs.modal", function(){
-       $("#produkt-items").html("");            
-});   
+ 
   
 $(document).off("dblclick",".produkt-item").on("dblclick",".produkt-item", function(ev){
     //použito preventivně off aby se neprovedl event dvakrát 
@@ -419,11 +417,12 @@ function createProdukt(parentsid, sidToKusovnik)    {
 };      
 
     
-    function clearInputs(){
-          $("input[field]").each(function( index ) {                
+    function clearInputsSkarta(){
+     
+          $("#modalSkarta").find("input[field]").each(function( index ) {                
                $(this).val("");
             });
        $("#input-skarta-popis").summernote('code','');     
-        
+        $("#produkt-items").html("");     
     }
 </script>

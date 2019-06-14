@@ -169,6 +169,7 @@
   </div>
 </div>
 <script>
+$("#modalKontakt").on("show.bs.modal", function(){
 $('#input-poznamky').summernote({        
         lang: "cs-CZ",
         toolbar: [
@@ -179,7 +180,7 @@ $('#input-poznamky').summernote({
   ['para', ['ul', 'ol', 'paragraph']],
   ['table', ['table']],
   ['insert', ['link', 'picture']],
-  ['view', ['fullscreen', 'codeview', 'help']],
+  ['view', [ 'codeview', 'help']],
 ],      
 	  popover: {
 		  image: [],
@@ -190,7 +191,7 @@ $('#input-poznamky').summernote({
         maximumImageFileSize: 524288 
     });
     //1024 * 512KB = 524288
-
+})    ;
     
 $("#adresar-add-new-adr-btn").on("click", function(){
      event.preventDefault(); 
@@ -199,7 +200,7 @@ $("#adresar-add-new-adr-btn").on("click", function(){
      $("#modalKontakt").modal("show");
 });
  $("#modalKontakt").on("hide.bs.modal", function(){
-        clearInputs();               
+                   
 });   
 $("#submit-edit-adress").on("click", function(){
        event.preventDefault();    
@@ -242,7 +243,7 @@ $("#submit-edit-adress").on("click", function(){
         }
        
     });
-    //    clearInputs();
+        clearInputs();
         $("#modalKontakt").modal("hide");
 });  
 $("#adresa-find-btn").on("click", function(ev){
