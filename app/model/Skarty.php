@@ -84,12 +84,14 @@ if($kid !== NULL){
    $sids = [];
    $cntmj = [];
     $temp =$this->db->fetch("SELECT arrSids FROM kusovnik WHERE kid = ?",$kid);   
+
+    if(strlen($temp["arrSids"])>0){
     $sidy = explode(",",$temp["arrSids"]);
     
     foreach($sidy as $sid){
-        $tmp = explode(":",$sid); //[0] sid, [1] početmj
+        $tmp = explode(":",$sid); //[0] sid, [1] početmj        
         $sids[] = $tmp[0];
-        $cntmj[$tmp[0]] =  $tmp[1]*1;
+        $cntmj[$tmp[0]] = $tmp[1]*1;
     }
     
     
@@ -104,7 +106,7 @@ if($kid !== NULL){
             "pocetmj" =>  (isset($cntmj[$child->sid])) ? $cntmj[$child->sid] : NULL
         ];            
     }
-    
+    } else { $result = NULL; }
     $this->result->chyba = false;
     $this->result->zprava = false;
     $this->result->zpravatext = '';
@@ -158,7 +160,7 @@ if($sid !== NULL ){
             $arrData .= $val . ":" . 0;
         }    
     
-        $this->db->query('INSERT INTO kusovnik', ["arrSids" => $arrData]); // vloží array jako string  
+        $this->db->query('INSERT INTO kusovnik ', ['arrSids' => $arrData]); // vloží array jako string  
         $kid =$this->db->getInsertId();
         
         //$arrData = ["skarta"=>"Nový produkt", "kid" => $kid, "mj2" => "", "mj2mj" => "", "kodfakturace" => ""];
