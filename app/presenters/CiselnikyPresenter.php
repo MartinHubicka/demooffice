@@ -80,18 +80,13 @@ if (!$this->isAjax()) {
    //$arrData = key = název fieldu value = hodnota fieldu
 if (!$this->isAjax()) {
 					 $this->redirect('this');
-	} else {
-   
+	} else {   
         $skarty = new Model\Skarty($this->db, $this->container);
         $userm = new \App\Model\MyAuthenticator($this->db, $this->container); 
         $resultobj = $skarty->saveSkarta($userm->getParentId($this->user->getId()),$sid, $arrdata,  $arrSids); 
         $this->payload->result = $resultobj;        
-        $this->redrawControl('redrawtableskarty');    
-      
-    
-   	//    $this->sendPayload();
-        
-       
+        $this->redrawControl('redrawtableskarty');              
+   	//    $this->sendPayload();            
 }
 }   
 
@@ -132,18 +127,16 @@ public function handledeleteSkartu($sids=[]){
 public function handleaddSkartuAsProdukt($parentsid, $sids=[]){
     // COMPONENTA tableSkarty
     if (!$this->isAjax()) {
-					 $this->redirect('this');
+        $this->redirect('this');
 	} else {
     if(count($sids) > 0){
-         $skarty = new Model\Skarty($this->db, $this->container);
-         $userm = new \App\Model\MyAuthenticator($this->db, $this->container);         
-         $resultobj = $skarty->addSkartuAsProdukt($userm->getParentId($this->user->getId()),$parentsid, $sids);    
-
+        $skarty = new Model\Skarty($this->db, $this->container);
+        $userm = new \App\Model\MyAuthenticator($this->db, $this->container);         
+        $resultobj = $skarty->addSkartuAsProdukt($userm->getParentId($this->user->getId()),$parentsid, $sids);    
         $this->redrawControl('redrawtableskarty');
         //$this->redrawControl('redrawsubtableskarty');
-    $this->payload->result = $resultobj;        
-//   	     $this->sendPayload();
-          
+        $this->payload->result = $resultobj;        
+//   	     $this->sendPayload();          
     }
 }    
 }     
