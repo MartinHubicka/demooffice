@@ -5,12 +5,83 @@ use App\Controls as AC;
 use App\Model;
 use Nette;
 
-
-final class CiselnikyPresenter extends BasePresenter
+final class FakturacePresenter extends BasePresenter
 {
 //modální okna pokladny jsou v BP
 //control v basepresenrteru modal okno ModalPrijemEET	
+    public function startup() {
+        parent::startup(); 
+        self::renderShow(); 
+    }
+public function handleloadDokument($druh_dokumentu = "FP", $ref_cislo = NULL) {
+    //$this->user->isinRole("EMIL")
+    // $ref_cislo = NULL; // nový dokument  
+if (!$this->isAjax()) {
+	 $this->redirect('this');
+	} else {
+    $druh_dokumentu = strtoupper($druh_dokumentu);
+    $druhy_dokumentu = array("FP", "FH", "ZP", "DB"); //možné druhy dokumentu faktury - jde o duplicitní věc, nemusí být, protože to řeší objekt tridy/faktura
+    if(in_array($druh_dokumentu, $druhy_dokumentu)) {
 
+        
+        $this->redirect('Fakturace:editor',$druh_dokumentu, $ref_cislo);         
+    }
+    
+}  
+}
+    
+public function renderShow () {
+    $userm = new \App\Model\MyAuthenticator($this->db, $this->container); 
+    $dokument = new \App\Model\Fakturace($this->db, $this->container); //overi zda dokument existuje (je-li zadán druhý parametr a má-li uživatel/subjekt oprávnění/vlastnictví ) jinak $dokument= NULL
+    $faktury = $dokument->getFaktury($this->user, $userm->getParent($this->user->getId())["subj_id"]);
+    if ($faktury===NULL) {        
+     //   $this->error();
+    } elseif (!$this->user->isInRole('admin') && !$this->user->isInRole('fakturace')) {
+         $this->error('Chybí oprávnění', Nette\HTTP\IResponse::S403_FORBIDDEN);
+    } else {        
+        //nastavit parametry šabloně
+     /*   $template = $this->getTemplate();
+        $template->faktury=$faktury;        
+        */
+        $this->template->faktury = $faktury;
+    }  
+    } 
+  
+public function handlesaveDokument(array $arrHlavicka=NULL, array $arrRows=NULL){
+
+ if (!$this->isAjax()) {
+		
+	} else {
+    $userm = new \App\Model\MyAuthenticator($this->db, $this->container); 
+    $dokument = new \App\Model\Fakturace($this->db, $this->container); //overi zda dokumen
+    $result = $dokument->saveData($this->user, $userm->getParent($this->user->getId())["subj_id"],$arrHlavicka, $arrRows); 
+     $this->payload->result = $result;        
+     $this->sendPayload();
+     
+ }
+ 
+}
+ 
+public function renderEditor($druh_dokumentu = NULL, $ref_cislo = NULL)
+{
+ //povinná fuknkce pro použitý redirect
+    
+            $userm = new \App\Model\MyAuthenticator($this->db, $this->container); 
+    $dokument = new \App\Model\Fakturace($this->db, $this->container); //overi zda dokument existuje (je-li zadán druhý parametr a má-li uživatel/subjekt oprávnění/vlastnictví ) jinak $dokument= NULL
+    $faktura = $dokument->getDokument($this->user, $userm->getParent($this->user->getId())["subj_id"],$druh_dokumentu, $ref_cislo);
+    if (!$faktura) {
+        $this->error();
+    } else {        
+        //nastavit parametry šabloně
+        $template = $this->getTemplate();
+        $template->faktura=$faktura;        
+        $template->setFile(__DIR__ . '/templates/Fakturace/editor.latte');
+        
+    }
+}
+
+//------------------
+// následující funkce jsou duplicitní s ciselnikyPresenter, možná přesunout do BasePresenteru, nebo vymazat -     
 public function handleupdateAdress($aid=-1, $arrdata=[]){
    // COMPONENTA tableAdresar
    //$aid = id kontaktu v adresáři, je li null nebo -1 jde o nový kontakt
@@ -25,37 +96,9 @@ if (!$this->isAjax()) {
         $this->payload->result = $resultobj;        
         $this->redrawControl('redrawtableadresar');    
    	//    $this->sendPayload();
-        
        
 }
 }
-    
-public function handlegetAdresyAutocompleteByString($str=NULL)  {
-    
-    if($str){
-        $adresar = new Model\Adresar($this->db, $this->container);
-        $userm = new \App\Model\MyAuthenticator($this->db, $this->container); 
-        //$userm->getParent($this->user->getId())["subj_id"]
-        $dataObj = $adresar->getAdresyByStr($userm->getParent($this->user->getId())["subj_id"], $str, true);
-            $this->payload->adresy = $dataObj;
-   	        $this->sendPayload();
-    }
-    
-}  
- 
-    
-public function handlegetSkartyAutocompleteByString($str=NULL)  {
-    
-    if($str){
-        $skarty = new Model\Skarty($this->db, $this->container);
-        $userm = new \App\Model\MyAuthenticator($this->db, $this->container); 
-        //$userm->getParent($this->user->getId())["subj_id"]
-        $dataObj = $skarty->getSkartyByString($userm->getParent($this->user->getId())["subj_id"], $str, true);
-            $this->payload->skarty = $dataObj;
-   	        $this->sendPayload();
-    }
-    
-}      
     
  public function handleupdateSkarta($sid=-1, $arrdata=[], $arrSids){
    // COMPONENTA tableAdresar

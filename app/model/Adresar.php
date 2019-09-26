@@ -5,7 +5,7 @@ use Latte\Engine;
 use Nette\Utils;
 class Adresar extends BaseModel {
 
-public function getAdresy($subjid=NULL, $filter=NULL){
+public function getAdresy($subjid=NULL, $filter=NULL){    
     //todo zapracovat filter
     $result = NULL;
    if($subjid!==NULL) {
@@ -17,6 +17,28 @@ public function getAdresy($subjid=NULL, $filter=NULL){
     return $result;
 }    
 
+public function getAdresyByStr($subjid=NULL, $str=NULL, $autocompleteformat=false){    
+    //todo zapracovat filter
+    $result = NULL;
+   if($subjid!==NULL && $str !== NULL) {
+  $res = $this->db->fetchAll("SELECT * FROM adresar WHERE subject_id = ? AND firma LIKE ?" ,  $subjid, $this->db::literal("'%".$str."%'"));
+        if($res) {           
+            
+            if(!$autocompleteformat) {                            
+            $result = (object)$res;
+            } else { 
+            //vrátí zkrácený formát:: data = [{label: "Pepa",aid: "15"},{label: "Martin",aid: "75"}];
+            $adresy = array();
+           foreach ($res as $value) {                
+                $adresy[] = array("value" =>$value->FIRMA, "aid"=>$value->aid);
+            }                
+            $result = $adresy;
+            }
+        }  
+    }   
+    return $result;
+}        
+    
 public function saveKontakt($subjid=NULL, $aid, $arrData){
 //využití obj z BaseModelu $this->result
 if($subjid===NULL){
@@ -87,26 +109,9 @@ if($aid !== NULL ){
 } 
     return $this->result;
 }  
-    
-public function getFirmaByIco ($subjid=NULL,$ico=NULL, $icofirma=NULL){
-$result = NULL;    
-if($icofirma !== NULL && strlen($icofirma) >=3   && $subjid!==NULL) { //ico nebo část názvu firmy a řetězec má alespoň 3 znaky
-//------
-//krok 1-vyhledani  v adresari    
-    
-  $res = $this->db->fetchAll("SELECT * FROM adresar WHERE subject_id = ? AND (ico = ? OR firma LIKE ?) " ,  $subjid, $icofirma, $this->db::literal("'%".$icofirma."%'"));
-        if($res) {    
-            $result = (object)$res;
-        }
-    
-}    
-    
-
-if($ico!==NULL && $result===NULL) { 
-//------
-//pokud nebylo nalezeno v adresari následuje krok 2 - vyhledání v aresu dle ič
-
-     $xmldom = new \DOMDocument(); //lomítko je tam proto, yb to nehledal v modelu ale v stanartně v php třídě
+public function getFirmaByIcoAres($ico) {
+   
+       $xmldom = new \DOMDocument(); //lomítko je tam proto, aby to nehledal v modelu ale v stanartně v php třídě
     if($xmldom) {
         if($xmldom->load($this->konstanty['aresurl']."&ico=".$ico)) {
        
@@ -150,6 +155,27 @@ $result =  \Nette\Utils\Json::Decode($json);
             
             
     }}    
+ return $result;   
+}    
+public function getFirmaByIco ($subjid=NULL,$ico=NULL, $icofirma=NULL){
+$result = NULL;    
+if($icofirma !== NULL && strlen($icofirma) >=3   && $subjid!==NULL) { //ico nebo část názvu firmy a řetězec má alespoň 3 znaky
+//------
+//krok 1-vyhledani  v adresari    
+    
+  $res = $this->db->fetchAll("SELECT * FROM adresar WHERE subject_id = ? AND (ico = ? OR firma LIKE ?) " ,  $subjid, $icofirma, $this->db::literal("'%".$icofirma."%'"));
+        if($res) {    
+            $result = (object)$res;
+        }
+    
+}    
+    
+
+if($ico!==NULL && $result===NULL) { 
+//------
+//pokud nebylo nalezeno v adresari následuje krok 2 - vyhledání v aresu dle ič
+ $result = $this->getFirmaByIcoAres($ico);
+  
 }
 return $result;
 }    

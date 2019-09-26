@@ -1,0 +1,98 @@
+<!-- Modal -->
+<div class="modal fade" id="modalFakturace" tabindex="-1" fid="-1" fdruh="" role="dialog" aria-labelledby="modalFaktura" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="ModalLabel">[Fakturace] Nový doklad</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+          
+  <div class="card-deck mb-3">
+ 
+  <div class="card">
+  <div class="card-body">
+    <h5 class="card-title">Faktura převodem</h5>
+    <p class="card-text">Nový bezhotovostní daňový doklad</p>
+ 
+  </div>
+  <div class="card-footer">
+      <a href="#" class="btn btn-primary noCSS_fakturace_novy" fdruh="FP">Vytvořit</a>
+    </div>      
+</div>      
+          
+<div class="card">
+  <div class="card-body">
+    <h5 class="card-title">Zálohová platba</h5>
+    <p class="card-text">Nový podklad pro zálohovou platbu - není daňový doklad</p>
+    
+  </div>
+     <div class="card-footer">
+    <a href="#" class="btn btn-primary noCSS_fakturace_novy" fdruh="ZP" >Vytvořit</a>     
+</div>       
+</div>       
+</div>       
+<div class="card-deck mb-3">                
+<div class="card disabled" >
+  <div class="card-body">
+    <h5 class="card-title">Faktura v hotovosti</h5>
+    <p class="card-text">Faktura pro platbu v hostovosti (daň doklad + př.pokl.dokl. vč. EET)</p>
+
+  </div>
+     <div class="card-footer">
+          <a href="#" class="btn btn-primary noCSS_fakturace_novy" fdruh="FH">Vytvořit</a>
+  </div>
+</div> 
+<div class="card" >
+  <div class="card-body">
+    <h5 class="card-title">Dobropis</h5>
+    <p class="card-text">Dopropis - opravný daňový doklad</p>
+
+  </div>
+      <div class="card-footer">
+           <a href="#" class="btn btn-primary noCSS_fakturace_novy" fdruh="DB">Vytvořit</a>
+</div>       
+</div>       
+</div>      
+          
+          
+  
+          
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Zavřít</button>       
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+$(document).on("click", ".noCSS_fakturace_novy", function(ev){
+   ev.preventDefault;
+   //alert($(this).attr("fdruh"));
+        var doklad = $(this).attr("fdruh");
+        var t = new Date();    
+    	$.nette.ajax(
+        {			 	        
+		  url: "/fakturace/editor/?do=loadDokument",
+            type: "POST",
+            off: ['unique'],
+            data: {
+                "t": t.getTime(),
+                "druh_dokumentu":  doklad
+                
+            },
+        success: function(payload)
+        {		
+            //alert(payload.info);//if(payload.adresy){}
+            
+        },
+        error: function(xhr, ajaxOptions, thrownError)
+        {
+        //    infoModal("Neočekávaná chyba programu. Chyba byla zaznamenána a bude opravena.", "Chyba v běhu programu");
+        }
+        }); 
+    
+});
+</script>

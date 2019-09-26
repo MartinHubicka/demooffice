@@ -1,0 +1,77 @@
+{block content}
+<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+  <a class="navbar-brand" href="{link Homepage:}">Hlavní menu</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsDefault" aria-controls="navbarsDefault" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  
+  <div class="collapse navbar-collapse" id="navbarsDefault">   
+      <ul class="navbar-nav mr-auto">
+      </ul>
+    
+  </div>
+</nav>
+{if $user->isInRole('fakturace') OR $user->isInRole('admin') }
+
+
+<div id="content">
+
+
+<main role="main">
+
+  <div class="jumbotron">
+    <div class="container">
+
+        <div class="row">
+            <div class="col-md-6">
+                <h2 class="display-4">Přehled faktur</h2>              
+            </div>
+        </div>
+        
+                
+      </div>
+    </div>
+    
+       <table class="table table-sm">
+  <thead>
+    <tr>
+      <th scope="col" class="text-center">Číslo faktury</th>    
+      <th scope="col" class="text-center">Odběratel</th>
+      <th scope="col" class="text-center">Místo</th>
+      <th scope="col" class="text-center">Stav faktury</th>
+      <th scope="col" class="text-center">Částka CELKEM</th>
+      <th scope="col" class="text-center">||</th>
+      <th scope="col" class="text-center">||</th>
+      <th scope="col" class="text-center">||</th>   
+      <th scope="col" class="text-center"></th>
+    </tr>      
+  </thead>
+  <tbody id="dokument-rows">
+   
+
+     {ifset $faktury}
+        {foreach $faktury as $zaznam}
+      <tr>
+      <td class="text-center">
+          {$zaznam->refcislo}
+      </td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td><a href="{link Fakturace:editor, $zaznam->druh_dokladu, $zaznam->refcislo}" class="btn btn-primary">Editovat {$zaznam->druh_dokladu}{$zaznam->refcislo}</a> </td>
+    <td></td>
+    <td></td>
+    </tr>   
+        {/foreach}            
+      {/ifset}
+           </tbody>
+    </table>
+</main>
+</div>
+{else} 
+
+
+
+{/if}

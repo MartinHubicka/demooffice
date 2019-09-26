@@ -20,12 +20,16 @@ class MyAuthorizator implements NS\IAuthorizator
 		 /*addRole(role, parent)*/
         $this->acl->addRole('guest'); //nepřihlášený návštěvník stránek		 
         $this->acl->addRole('registered'); // registrovaný uživatel nebo zákazník
+        $this->acl->addRole('customer', 'registered'); //zákazník
         $this->acl->addRole('user', 'registered'); //přihlášený uživat TW
-        $this->acl->addRole('participant', 'user'); //přihlášený pro užživatele s provizní smlouvou
+        $this->acl->addRole('participant', 'user'); //přihlášený pro uživatele s provizní smlouvou
 		$this->acl->addRole('obchod', 'user'); //zakázky, nabídky
+        $this->acl->addRole('report', 'user'); //smí vidět reporty
         $this->acl->addRole('fakturace', 'user'); //fakturace
+        $this->acl->addRole('sklad', 'user'); //fakturace
         $this->acl->addRole('demo', 'user'); //demo role - veškeré doklady vč. eet nejsou oficiální, pokud má úživatel mj. roli demo není schopen udělat oficiílní doklad
-        $this->acl->addRole('settings', 'user'); 
+        $this->acl->addRole('settings', 'user');
+        $this->acl->addRole('team', 'user'); // může nastavovat práva sobě a ostatním kromě admina a jiného team usera
         //$this->acl->addRole('crew', 'user'); //posádka vozu/technologie - zejména ve spojení s plánovačem termínů a termínů k dispozici
 		$this->acl->addRole('pokladna', 'user' ); //práva pro práci s pokladnou pokladnou        
         $this->acl->addRole('admin', 'user'); // administrátor

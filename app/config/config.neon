@@ -9,10 +9,12 @@ parameters:
         user: martinhubicka 
         pass: Admin75@
     konstanty:	
-        dph1: 0.21
+        dph0: 0
+        dph1: 0.15
+        dph2: 0.21
+        defsplatnostdny: 7
         systemmail: noreply@twoffice.app
-        adminmail: martin.hubicka@gmail.com
-        obchemail: jihlava@thermowhite.cz
+        adminmail: martin.hubicka@gmail.com        
         temppassmin: 60
         loginexpdays: 30 #musí být <= bež seesion expiration
         aresurl: 'http://wwwinfo.mfcr.cz/cgi-bin/ares/darv_bas.cgi?aktivni=true'

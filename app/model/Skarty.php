@@ -18,6 +18,29 @@ public function getSkarty($subjid=NULL, $filter=NULL){
     return $result;
 }    
 
+    
+    
+        
+public function getSkartyByString($subjid=NULL, $str=NULL, $autocompleteformat=false){    
+    //todo zapracovat filter
+    $result = NULL;
+   if($subjid!==NULL && $str !== NULL) {
+  $res = $this->db->fetchAll("SELECT * FROM skarty WHERE subj_id = ? AND skarta LIKE ?" ,  $subjid, $this->db::literal("'%".$str."%'"));
+        if($res) {                       
+            if(!$autocompleteformat) {                            
+            $result = (object)$res;
+            } else { 
+            //vrátí zkrácený formát:: data = [{label: "Pepa",aid: "15"},{label: "Martin",aid: "75"}];
+            $skarty = array();
+           foreach ($res as $value) {                
+                $skarty[] = array("value" =>$value->skarta, "sid"=>$value->sid);
+            }                
+            $result = $skarty;
+            }
+        }  
+    }   
+    return $result;
+}            
 public function saveSkarta($subjid=null,int $sid, $arrData,$arrSids=NULL){
 
 if($subjid===NULL){
