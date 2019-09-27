@@ -14,7 +14,7 @@ public function getFaktury(\Nette\Security\user $user, $subjid = NULL, $arrayFil
     $faktury = NULL;
   if($subjid!==NULL) {                
     //todo zapracovat filter
-  $res = $this->db->fetchAll("SELECT *, (SELECT SUM(vydej_mj*cena_mj*(1+dph/100)) FROM sklad WHERE sklad.refcislo = CONCAT(faktury.druh_dokladu,faktury.refcislo) GROUP BY sklad.refcislo ) AS celkem FROM faktury WHERE subj_id = ? ORDER BY dvystaveni DESC " ,  $subjid);
+  $res = $this->db->fetchAll("SELECT *, (SELECT SUM(vydej_mj*cena_mj*(1+dph/100)) FROM sklad WHERE sklad.refcislo = CONCAT(faktury.druh_dokladu,faktury.refcislo) GROUP BY sklad.refcislo ) AS celkem FROM faktury WHERE subj_id = ? ORDER BY dvystaveni DESC,refcislo DESC  " ,  $subjid);
         if($res) {            
             $faktury = (object)$res;
         }  
