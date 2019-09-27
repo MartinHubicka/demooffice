@@ -114,7 +114,7 @@ public function getDokument(\Nette\Security\user $user, $subjid = NULL, $druh = 
             } else {
              foreach($res as $row) {
              $html .= '
-<tr class="noCSS_dokument_row" idecko="'.$row->idecko.'" sid="'.$row->sid.'" druh="'.$row->druh.'">
+<tr class="noCSS_dokument_row" vydejka="'.$row->vydejka.'" idecko="'.$row->idecko.'" sid="'.$row->sid.'" druh="'.$row->druh.'">
 <td>
 <div class="btn-group" role="group" aria-label="move-row"><button type="button" class="btn btn-light btn-sm noCSS_move_up">&#8593;</button><button type="button" class="btn btn-light btn-sm noCSS_move_down">&#8595;</button></div>
 </td>
@@ -192,20 +192,20 @@ public function saveData(\Nette\Security\user $user, $subjid = NULL, $arrHlavick
     $arrHlavicka["fakturoval"]= $user->getIdentity()->username;    
     $arrHlavicka["ispdp"] = ($arrHlavicka["ispdp"]===true || $arrHlavicka["ispdp"]== "true" || $arrHlavicka["ispdp"]== 1 || $arrHlavicka["ispdp"]== "1") ? 1 : 0;
     
-        
+         $subj = new \App\Model\Subject($this->db, $this->container);  
         
   if(!$arrHlavicka["refcislo"]) {
    //nový záznam      
       //získání referenčního čísla nového dokumentu
-        $subj = new \App\Model\Subject($this->db, $this->container);        
+             
         
-        $arrHlavicka["refcislo"]= $subj->getFreeRefNumber($subjid,"faktury");
+        //$arrHlavicka["refcislo"]= $subj->getFreeRefNumber($subjid,"faktury");
         
         $arrHlavicka["refcislo"]= $subj->getFreeRefNumber($subjid,"faktury");
     $this->db->query('INSERT INTO faktury', $arrHlavicka);
     $id = $this->db->getInsertId();
         if($id) {
-
+            $groupvydejka = $subj->getFreeRefNumber($subjid,"vydejky");
     //uložíme řádky        
         $rowindex = 0;
             if(count($arrRows)>0) {
@@ -213,8 +213,8 @@ public function saveData(\Nette\Security\user $user, $subjid = NULL, $arrHlavick
                         
                   $row["row_index"] = $rowindex;
             
-                  $row["vydejka"] =  $subj->getFreeRefNumber($subjid,"vydejky");
-            
+                  $row["vydejka"] =   $groupvydejka ;
+                    
                 $row["subj_id"] = $subjid; 
                     $row["refcislo"] = $arrHlavicka["druh_dokladu"] . $arrHlavicka["refcislo"]; 
                     $row["datum"] =  $arrHlavicka["duzp"];
@@ -261,16 +261,19 @@ public function saveData(\Nette\Security\user $user, $subjid = NULL, $arrHlavick
         
       
       //získám idecka před uložením dokumentu
-        $res = $this->db->fetchAll("SELECT idecko FROM sklad WHERE refcislo = ? " , $arrHlavicka["druh_dokladu"] . $arrHlavicka["refcislo"]);                
+        $res = $this->db->fetchAll("SELECT idecko, vydejka FROM sklad WHERE refcislo = ? " , $arrHlavicka["druh_dokladu"] . $arrHlavicka["refcislo"]);                
          $puvodniIDS = [];
+      $groupvydejka = NULL;
         if($res) {
          foreach($res as $row) {
             $puvodniIDS[] = $row["idecko"]*1;//pozor na typ proměnné misí být integer
+            $groupvydejka =  $row["vydejka"];
          }
         }
 
         
         $rowindex = 0;
+        
             if(count($arrRows)>0) {
         foreach($arrRows as $row) {
                 $row["row_index"] = $rowindex;   
@@ -278,8 +281,13 @@ public function saveData(\Nette\Security\user $user, $subjid = NULL, $arrHlavick
                 $row["refcislo"] = $arrHlavicka["druh_dokladu"] . $arrHlavicka["refcislo"]; 
                 $row["datum"] =  $arrHlavicka["duzp"];
                 // todo výdejka  $row["výdejka"]
-                if($row["vydejka"] = "" || $row["vydejka"]=  NULL) {
-                        $subj->getFreeRefNumber($subjid,"vydejky");
+        
+                if( $row["vydejka"] ===  NULL || $row["vydejka"] =="" ) {
+                    if($groupvydejka === NULL) {
+                    $groupvydejka = $subj->getFreeRefNumber($subjid,"vydejky");    
+                    }
+                    
+                    $row["vydejka"] = $groupvydejka;
                     } 
                 if($row["idecko"]=="") { //nový záznam
                   unset($row["idecko"]);  

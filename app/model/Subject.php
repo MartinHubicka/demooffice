@@ -39,7 +39,7 @@ public function getFreeRefNumber($subjid,$field){
  //   $find = $this->raiseRefNumber($subjid, $field);
     //$find[$field];    
    $refnr = $this->getRefNumber($subjid,$field)[$field];
-   
+
     $result = false;
     do {
     $refnr = $refnr+ 1;    
@@ -78,9 +78,14 @@ private function isFree($subjid, $field, $refnr) {
             $res = $value;
             } 
             break;
-        case "prijemky":               
+        case "prijemky": 
+               $res = $this->db->fetch("SELECT count(idecko) FROM sklad WHERE subj_id = ? AND prijemka = ? ",    $subjid, $refnr);                        
+       		foreach($res as $key => $value) {
+            $res = $value;
+            }     
+            break;
         case "vydejky":
-            $res = $this->db->fetch("SELECT count(idecko) FROM sklad WHERE subj_id = ? AND ".$field." = ? ",    $subjid, $refnr);                        
+            $res = $this->db->fetch("SELECT count(idecko) FROM sklad WHERE subj_id = ? AND vydejka = ? ",    $subjid, $refnr);                        
        		foreach($res as $key => $value) {
             $res = $value;
             }     

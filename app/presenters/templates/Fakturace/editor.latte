@@ -364,7 +364,7 @@ $("#isPDP").on("change", function(ev){
 });   
 $("#btn-add-row").on("click", function(ev){
   
-var html='<tr class="noCSS_dokument_row" sid="" druh="" idecko=""><td><div class="btn-group" role="group" aria-label="move-row"><button type="button" class="btn btn-light btn-sm noCSS_move_up">&#8593;</button><button type="button" class="btn btn-light btn-sm noCSS_move_down">&#8595;</button></div></td><td contenteditable="true" class="noCSS_col_field text-right" field="skarta"></td><td contenteditable="true" class="noCSS_col_field" field="popis"></td><td contenteditable="true" class="noCSS_col_field text-center noCSS_number" format="0.00" selectOnFocus field="vydej_mj"></td><td contenteditable="true" class="noCSS_col_field text-center" field="mj"></td><td contenteditable="true" class="noCSS_col_field text-right noCSS_number" selectOnFocus format="0.00" field="cena_mj"></td><td contenteditable="true" class="noCSS_col_field text-center noCSS_number" selectOnFocus format="0" field="dph"></td><td class="noCSS_row_cena text-right noCSS_number" format="0.00"></td><td><button type="button" class="btn btn-light btn-sm noCSS_row_remove">x</button></td></tr>';
+var html='<tr class="noCSS_dokument_row" sid="" vydejka="" druh="" idecko=""><td><div class="btn-group" role="group" aria-label="move-row"><button type="button" class="btn btn-light btn-sm noCSS_move_up">&#8593;</button><button type="button" class="btn btn-light btn-sm noCSS_move_down">&#8595;</button></div></td><td contenteditable="true" class="noCSS_col_field text-right" field="skarta"></td><td contenteditable="true" class="noCSS_col_field" field="popis"></td><td contenteditable="true" class="noCSS_col_field text-center noCSS_number" format="0.00" selectOnFocus field="vydej_mj"></td><td contenteditable="true" class="noCSS_col_field text-center" field="mj"></td><td contenteditable="true" class="noCSS_col_field text-right noCSS_number" selectOnFocus format="0.00" field="cena_mj"></td><td contenteditable="true" class="noCSS_col_field text-center noCSS_number" selectOnFocus format="0" field="dph"></td><td class="noCSS_row_cena text-right noCSS_number" format="0.00"></td><td><button type="button" class="btn btn-light btn-sm noCSS_row_remove">x</button></td></tr>';
     $("#dokument-rows").append(html);
     $("#isPDP").trigger("change");
 });
@@ -479,6 +479,7 @@ $("#save-dokument").on("click", function(ev){
         temprow = $(this);        
 		_temprow["sid"] = $(temprow).attr("sid");
         _temprow["druh"] = $(temprow).attr("druh");
+        _temprow["vydejka"] = $(temprow).attr("vydejka");
         _temprow["idecko"] = $(temprow).attr("idecko");
         $(temprow).find("[field]").each(function(index) {
             _temprow[$(this).attr("field")] = ($(this).attr("field")=="popis") ? $(this).html() : $(this).text();
