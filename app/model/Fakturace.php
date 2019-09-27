@@ -201,6 +201,7 @@ public function saveData(\Nette\Security\user $user, $subjid = NULL, $arrHlavick
         
         $arrHlavicka["refcislo"]= $subj->getFreeRefNumber($subjid,"faktury");
         
+        $arrHlavicka["refcislo"]= $subj->getFreeRefNumber($subjid,"faktury");
     $this->db->query('INSERT INTO faktury', $arrHlavicka);
     $id = $this->db->getInsertId();
         if($id) {
@@ -209,11 +210,12 @@ public function saveData(\Nette\Security\user $user, $subjid = NULL, $arrHlavick
         $rowindex = 0;
             if(count($arrRows)>0) {
         foreach($arrRows as $row) {
+                        
                   $row["row_index"] = $rowindex;
             
-                    $row["vydejka"] = $rowindex;
+                  $row["vydejka"] =  $subj->getFreeRefNumber($subjid,"vydejky");
             
-            
+                $row["subj_id"] = $subjid; 
                     $row["refcislo"] = $arrHlavicka["druh_dokladu"] . $arrHlavicka["refcislo"]; 
                     $row["datum"] =  $arrHlavicka["duzp"];
                     //$row["kodfakturace"] = $arrHlavicka["kodfakturace"]
@@ -272,12 +274,18 @@ public function saveData(\Nette\Security\user $user, $subjid = NULL, $arrHlavick
             if(count($arrRows)>0) {
         foreach($arrRows as $row) {
                 $row["row_index"] = $rowindex;   
+                $row["subj_id"] = $subjid;      
                 $row["refcislo"] = $arrHlavicka["druh_dokladu"] . $arrHlavicka["refcislo"]; 
                 $row["datum"] =  $arrHlavicka["duzp"];
                 // todo výdejka  $row["výdejka"]
+                if($row["vydejka"] = "" || $row["vydejka"]=  NULL) {
+                        $subj->getFreeRefNumber($subjid,"vydejky");
+                    } 
                 if($row["idecko"]=="") { //nový záznam
                   unset($row["idecko"]);  
-                      $this->db->query('INSERT INTO sklad', $row);  
+                    
+                    $this->db->query('INSERT INTO sklad', $row);  
+                    
                 } else {
                     $this->db->query('UPDATE sklad SET', 
                         $row,
