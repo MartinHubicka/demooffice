@@ -4,13 +4,12 @@
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsDefault" aria-controls="navbarsDefault" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon">aaa</span>
   </button>
-  {if $user->isInRole('fakturace') OR $user->isInRole('admin') }
-  
+  {if $user->isInRole('fakturace') OR $user->isInRole('admin') OR $user->isInRole('pokladna') }  
   <button type="button" class="btn btn-success" id="butt-fakturace-nova">Vytvořit doklad</button>    
   {/if}
-
-</nav>
-{if $user->isInRole('fakturace') OR $user->isInRole('admin') }
+    <a class="btn btn-light ml-3" target="_ciselniky" href="{link Ciselniky:}">Číselníky a adresář <span class="badge badge-pill badge-secondary text-sm">&raquo;</span></</a>	     
+</nav>  
+{if $user->isInRole('fakturace') OR $user->isInRole('admin') OR $user->isInRole('obchod') }
 
   {control modalFakturace} 
 <div id="content">
