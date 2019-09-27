@@ -53,6 +53,7 @@ public function renderShow () {
      /*   $template = $this->getTemplate();
         $template->faktury=$faktury;        
         */
+
         $this->template->faktury = $faktury;
     }  
     } 

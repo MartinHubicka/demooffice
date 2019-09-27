@@ -173,7 +173,7 @@
     
 </table>
     
-    
+     {if isset($this->getParameter('faktura')->_DOM)}   
 <table class="rows" style="margin-top: 0.5cm; margin-left:0.5cm;  margin-right:0.5cm;" width="100%">
     <thead>
     <tr>
@@ -189,7 +189,8 @@
     <tbody>
     {var $dph = []}
     {var $zaklad = []}
-    {var $suma = 0}    
+    {var $suma = 0}   
+    
     {foreach $this->getParameter('faktura')->_DOM as $polozka} 	
         {$soucty['dph'.$polozka["dph"]] = $polozka["dph"]}
         {if isset($zaklad['dph'.$polozka["dph"]])}        
@@ -234,7 +235,8 @@ zákazník.&nbsp;</span>
         <th class="textc">základ</th>        
         <th class="textc">daň</th>        
         </tr>
-        	{foreach $soucty as $soucet} 
+         
+        {foreach $soucty as $soucet} 
        
             
         <tr>
@@ -244,6 +246,7 @@ zákazník.&nbsp;</span>
         
         </tr>
         {/foreach}
+      
     </table>
 </td>        
 </tr>
@@ -253,6 +256,6 @@ zákazník.&nbsp;</span>
 </tr>    
 
 </table>
-
+  {/if}
 </body>
 </html>	

@@ -32,18 +32,20 @@
       </div>
     </div>
     
-       <table class="table table-sm">
+       <table class="table table-sm table-hover">
   <thead>
-    <tr>
+    <tr class="table-light ">
       <th scope="col" class="text-center">Číslo faktury</th>    
+      <th scope="col" class="text-center"></th>
       <th scope="col" class="text-center">Odběratel</th>
+      <th scope="col" class="text-center">Objednávka</th>
       <th scope="col" class="text-center">Místo</th>
+      <th scope="col" class="text-center">Vyřizuje</th>
       <th scope="col" class="text-center">Stav faktury</th>
       <th scope="col" class="text-center">Částka CELKEM</th>
-      <th scope="col" class="text-center">||</th>
-      <th scope="col" class="text-center">||</th>
-      <th scope="col" class="text-center">||</th>   
-      <th scope="col" class="text-center"></th>
+      <th scope="col" class="text-center">Účet/FIK</th>
+      <th scope="col" class="text-center">Související dokumenty</th>
+     
     </tr>      
   </thead>
   <tbody id="dokument-rows">
@@ -53,16 +55,24 @@
         {foreach $faktury as $zaznam}
       <tr>
       <td class="text-center">
-          {$zaznam->refcislo}
+          <span class="badge badge-pill badge-secondary text-sm">{$zaznam->druh_dokladu}</span> {$zaznam->refcislo}
       </td>
+    <td>
+        <div class="btn-group btn-group-sm" role="group" aria-label="document-btns">
+            <a class="btn btn-success" id="edit-dokument" href="{link Fakturace:editor, $zaznam->druh_dokladu, $zaznam->refcislo}">Upravit</a>
+            <a class="btn btn-warning" id="print-dokument" href="{link Fakturace:topdf, $zaznam->idecko}">Tisk [PDF]</a>
+        </div>
+    </td>
+    <td>{$zaznam->FIRMAO}</td>
+    <td>{$zaznam->objednavka}</td>
+    <td>{$zaznam->FIRMAM} {$zaznam->MISTOM}</td>
+    <td class="text-center">{$zaznam->fakturoval}</td>
     <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td><a href="{link Fakturace:editor, $zaznam->druh_dokladu, $zaznam->refcislo}" class="btn btn-primary">Editovat {$zaznam->druh_dokladu}{$zaznam->refcislo}</a> </td>
-    <td></td>
-    <td></td>
+    <td class="text-right">{$zaznam->celkem|number:2:',':' '} Kč</td>          
+    <td class="text-center">{$zaznam->banka} {$zaznam->ucet}</td>   
+    <td></td>    
+    
+    
     </tr>   
         {/foreach}            
       {/ifset}
