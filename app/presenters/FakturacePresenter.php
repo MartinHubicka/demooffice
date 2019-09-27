@@ -4,7 +4,8 @@ namespace App\Presenters;
 use App\Controls as AC;
 use App\Model;
 use Nette;
-
+use Vendor\mpdf\mpdf;
+use Latte\Engine;
 final class FakturacePresenter extends BasePresenter
 {
 //modální okna pokladny jsou v BP
@@ -29,6 +30,15 @@ if (!$this->isAjax()) {
     
 }  
 }
+    
+public function handletopdf($idecko= NULL) {
+    
+if (!$this->isAjax()) {
+	 $this->redirect('this');
+	} else {
+        $this->redirect('Fakturace:topdf',$idecko);         
+}  
+}    
     
 public function renderShow () {
     $userm = new \App\Model\MyAuthenticator($this->db, $this->container); 
@@ -61,7 +71,63 @@ public function handlesaveDokument(array $arrHlavicka=NULL, array $arrRows=NULL)
  }
  
 }
+public function rendertopdf($idecko = NULL)
+{ //povinná fuknkce pro použitý redirect
+    
+    $userm = new \App\Model\MyAuthenticator($this->db, $this->container); 
+    $subject = new \App\Model\Subject($this->db, $this->container);
+    $dokument = new \App\Model\Fakturace($this->db, $this->container); 
+    
+    $faktura = $dokument->getDokumentById($this->user, $userm->getParent($this->user->getId())["subj_id"], $idecko);
+    if (!$faktura) {
+       // $this->error();
+    } else {               
  
+        $infoSubject = $subject->getArrAttributeBySid($faktura->subj_id);
+
+            if(!$infoSubject){
+                $infoSubject = NULL;
+            }
+        $latte = new Engine;
+        //nastavit parametry šabloně
+        $template = $this->getTemplate();
+        $template->faktura=$faktura;        
+        //$template->setFile(__DIR__ . '/templates/Fakturace/topdf.latte');  
+        $PDF = new \Mpdf\Mpdf([
+			'default_font' => 'Lohit-Kannada'		
+		]);
+		$PDF->allow_charset_conversion=true;
+		$PDF->charset_in='UTF-8';
+		$PDF->ignore_invalid_utf8 = true;
+		$stylesheet = file_get_contents(__DIR__ . "/../../www/CSS/style.css"); 
+		$PDF->WriteHTML($stylesheet,1); //druhý parametr deklaruje zápis stylů
+        
+        $stylesheet = file_get_contents(__DIR__ . "/../../www/CSS/bootstrap.min.css"); 
+		$PDF->WriteHTML($stylesheet,1); //druhý parametr deklaruje zápis stylů
+        
+        $stylesheet = file_get_contents(__DIR__ . "/../../www/CSS/bootstrap-grid.min.css"); 
+		$PDF->WriteHTML($stylesheet,1); //druhý parametr deklaruje zápis stylů
+        /*
+        $stylesheet = file_get_contents(__DIR__ . "/../../www/bootstrap-reboot.min.cs"); 
+		$PDF->WriteHTML($stylesheet,1); //druhý parametr deklaruje zápis stylů
+*/
+        $splatnost = date('d.m.Y', strtotime($faktura->dvystaveni . ' + '. abs($faktura->dsplatnosti).' days'));
+       
+        			 $params = [
+            'faktura' => $faktura,
+            'subject' =>$infoSubject,
+            'splatnost' => $splatnost             
+                        ];
+		$PDF->WriteHTML($latte->renderToString(__DIR__ . '/templates/Fakturace/topdf.latte', $params));				
+        
+
+        $PDF->SetTitle($infoSubject["prefix"]."-".$faktura->druh_dokladu."-".$faktura->refcislo);
+		$PDF->Output($infoSubject["prefix"]."-".$faktura->druh_dokladu."-".$faktura->refcislo.".pdf", "I");	 
+			 
+	 
+		
+    }
+} 
 public function renderEditor($druh_dokumentu = NULL, $ref_cislo = NULL)
 {
  //povinná fuknkce pro použitý redirect

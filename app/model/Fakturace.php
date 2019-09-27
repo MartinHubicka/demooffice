@@ -26,7 +26,8 @@ public function getFaktury(\Nette\Security\user $user, $subjid = NULL, $arrayFil
     return $faktury;         
 }  
     
-public function getDokument(\Nette\Security\user $user, $subjid = NULL, $druh = NULL, $ref = NULL) {
+public function getDokument(\Nette\Security\user $user, $subjid = NULL, $druh = NULL, $ref = NULL, $rowsArray = false) {
+    //$rowsArray = false umožnuje v případě true vrátit v $faktura->_DOM array se řádky v případě pokud checme předat pouze data
    $this->user = $user;
     if($subjid && $druh) {
     //user je přořazen k subjektu a je předán druh faktury/dokumentu
@@ -63,6 +64,7 @@ public function getDokument(\Nette\Security\user $user, $subjid = NULL, $druh = 
             $res= $res[0]; //první záznam - vžy bude jen jeden hack fetchAll
             $faktura->idecko = $res->idecko;
             $faktura->refcislo = $res->refcislo;
+            $faktura->subj_id = $res->subj_id;
             $faktura->druh_dokladu = $res->druh_dokladu;      
             $faktura->changeDokType($res->druh_dokladu);
                 $_date=date_create($res->duzp);                         
@@ -103,11 +105,13 @@ public function getDokument(\Nette\Security\user $user, $subjid = NULL, $druh = 
              $faktura->STATO = $res->STATO;
              $faktura->STATM = $res->STATM;
              $faktura->TEXTY =  $res->TEXTY;  
-      
+         $html = ($rowsArray==true) ? NULL : '';
              // sestavíme dom řádků
             $res = $this->db->fetchAll("SELECT * FROM sklad WHERE refcislo = ? ORDER BY row_index ASC " , $druh.$ref );                
         if($res) {
-            $html = '';
+            if($rowsArray==true) {
+               $html = $res; 
+            } else {
              foreach($res as $row) {
              $html .= '
 <tr class="noCSS_dokument_row" idecko="'.$row->idecko.'" sid="'.$row->sid.'" druh="'.$row->druh.'">
@@ -125,7 +129,7 @@ public function getDokument(\Nette\Security\user $user, $subjid = NULL, $druh = 
 </tr>             
              ';                     
              }
-            
+           } 
         } 
               $faktura->_DOM = $html;
           
@@ -142,8 +146,36 @@ public function getDokument(\Nette\Security\user $user, $subjid = NULL, $druh = 
        // uživatel nemá oprávnění
        throw new \Nette\Application\ForbiddenRequestException; 
    }
+    if($faktura) {
+        $faktura->changeDokType($faktura->druh_dokladu);        
+    }
+    
+
     return (object)$faktura;
-}    
+}
+public function getDokumentById(\Nette\Security\user $user, $subjid = NULL, $idecko = NULL) {
+
+if($subjid===NULL|| $idecko ===NULL ){
+    $this->result->chyba = true;
+    $this->result->zprava = true;
+    $this->result->zpravatext = 'Chyba toku programu. Nebyl předán subj_id nebo id dokumentu. [model->Faktura]->getDokumentById';
+    $this->result->data = null;            
+    return $this->result;
+} else {       
+         $res = $this->db->fetch("SELECT druh_dokladu, refcislo FROM faktury WHERE idecko = ? AND subj_id = ?" , $idecko, $subjid );                
+        
+        if($res) {            
+           $dokument =  $this->getDokument($user, $subjid, $res->druh_dokladu, $res->refcislo, true);    
+        } else {
+           $this->result->chyba = true;
+    $this->result->zprava = true;
+    $this->result->zpravatext = 'Chyba toku programu. Nebyly nalezeny záznamy podle id dokladu. [model->Faktura]->getDokumentById';
+    $this->result->data = null;                    
+    return $this->result;
+        }
+    return $dokument; // máme kompletní fakturu včetně array řádku v parametru $dokument->_DOM;
+}
+}
 public function saveData(\Nette\Security\user $user, $subjid = NULL, $arrHlavicka, $arrRows) {
     if($subjid===NULL){
     $this->result->chyba = true;
@@ -190,14 +222,15 @@ public function saveData(\Nette\Security\user $user, $subjid = NULL, $arrHlavick
                 //var_dump($field . "=>" . $value);
          }*/
             
-             $this->db->query('INSERT INTO sklad', $row);
+            $this->db->query('INSERT INTO sklad', $row);
+            
             $rowindex++;
         }  }  
             
               $this->result->chyba = false;
     $this->result->zprava = true;
     $this->result->zpravatext = 'Dokument byl úspěšně uložen !';
-    $this->result->data = $arrHlavicka["refcislo"];  
+    $this->result->data = ['idecko' => $id,'refnr' => $arrHlavicka["refcislo"]];  
             
             
         } else {
@@ -268,9 +301,7 @@ public function saveData(\Nette\Security\user $user, $subjid = NULL, $arrHlavick
                     $this->result->chyba = false;
     $this->result->zprava = true;
     $this->result->zpravatext = 'Dokument byl úspěšně uložen !';
-    $this->result->data = $arrHlavicka["refcislo"];  
-            
-    
+    $this->result->data = ['idecko' =>  $arrHlavicka["idecko"],'refnr' => $arrHlavicka["refcislo"]];  
       
   }
    

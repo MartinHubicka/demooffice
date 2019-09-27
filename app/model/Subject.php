@@ -21,10 +21,10 @@ public function getArrAttribute(\Nette\Security\user $user) {
     return $result;
 }  
 public function getArrAttributeBySid($subjid) {
+
+    $res = $this->db->fetch("SELECT * FROM subjects WHERE subj_id = ?",  $subjid*1);
     
-    
-    $res = $this->db->fetch("SELECT * FROM subjects WHERE subj_id = ?",    $subjid);
-    
+
 	$result = NULL;
     if($res) {
         $result = array();
@@ -32,6 +32,7 @@ public function getArrAttributeBySid($subjid) {
        $result[Strings::normalize($key)] = $value;
       }	 	
         }    
+    
     return $result;
 }
 public function getFreeRefNumber($subjid,$field){

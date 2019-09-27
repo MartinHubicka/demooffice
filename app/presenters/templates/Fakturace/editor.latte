@@ -429,7 +429,30 @@ var arr_dph = Array();
     $("#dokument-dph-recap").html(temprecap);
     $("#doklad-soucet").text("CELKEM: " +  doklad_celkem.toFixed(2) + " Kč");
 }    
-
+$("#print-dokument").on("click", function (ev){
+    event.preventDefault;
+        var t = new Date();    
+    	$.nette.ajax(
+        {			 	        
+		  url: "/fakturace/topdf/?do=topdf",
+            type: "POST",
+            off: ['unique'],
+            data: {
+                "t": t.getTime(),
+                "idecko":  idecko                
+            },
+        success: function(payload)
+        {		
+            //alert(payload.info);//if(payload.adresy){}
+            
+        },
+        error: function(xhr, ajaxOptions, thrownError)
+        {
+        //    infoModal("Neočekávaná chyba programu. Chyba byla zaznamenána a bude opravena.", "Chyba v běhu programu");
+        }
+        }); 
+    
+});
 $("#save-dokument").on("click", function(ev){
     event.preventDefault();      
     $("#loader-dokument").toggleClass("block");
@@ -487,7 +510,8 @@ $("#save-dokument").on("click", function(ev){
          // $("#basket-sum").text(payload.kosikKc);
           if(!payload.result.chyba){
             $("#print-dokument").removeClass("disabled");  
-             ref_nr = payload.result.data;  
+             ref_nr = payload.result.data['refnr'];  
+             idecko = payload.result.data['idecko'];
              $("#dok-ref").text(druh_dokumentu + ref_nr);
           } 
             

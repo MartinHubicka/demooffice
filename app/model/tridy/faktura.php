@@ -48,9 +48,11 @@ public $STATO;
 public $STATM;
 public $TEXTY;  
     
+
 public $_DOM="";    //dom radku v dokumentu  
     //--------- nedatabázové property
 public $info_druh_dokladu;    
+public $zkraceny_nazev;         
 public function changeDokType($doktyp) { 
      $doktyp = strtoupper(trim($doktyp));
      $druhy_dokumentu = array("FP", "FH", "ZP", "DB"); //možné druhy dokumentu faktury
@@ -59,15 +61,19 @@ public function changeDokType($doktyp) {
         switch ($this->druh_dokladu) {
             case "FP":                
                 $this->info_druh_dokladu = "Daňový doklad - převodem";
+                $this->zkraceny_nazev = "faktura";
             break;    
             case "FH":
                 $this->info_druh_dokladu = "Daňový doklad - v hotovosti (EET)";
+                $this->zkraceny_nazev = "faktura";
             break;    
             case "ZP":
                 $this->info_druh_dokladu = "Podklad pro zálohovou platbu";
+                $this->zkraceny_nazev = "záloha";
             break;    
             case "DB":
                 $this->info_druh_dokladu = "Opravný daňový doklad - dobropis";
+                $this->zkraceny_nazev = "dobropis";
             break;                
             default:
                 $this->info_druh_dokladu = "chyba-neznámý typ dokumentu";
