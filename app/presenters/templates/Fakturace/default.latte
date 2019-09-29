@@ -1,13 +1,11 @@
 {block content}
 <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
   <a class="navbar-brand" href="{link Homepage:}">Hlavní menu</a>
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsDefault" aria-controls="navbarsDefault" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon">aaa</span>
-  </button>
-  {if $user->isInRole('fakturace') OR $user->isInRole('admin') OR $user->isInRole('pokladna') }  
+  
+  {if $user->isInRole('fakturace') OR $user->isInRole('admin') OR $user->isInRole('pokladna')}  
   <button type="button" class="btn btn-success" id="butt-fakturace-nova">Vytvořit doklad</button>    
   {/if}
-    <a class="btn btn-light ml-3" target="_ciselniky" href="{link Ciselniky:}">Číselníky a adresář <span class="badge badge-pill badge-secondary text-sm">&raquo;</span></</a>	     
+  <a class="btn btn-light ml-3" target="_ciselniky" href="{link Ciselniky:}">Číselníky a adresář</a>	     
 </nav>  
 {if $user->isInRole('fakturace') OR $user->isInRole('admin') OR $user->isInRole('obchod') }
 
@@ -30,7 +28,7 @@
       </div>
     </div>
     
-       <table class="table table-sm table-hover">
+<table class="table table-sm table-hover">
   <thead>
     <tr class="table-light ">
       <th scope="col" class="text-center">Číslo faktury</th>    
@@ -80,6 +78,7 @@
     </table>
 </main>
 </div>
+    
 <script>
     
           $("#butt-fakturace-nova").on("click", function(ev){
