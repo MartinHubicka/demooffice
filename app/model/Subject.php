@@ -58,6 +58,11 @@ private function isFree($subjid, $field, $refnr) {
     $res = NULL;
     switch(strtolower($field)) {
         case "nabidky" :
+            $res = $this->db->fetch("SELECT count(idecko) FROM nabidky WHERE subj_id = ? AND refcislo = ?",    $subjid, $refnr);                        
+       		foreach($res as $key => $value) {
+            $res = $value;
+            }             
+            break;
             break;
         case "zakazky" :
             break;

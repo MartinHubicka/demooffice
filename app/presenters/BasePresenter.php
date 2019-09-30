@@ -70,6 +70,8 @@ public function renderShow (){
     //funkce která je modifikována v konkrétních musí existovat i v basePresenteru
     
 }
+
+    
 public function handleresetPass ($email=NULL, $key=NULL){
     $chyba = true;
     $chybatext = "";

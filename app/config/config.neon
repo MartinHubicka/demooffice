@@ -13,6 +13,7 @@ parameters:
         dph1: 0.15
         dph2: 0.21
         defsplatnostdny: 7
+        defplatnostnab: 30
         systemmail: noreply@twoffice.app
         adminmail: martin.hubicka@gmail.com        
         temppassmin: 60

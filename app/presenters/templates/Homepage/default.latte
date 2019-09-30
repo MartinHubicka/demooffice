@@ -66,12 +66,12 @@
   <div class="card-body">
     <h5 class="card-title">NABÍDKY</h5>
     <p class="card-text" style="min-height: 10rem">Vytváření a přehled obchodních nabídek. Dokument nabídky není podmíněn, proto může předcházet zakázce, ale nemusí. Jde o podpůrný nástroj k získání zakázky.</p>
-     <button type="button" class="btn btn-success" id="butt-nabidka-nova">Nová nabídka</button>
-	  <button type="button" class="btn btn-link">Přehled nabídek</button>
+     <a class="btn btn-success" href="{link Nabidky:editor}" id="butt-nabidka-nova">Nová nabídka</a>
+	   <a  href="{link Nabidky:}" class="btn btn-link">Přehled nabídek</a>
   </div>
 </div>
 </div>
-   {control modalNabidka}          
+
           
 <div class="col-md-4 {$user->isinRole('admin') || $user->isinRole('obchod') ? '' : 'disabled'}">
 <div class="card" style="width: 100%;">
@@ -401,12 +401,7 @@ $("#loginSubmit").on("click", function (ev){
         // eetPrijem();
     });
     
-      $("#butt-nabidka-nova").on("click", function(ev){
-        event.preventDefault();    
-          $("#modalNabidka").attr("nid", -1); //nový dokument
-          $("#modalNabidka").modal('show');
-        // eetPrijem();
-    });
+
     
           $("#butt-fakturace-nova").on("click", function(ev){
         event.preventDefault();    
