@@ -3,7 +3,7 @@
   <a class="navbar-brand" href="{link Homepage:}">Hlavní menu</a>
   
   {if $user->isInRole('obchod') OR $user->isInRole('admin') }  
-  <button type="button" class="btn btn-success" id="butt-nabidky-nova">Vytvořit doklad</button>    
+   <a class="btn btn-success" href="{link Nabidky:editor}" id="butt-nabidka-nova">Nová nabídka</a>
   {/if}
   <a class="btn btn-light ml-3" target="_ciselniky" href="{link Ciselniky:}">Číselníky a adresář</a>	     
 </nav>  
