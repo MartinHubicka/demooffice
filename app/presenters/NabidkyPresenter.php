@@ -63,11 +63,12 @@ public function rendertopdf($idecko = NULL)
     $dokument = new \App\Model\Nabidky($this->db, $this->container); 
     
     $nabidka = $dokument->getDokumentById($this->user, $userm->getParent($this->user->getId())["subj_id"], $idecko);
-    if (!$nabidka) {
+    
+    if ($nabidka->chyba == true) {
         $this->error();
+        
     } else {               
- var_dump($nabidka);
-        die();
+
         $infoSubject = $subject->getArrAttributeBySid($nabidka->subj_id);
         $userinfo = $userm->getUser($nabidka->uid);
         

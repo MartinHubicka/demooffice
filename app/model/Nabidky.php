@@ -39,6 +39,7 @@ public function getDokument(\Nette\Security\user $user, $subjid = NULL, $ref = N
         // nový dokument            
             $nabidka->dvystaveni = date("Y-m-d");            
             $nabidka->subj_id = $subjid;            
+            
             $nabidka->dplatnosti = $nabidka->changeDplatnosti($nabidka->dvystaveni, $this->konstanty["defplatnostnab"]);
             
             $nabidka->uid = $this->user->id;
@@ -67,9 +68,10 @@ public function getDokument(\Nette\Security\user $user, $subjid = NULL, $ref = N
             $nabidka->idecko = $res->idecko;
             $nabidka->refcislo = $res->refcislo;
             $nabidka->subj_id = $res->subj_id;
+            $nabidka->uid = $res->uid;
             $_date=date_create($res->dvystaveni);                         
             $nabidka->dvystaveni = date_format($_date,"d.m.Y");
-                $_date=date_create($res->dvystaveni);                                     
+            $_date=date_create($res->dvystaveni);                                     
             $nabidka->dplatnosti = $nabidka->changeDplatnosti($nabidka->dvystaveni, $res->dplatnosti);            
             $nabidka->vystavil =  $res->vystavil;
             $nabidka->termin =  $res->termin;
