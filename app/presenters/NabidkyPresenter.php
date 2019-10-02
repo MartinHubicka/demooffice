@@ -58,7 +58,7 @@ public function rendertopdf($idecko = NULL)
 { //povinná fuknkce pro použitý redirect
     
     $userm = new \App\Model\MyAuthenticator($this->db, $this->container); 
-    $userinfo = $userm->getUser($this->user->getId());
+    
     $subject = new \App\Model\Subject($this->db, $this->container);
     $dokument = new \App\Model\Nabidky($this->db, $this->container); 
     
@@ -66,9 +66,11 @@ public function rendertopdf($idecko = NULL)
     if (!$nabidka) {
         $this->error();
     } else {               
- 
+ var_dump($nabidka);
+        die();
         $infoSubject = $subject->getArrAttributeBySid($nabidka->subj_id);
-
+        $userinfo = $userm->getUser($nabidka->uid);
+        
             if(!$infoSubject){
                 $infoSubject = NULL;
             }
