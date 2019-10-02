@@ -268,10 +268,11 @@ public function saveData(\Nette\Security\user $user, $subjid = NULL, $arrHlavick
         }
                   $rowindex++;
                  } 
-       //vymazání záznamů, který byly odebrány před uložením        
+       
+            } 
+         //vymazání záznamů, který byly odebrány před uložením  - musí být až po smyčce rows     
         $this->db->query('DELETE FROM nabidky_rows WHERE ?or', ['rid' => $puvodniIDS]);    
-            
-            }  
+         
       /*var_dump($arrRows);
       die();
       */

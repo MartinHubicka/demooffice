@@ -65,6 +65,7 @@ public function getDokument(\Nette\Security\user $user, $subjid = NULL, $druh = 
             $faktura->idecko = $res->idecko;
             $faktura->refcislo = $res->refcislo;
             $faktura->subj_id = $res->subj_id;
+            $faktura->uid = $res->uid;
             $faktura->druh_dokladu = $res->druh_dokladu;      
             $faktura->changeDokType($res->druh_dokladu);
                 $_date=date_create($res->duzp);                         
@@ -307,10 +308,11 @@ public function saveData(\Nette\Security\user $user, $subjid = NULL, $arrHlavick
         }
                   $rowindex++;
                  } 
-       //vymazání záznamů, který byly odebrány před uložením        
+    
+            }
+         //vymazání záznamů, který byly odebrány před uložením - musí být až po smyčce rows     
         $this->db->query('DELETE FROM sklad WHERE ?or', ['idecko' => $puvodniIDS]);    
             
-            }  
       /*var_dump($arrRows);
       die();
       */
