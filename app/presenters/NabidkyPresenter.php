@@ -64,7 +64,7 @@ public function rendertopdf($idecko = NULL)
     
     $nabidka = $dokument->getDokumentById($this->user, $userm->getParent($this->user->getId())["subj_id"], $idecko);
     
-    if ($nabidka->chyba == true) {
+    if (isset($nabidka->chyba)) { 
         $this->error();
         
     } else {               

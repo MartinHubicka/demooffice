@@ -45,6 +45,7 @@ public $STATM;
 public $TEXTY;  
 public $priv_note;  
 public $public_note;  
+//public $tagy;  //zde zatímnepoužívám protože tagy neprocházejí editorem
     
 
 public $_DOM="";    //dom radku v dokumentu  

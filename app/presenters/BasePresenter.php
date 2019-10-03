@@ -72,6 +72,13 @@ public function renderShow (){
 }
 
     
+    public function handleupdateTags($table =NULL, $idecko=NULL, $value="") {        
+        if($table!==NULL && $idecko !==NULL){
+            $userm = new \App\Model\MyAuthenticator($this->db, $this->container);
+            $userm->updateTags($userm->getParent($this->user->getId())["subj_id"], $table, $idecko, $value );
+        }
+    }
+    
 public function handleresetPass ($email=NULL, $key=NULL){
     $chyba = true;
     $chybatext = "";

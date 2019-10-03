@@ -25,5 +25,14 @@ public function __construct( \Nette\Database\Connection $db, Container $containe
                 'data' => NULL
                 ];		
     }
-
+public function updateTags($subjid=NULL, $table=NULL, $idecko=NULL, $value=""){
+    if($subjid!==NULL && $table!==NULL && $idecko!==NULL){
+     $this->db->query('UPDATE '.$table.' SET', [
+                      'tagy' => $value
+                    ],'WHERE subj_id = ? AND idecko = ?', $subjid * 1, $idecko*1);     
+        
+    } else {
+        return $this->result;
+    }    
+}
 }
