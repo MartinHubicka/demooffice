@@ -14,7 +14,7 @@ public function getNabidky(\Nette\Security\user $user, $subjid = NULL, $arrayFil
     $nabidky = NULL;
   if($subjid!==NULL) {                
     //todo zapracovat filter
-  $res = $this->db->fetchAll("SELECT *, (SELECT SUM(mnozstvi*cena_mj) FROM nabidky_rows WHERE nabidky_rows.nid = nabidky.idecko GROUP BY nabidky_rows.nid ) AS celkem FROM nabidky WHERE subj_id = ? ORDER BY dvystaveni DESC,refcislo DESC  " ,  $subjid);
+  $res = $this->db->fetchAll("SELECT *, (SELECT refcislo from zakazky WHERE zakazky.idecko = nabidky.zid) AS zakazka, (SELECT SUM(mnozstvi*cena_mj) FROM nabidky_rows WHERE nabidky_rows.nid = nabidky.idecko GROUP BY nabidky_rows.nid ) AS celkem FROM nabidky WHERE subj_id = ? ORDER BY dvystaveni DESC,refcislo DESC  " ,  $subjid);
         if($res) {            
             $nabidky = (object)$res;
         }  

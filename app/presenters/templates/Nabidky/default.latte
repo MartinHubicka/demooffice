@@ -37,6 +37,7 @@
       <th scope="col" class="text-center">Datum</th>    
         <th scope="col" class="text-center">Termín</th>      
       <th scope="col" class="text-center">Vyřizuje</th>
+      <th scope="col" class="text-center">Zakázka č.</th>
       <th scope="col" class="text-center">Stav nabídky</th>
       <th scope="col" class="text-center">Částka CELKEM [bez DPH]</th>            
       <th scope="col" class="text-center">Související dokumenty</th>
@@ -64,6 +65,13 @@
     <td class="text-center">{$zaznam->dvystaveni|date:'%d.%m.%Y'}</td>
     <td class="text-center">{$zaznam->termin}</td>         
     <td class="text-center">{$zaznam->vystavil}</td>
+          <td class="text-center">
+              {if $zaznam->zakazka===NULL}
+              <a class="btn btn-warning" style="font-size: 12px;" id="test" href="#">Vytvořit zak.</a>
+              {else}
+              {$zaznam->zakazka}
+                {/if}
+          </td>
     <td style="max-width: 200px;"><input edit="{$zaznam->idecko}"  style="font-size: 12px;" type="text" name="tags" value="{$zaznam->tagy}"></td>
     <td class="text-right">{$zaznam->celkem|number:2:',':' '} Kč</td>          
     
