@@ -84,8 +84,8 @@
     var onload = true; //zabrání onload zachycení eventu update tagů
     $('input[name="tags"]').amsifySuggestags({
     type :'bootstrap',
-    suggestions: ['odesláno @','po splatnosti','čeká na úhradu','urgovaná pohledávka'],
-    classes: ['bg-info','bg-danger',   'bg-warning','bg-danger'],
+    suggestions: ['uhrazeno','odesláno @','po splatnosti','čeká na úhradu','urgovaná pohledávka'],
+    classes: ['bg-success', 'bg-info','bg-danger',   'bg-warning','bg-danger'],
         afterAdd:function(value, rodic) {
     if(!onload) {
         
