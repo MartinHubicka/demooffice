@@ -35,7 +35,7 @@ public function renderShow () {
     $nabidky = $dokument->getNabidky($this->user, $userm->getParent($this->user->getId())["subj_id"]);
     if ($nabidky===NULL) {        
      //   $this->error();
-    } elseif (!$this->user->isInRole('admin') && !$this->user->isInRole('fakturace')) {
+    } elseif (!$this->user->isInRole('admin') && !$this->user->isInRole('fakturace') && !$this->user->isInRole('obchod')) {
          $this->error('Chybí oprávnění', Nette\HTTP\IResponse::S403_FORBIDDEN);
     } else {        
         //nastavit parametry šabloně

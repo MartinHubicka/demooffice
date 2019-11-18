@@ -76,10 +76,14 @@
 			<td width="45%" height="2cm" class="logo" style="vertical-align: top; text-align: center;">
             <table style="margin-top: 3cm; padding: 5px 5px 5px 5px;" >			
             <tr>
-				<td class="textl f12" >Dodavatel:</td>		
+				<td class="textl f12" >Dodavatel:</td>
 			</tr>	
             <tr>
-				<td class="textl f18">{$this->getParameter('faktura')->FIRMAD}</td>		
+				<td class="textl f18">{$this->getParameter('faktura')->FIRMAD}
+                   <br><span class="f14">
+                IČO: {$this->getParameter('faktura')->ICOD}, DIČ: {$this->getParameter('faktura')->DICD}
+                    </span>
+                </td>		
 			</tr>	
 			<tr>	
 				<td class="textl">{$this->getParameter('faktura')->PODNAZEVD}</td>		
@@ -140,7 +144,13 @@
 				<td class="textl f12" ><br>Odběratel:</td>		
 			</tr>
             <tr>
-				<td class="textl f18">{$this->getParameter('faktura')->FIRMAO}</td>		
+				<td class="textl f18">{$this->getParameter('faktura')->FIRMAO}
+                  {if $this->getParameter('faktura')->ICOO !== ''}
+                    <br><span class="f14">
+                IČO: {$this->getParameter('faktura')->ICOO}, DIČ: {$this->getParameter('faktura')->DICO}
+                    </span>
+                    {/if}
+                </td>		
 			</tr>	
 			<tr>	
 				<td class="textl">{$this->getParameter('faktura')->PODNAZEVO}</td>		
