@@ -35,13 +35,14 @@
       <th scope="col" class="text-center"></th>
       <th scope="col" class="text-center">Odběratel</th>
       <th scope="col" class="text-center">Objednávka</th>
-      <th scope="col" class="text-center">Místo</th>
-      <th scope="col" class="text-center">Datum/DUZP</th>    
+      <th scope="col" class="text-center f14">Místo</th>
+      <th scope="col" class="text-center f14">Datum/DUZP</th>    
       <th scope="col" class="text-center">Vyřizuje</th>
+      <th scope="col" class="text-center f14">Splatné k</th>        
       <th scope="col" class="text-center">Stav faktury</th>
       <th scope="col" class="text-center">Částka CELKEM</th>
-      <th scope="col" class="text-center">Účet/FIK</th>
-      <th scope="col" class="text-center">Související dokumenty</th>
+      <th scope="col" class="text-center f14">Účet/FIK</th>
+      <th scope="col" class="text-center f14">Související dokumenty</th>
      
     </tr>      
   </thead>
@@ -62,13 +63,15 @@
     </td>
     <td>{$zaznam->FIRMAO}</td>
     <td>{$zaznam->objednavka}</td>
-    <td>{$zaznam->FIRMAM} {$zaznam->MISTOM}</td>
-    <td class="text-center">{$zaznam->duzp|date:'%d.%m.%Y'}</td>
+    <td class="f14">{$zaznam->FIRMAM} {$zaznam->MISTOM}</td>
+    <td class="text-center f14">{$zaznam->duzp|date:'%d.%m.%Y'}</td>
     <td class="text-center">{$zaznam->fakturoval}</td>
+    <td class="text-center f14">{$zaznam->dvystaveni,$zaznam->dsplatnosti|dsplatnosti|date:'%d.%m.%Y'}</td>
+         
     <td style="max-width: 200px;"><input edit="{$zaznam->idecko}"  style="font-size: 12px;" type="text" name="tags" value="{$zaznam->tagy}"></td>
     <td class="text-right">{$zaznam->celkem|number:2:',':' '} Kč</td>          
-    <td class="text-center">{$zaznam->banka} {$zaznam->ucet}</td>   
-    <td></td>    
+    <td class="text-center f14">{$zaznam->banka} {$zaznam->ucet}</td>   
+    <td class="f14"></td>    
     
     
     </tr>   

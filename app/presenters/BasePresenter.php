@@ -63,9 +63,17 @@ public $username;
         
 	}
     public function startup() {
-        parent::startup(); //V každém presenteru je NUTNÉ volat startup předka, pokud je startup v presenteru použitý.
+        parent::startup(); //V každém presenteru je NUTNÉ volat startup předka, pokud je startup v presenteru použitý. 
     }
+protected function beforeRender() {
+    //vlastní filtry do šablony     
+        $this->template->addFilter('dsplatnosti', function ($dvystaveni, $splatnost) {             
+            return date('Y-m-d', strtotime($dvystaveni. ' + '. abs($splatnost).' days'));
+        });
+    }
+    
 
+    
 public function renderShow (){
     //funkce která je modifikována v konkrétních musí existovat i v basePresenteru
     

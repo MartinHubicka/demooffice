@@ -42,8 +42,8 @@ if (!$this->isAjax()) {
     
 public function renderShow () {
     $userm = new \App\Model\MyAuthenticator($this->db, $this->container); 
-    $dokument = new \App\Model\Fakturace($this->db, $this->container); //overi zda dokument existuje (je-li zadán druhý parametr a má-li uživatel/subjekt oprávnění/vlastnictví ) jinak $dokument= NULL
-    $faktury = $dokument->getFaktury($this->user, $userm->getParent($this->user->getId())["subj_id"]);
+    $dokument = new \App\Model\Fakturace($this->db, $this->container); 
+    $faktury = $dokument->getFaktury($this->user, $userm->getParent($this->user->getId())["subj_id"]);//overi zda dokument existuje (je-li zadán druhý parametr a má-li uživatel/subjekt oprávnění/vlastnictví ) jinak $dokument= NULL
     if ($faktury===NULL) {        
      //   $this->error();
     } elseif (!$this->user->isInRole('admin') && !$this->user->isInRole('fakturace')) {
