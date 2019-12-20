@@ -67,7 +67,7 @@ public $username;
     }
 protected function beforeRender() {
     //vlastní filtry do šablony     
-        $this->template->addFilter('dsplatnosti', function ($dvystaveni, $splatnost) {             
+        $this->template->addFilter('filterdsplatnosti', function ($dvystaveni, $splatnost) {             
             return date('Y-m-d', strtotime($dvystaveni. ' + '. abs($splatnost).' days'));
         });
     }
