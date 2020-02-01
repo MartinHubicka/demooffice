@@ -14,11 +14,12 @@ parameters:
         dph2: 0.21
         defsplatnostdny: 7
         defplatnostnab: 30
-        systemmail: noreply@twoffice.app
+        systemmail: martin.hubicka@gmail.com
         adminmail: martin.hubicka@gmail.com        
         temppassmin: 60
         loginexpdays: 30 #musí být <= bež seesion expiration
         aresurl: 'http://wwwinfo.mfcr.cz/cgi-bin/ares/darv_bas.cgi?aktivni=true'
+        deftitle: DemoOffice
 		  
 database:
 	dsn: 'mysql:host=%database.host%;dbname=%database.dbname%'
