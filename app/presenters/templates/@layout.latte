@@ -10,20 +10,24 @@
 	<link href="{$basePath}/favicon.ico" rel="icon" type="image/x-icon">
 	<title>{ifset title}{include title|stripHtml} | {/ifset}ThermoWhite Moravia office</title>
 	<script src="{$basePath}/JS/jquery.min.js"></script>     
+    <script src="{$basePath}/JS/jquery-ui.min.js"></script>     
 	<link rel="stylesheet" href="{$basePath}/CSS/style.css">		
-	
+	    <!--jquery taging system plugin (https://www.jqueryscript.net/form/Tagging-System-Autocomplete-Amsify-Suggestags.html)-->
+    <link rel="stylesheet" href="{$basePath}/CSS/amsify.suggestags.css">
+    <script src="{$basePath}/JS/jquery.amsify.suggestags.js"></script>
+    <!--jquery taging system plugin END-->
 	<!--wysiwyg editor (https://summernote.org/)-->
 	<link rel="stylesheet" href="{$basePath}/CSS/summernote.css">			
 	<script src="{$basePath}/JS/summernote.js"></script>
 	<script src="{$basePath}/JS/lang/summernote-cs-CZ.js"></script>
 	<script src="{$basePath}/JS/popper.min.js"></script>
 	<!--wysiwyg editor END-->
+
 	{*<!--SCRIPT bootstrap & javascript-->*}
 		<script src="{$basePath}/JS/bootstrap.bundle.min.js"></script>
 		<script src="{$basePath}/JS/bootstrap.min.js"></script>
 	
-	{*<!--SCRIPT bootstrap & javascript END-->*}
-	
+	{*<!--SCRIPT bootstrap & javascript END-->*}	
 	<link rel="stylesheet" href="{$basePath}/JS/jquery-ui.min.css">	
 	<script src="{$basePath}/JS/NETTEajax/nette.ajax.js"></script>
 <!--CSS bootstrap-->
@@ -60,30 +64,67 @@
     
 	{include content}
 
-<footer class="container">
+<footer class="container mt-5">
     <p>ThermoWhite Moravia s.r.o &copy; Martin Hubička 2018-{="now"|date:'Y'}</p>
 </footer>	
-	{block scripts}
-	<script src="https://nette.github.io/resources/js/netteForms.min.js"></script>
+
+	
 	<script>
+          $.datepicker.regional['cs'] = {
+		closeText: 'Zavřít',
+		prevText: '&#x3c;Dříve',
+		nextText: 'Později&#x3e;',
+		currentText: 'Nyní',
+		monthNames: ['leden','únor','březen','duben','květen','červen','červenec','srpen','září','říjen','listopad','prosinec'],
+		monthNamesShort: ['led','úno','bře','dub','kvě','čer','čvc','srp','zář','říj','lis','pro'],
+		dayNames: ['neděle', 'pondělí', 'úterý', 'středa', 'čtvrtek', 'pátek', 'sobota'],
+		dayNamesShort: ['ne', 'po', 'út', 'st', 'čt', 'pá', 'so'],
+		dayNamesMin: ['ne','po','út','st','čt','pá','so'],
+		weekHeader: 'Týd',
+		dateFormat: 'dd.mm.yy',
+		firstDay: 1,
+		isRTL: false,
+		showMonthAfterYear: false,
+		yearSuffix: ''};
+   	$.datepicker.setDefaults($.datepicker.regional['cs']);   
+     $(".noCSS_f_datepicker_datum").datepicker($.datepicker.regional['cs']);
+        	{block scripts}
+      $(function () {
+            $.nette.init();
+        });
+        
+    $(document).off("focus","[selectOnFocus]").on("focus","[selectOnFocus]",  function(ev) { 
+        $(this).selectText(); 
+    });    
+        
+        
 	$(document).ready(function() {
 		
-  $('.summernote').summernote({        
-        lang: "cs-CZ",
-	  popover: {
-		  image: [],
-		  link: [],
-		  air: []
-	  	}
-    });
+
 	  
 });	
+jQuery.fn.selectText = function(){
+   var doc = document;
+   var element = this[0];
+
+   if (doc.body.createTextRange) {
+       var range = document.body.createTextRange();
+       range.moveToElementText(element);
+       range.select();
+   } else if (window.getSelection) {
+       var selection = window.getSelection();        
+       var range = document.createRange();
+       range.selectNodeContents(element);
+       selection.removeAllRanges();
+       selection.addRange(range);
+   }
+};
 function infoModal(htmlMessage="", title="Info"){
    $("#modalFlashMessageHtml").html(htmlMessage);    
-   $("#modalFlashMessageTitle").text(title);    
-    
-    $('#modalFlashMessage').modal('show');
+   $("#modalFlashMessageTitle").text(title);        
+   $('#modalFlashMessage').modal('show');
 }
+
 	</script>
 	{/block}
 </body>

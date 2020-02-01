@@ -1,0 +1,478 @@
+<div class="container">
+<button type="button" class="btn btn-primary mt-4 mb-4 ml-4 mr-4" id="skarty-add-new-karta-btn">Nová skl.karta</button>
+<button type="button" class="btn btn-danger mt-4 mb-4 ml-4 mr-4 disabled" id="skarty-delete-kartu-btn">Vymazat označené skl. karty</button>
+    
+<button type="button" class="btn btn-info mt-4 mb-4 ml-4 mr-4 disabled" id="skarty-create-kusovnik-btn">Vytvořit z výběru produkt</button>    
+<span class="badge badge-light mt-4 mb-4 ml-4 mr-4">! Kartu zeditujete dvojklikem na vybraný řádek</span> 
+<table class="table table-striped table-responsive table-hover">
+  <thead class="thead-dark">
+    <tr>
+      <th scope="col text-center"></th>
+      <th scope="col">Skl. karta</th>
+      <th scope="col">popis na dokladech</th>
+      <th scope="col">mj</th>
+      <th scope="col">sec.mj2</th>
+      <th scope="col">mj2/mj</th>        
+      <th scope="col">kusovník</th>
+    </tr>
+  </thead>
+  <tbody>
+      {ifset $skarty}
+        {foreach $skarty as $skarta}
+    <tr skartaid='{$skarta->sid}'>
+      <td >
+        <div class="input-group-prepend">
+            <div class="input-group-text" >
+            <input type="checkbox" aria-label="">
+            </div>
+        </div>
+      </td>
+      <td class="row-skarta">{$skarta->skarta}</td>
+      <td>{$skarta->popis|noescape}</td>
+      <td>{$skarta->mj}</td>
+      <td>{if $skarta->mj2 !== null}{$skarta->mj2}{else}-{/if}</td>
+      <td>{if $skarta->mj2 !== null}{$skarta->mj2mj|number:3:',':' '} {$skarta->mj2}/{$skarta->mj}{else}-{/if}</td>      
+      <td>{if $skarta->kid !== null} kusovník č.{$skarta->kid}{else}-{/if}</td>    
+    </tr>   
+        {/foreach}            
+      {/ifset}
+
+  </tbody>
+</table>
+</div>
+<!-- Modal -->
+<div class="modal " id="modalSkarta" tabindex="-1" role="dialog" sid="-1" aria-labelledby="modalSkarta" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="ModalLabel">Skladová karta</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+                <form class="form" id="formSkarta">
+                      
+                    <div class="input-group mb-2 mr-sm-2">
+                    <div class="input-group-prepend">
+                    <div class="input-group-text text-center">Název skl.karty</div>
+                    </div>
+                    <input type="text" class="form-control  form-control-lg" field="skarta" id="input-skarta" placeholder="může být číslo, nebo krátký text">
+                    </div> 
+                    
+                    <div class="input-group mb-2 mr-sm-2">                    
+                    <div class="input-group-prepend">
+                    <div class="input-group-text text-center">Popis skl. karty (např. u faktury):</div>
+                    </div>
+                    <div class="summernote" id="input-skarta-popis" style="display:none;"></div>
+                     </div>
+                    
+                
+                <div class="form-row">   
+                    <div class="col-md-6 mb-3">
+                    <div class="input-group mb-2 mr-sm-2">
+                    <div class="input-group-prepend">
+                    <div class="input-group-text text-center w4rem">mj</div>
+                    </div>
+                    <input type="text" class="form-control  form-control-lg" field="mj" id="input-mj" placeholder="např. ks, (měrná jednotka, krátký text)">
+                    </div>    
+                    </div>
+                    <div class="col-md-6 mb-3">
+                    <div class="input-group mb-2 mr-sm-2">
+                    <div class="input-group-prepend">
+                    <div class="input-group-text text-center w4rem">sec.mj</div>
+                    </div>
+                    <input type="text" class="form-control  form-control-lg" field="mj2" id="input-mj2" placeholder="např. kg, (sekundární měrná jednotka)">
+                    </div>    
+                    </div>
+                </div>                    
+                <div class="form-row">   
+                    <div class="col-md-6 mb-3">
+                    <div class="input-group mb-2 mr-sm-2">
+                    <div class="input-group-prepend">
+                    <div class="input-group-text text-center w6rem">sec.mj/mj</div>
+                    </div>
+                    <input type="number" class="form-control  form-control-lg" field="mj2mj" id="input-mj2mj" placeholder="kolik má 1 skl. karta sec.mj">
+                    </div>     
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="input-group mb-2 mr-sm-2">
+                    <div class="input-group-prepend">
+                    <div class="input-group-text text-center w7rem">kód fakturace</div>
+                    </div>
+                    <input type="number" class="form-control  form-control-lg" field="kodfakturace" id="input-kodfakturace" placeholder="legislativní číeslník">
+                    </div>  
+                    </div>
+                </div>
+                    <div class="input-group mb-2 mr-sm-2">                    
+                    <div class="input-group-prepend">
+                    <div class="input-group-text text-center">Složení skladové karty - kusovník</div>
+                    </div>                
+                    </div>
+                    <div id="form-produkt-items">  
+                        
+                    </div>
+                    
+                </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Zavřít</button>
+        <button type="button" class="btn btn-primary" id="submit-edit-skarta">Uložit skladovou kartu</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Modal -->
+<div class="modal " id="modalProdukt" tabindex="-1" role="dialog" kid="-1" aria-labelledby="modalProdukt" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="ModalLabel">Struktura produktu</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+          <form class="form" id="formProdukt">
+              <span class="badge badge-light mt-4 mb-4 ml-4 mr-4">! Prohození karty produkt vs. položka provedete dvojklikem na položku.</span> 
+                    <div class="input-group mb-2 mr-2">
+                    <div class="input-group-prepend">
+                    <div class="input-group-text text-center">Skladová karta - produkt:</div>
+                    </div>
+                    <input type="text" readonly class="form-control  form-control-lg" parentsid="" id="input-parentsid" placeholder="">
+                    </div> 
+              
+                    <div class="input-group mb-2 mr-sm-2 ml-5">
+                    <div class="input-group-prepend">
+                    <div class="input-group-text text-center">Skladové karty - položka produktu:</div>
+                    </div>                    
+                    </div>
+              
+                    <div class="input-group mb-2 mr-sm-2 ml-5">
+                    <ul id="produkt-items">
+                        
+                    </ul>
+                    </div>
+          </form>
+        </div>
+ <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Zavřít</button>
+        <button type="button" class="btn btn-primary" id="submit-create-product">Vytvořit produkt</button>
+      </div>
+    
+        </div>
+      </div>
+    </div>
+
+<script>
+$("#modalSkarta").on("show.bs.modal", function(){
+$('#input-skarta-popis').summernote({        
+        lang: "cs-CZ",
+        toolbar: [
+  ['style', ['style']],
+  ['font', ['bold', 'underline', 'clear','superscript', 'subscript']],
+  ['fontname', ['fontname']],
+  ['color', ['color']],
+  ['para', ['ul', 'ol', 'paragraph']],
+  ['table', ['table']],
+  ['insert', ['link', 'picture']],
+  ['view', [ 'codeview', 'help']],
+],      
+	  popover: {
+		  image: [],
+		  link: [],
+          dialogsInBody: false,
+		  air: []
+	  	},
+        maximumImageFileSize: 524288 
+    });
+    //1024 * 512KB = 524288
+     if($('#input-skarta-popis').summernote("code") =="<p></p>"){
+        //hack
+        $('#input-skarta-popis').summernote("code","");
+    }
+})    ;
+   
+$("#skarty-add-new-karta-btn").on("click", function(){
+     event.preventDefault(); 
+     $("#modalSkarta").attr("sid", -1); //jedná se o novou skartu
+
+     $("#modalSkarta").modal("show");
+});
+    
+ $("#modalSkarta").on("hidden.bs.modal", function(){
+      clearInputsSkarta(true);               
+});   
+$("#submit-edit-skarta").on("click", function(){
+       event.preventDefault();    
+            var t = new Date();  
+            var arrSids = false;
+            // když aid = null (resp. -1) jedná se o nový kontakt, jinak aid určuje číslo id kontaktu v adresáři
+            var sid = ($("#modalSkarta").attr("sid")<0) ? -1 : $("#modalSkarta").attr("sid");
+            var arrData =[];
+            arrData["popis"] =$("#input-skarta-popis").summernote("code");
+            $("#formSkarta").find("input[field]").each(function( index ) {                
+                arrData[$(this).attr("field")] = $(this).val();
+            }); 
+            arrData["popis"] =$("#input-skarta-popis").summernote("code");
+            //případný kusovník    
+            if($("#modalSkarta").attr("kid") * 1 >=0) {
+                arrData["kid"] = $("#modalSkarta").attr("kid");
+                var tempKidSids = "";
+                $(".form-produkt-item").each(function(index){
+                    if(tempKidSids!=""){
+                        tempKidSids = tempKidSids+ ",";
+                    }
+                   tempKidSids =tempKidSids+ $(this).attr("sid")+':'+ $(this).find(".form-produkt-item-pocet").val().replace(",", ".");
+                });
+              arrSids = tempKidSids;
+            }
+    
+    
+            //console.log(arrData);
+            //console.log(  Array.isArray(arrData));
+            //nize Object.assign({}, arrData) je predan object (konverze z array na object a do presenteru dorazi array - its magic)     
+            
+    		 $.nette.ajax(
+        {			 	        
+		  url: "/ciselniky/?do=updateSkarta",
+        type: "POST",
+		  off: ['unique'],
+        data: {
+            "t": t.getTime(),
+            "arrdata": Object.assign({}, arrData),
+            "sid": sid ,
+            "arrSids": arrSids
+            
+        },
+        success: function(payload)
+        {
+            console.log(payload);
+            if(payload.result) {
+                   infoModal(payload.result.zpravatext, "Záznam uložen");    
+                }    
+            
+            
+        },
+        error: function(xhr, ajaxOptions, thrownError)
+        {
+            //infoModal("Neočekávaná chyba programu. Chyba byla zaznamenána a bude opravena.", "Chyba v běhu programu");
+        }
+       
+    });
+       clearInputsSkarta();  
+        $("#modalSkarta").modal("hide");
+});  
+
+    function doplnPoleSkarty(objSkarta) {
+        $("#input-skarta").val(objSkarta.skarta);
+        $("#input-mj").val(objSkarta.mj);
+        $("#input-mj2").val(objSkarta.mj2);
+        $("#input-mj2mj").val(objSkarta.mj2mj);
+        $("#input-kodfakturace").val(objSkarta.kodfakturace);     
+        if(objSkarta.popis) {
+            $("#input-skarta-popis").summernote("code",objSkarta.popis);          
+        }
+        
+        //případný kusovník
+        if(objSkarta.kid) {
+         $("#modalSkarta").attr("kid", objSkarta.kid) ;  
+        var t = new Date();    
+    		 $.nette.ajax(
+        {			 	        
+		  url: "/ciselniky/?do=getKidSids",
+        type: "POST",
+		  off: ['unique'],
+        data: {
+            "t": t.getTime(),
+            "kid": objSkarta.kid
+        },
+        success: function(payload)
+        {		
+            if(payload.dataObj.data){               
+            Object.keys(payload.dataObj.data).forEach(function(key) {
+                var polozka = payload.dataObj.data[key];
+           
+            $("#form-produkt-items").append('<div class="input-group form-produkt-item" sid='+polozka.sid+'><div class="input-group-prepend"><span class="input-group-text w8rem">'+polozka.skarta+'</span></div><input type="number" aria-label="pocetmj" class="form-control form-produkt-item-pocet"  value='+polozka.pocetmj+'><div class="input-group-append"><span class="input-group-text w5rem">'+polozka.mj+'</span></div></div>');
+          });
+       // $("#modalSkarta").attr("sid", $(ev.delegateTarget).attr("skartaid")); 
+    //    $("#modalSkarta").modal("show"); 
+            }
+            
+        },
+        error: function(xhr, ajaxOptions, thrownError)
+        {
+        //    infoModal("Neočekávaná chyba programu. Chyba byla zaznamenána a bude opravena.", "Chyba v běhu programu");
+        }
+        });  
+        }
+    }
+   
+$("tr[skartaid]").on("dblclick", function(ev){
+    event.preventDefault();     
+             var t = new Date();    
+    		 $.nette.ajax(
+        {			 	        
+		  url: "/ciselniky/?do=getSkartuBySid",
+        type: "POST",
+		  off: ['unique'],
+        data: {
+            "t": t.getTime(),
+            "sid": $(ev.delegateTarget).attr("skartaid")
+        },
+        success: function(payload)
+        {		
+            if(payload.dataObj){
+              // console.log(payload.dataObj);
+               doplnPoleSkarty(payload.dataObj.data) ;
+               $("#modalSkarta").attr("sid", $(ev.delegateTarget).attr("skartaid")); 
+                $("#modalSkarta").modal("show"); 
+            }
+            
+        },
+        error: function(xhr, ajaxOptions, thrownError)
+        {
+        //    infoModal("Neočekávaná chyba programu. Chyba byla zaznamenána a bude opravena.", "Chyba v běhu programu");
+        }
+        });  
+});
+    
+$("tr[skartaid] td input[type='checkbox']").change(function(){
+   
+   ($("tr[skartaid] td input[type='checkbox']:checked").length>0) ?  $("#skarty-delete-kartu-btn").removeClass("disabled") : $("#skarty-delete-kartu-btn").addClass("disabled");
+   ($("tr[skartaid] td input[type='checkbox']:checked").length>1) ?  $("#skarty-create-kusovnik-btn").removeClass("disabled") : $("#skarty-create-kusovnik-btn").addClass("disabled");
+    
+});
+    
+$("#skarty-delete-kartu-btn").on("click", function() {
+    event.preventDefault();  
+    var sidToDelete = [];
+       $("tr td input[type='checkbox']:checked").parents("tr").each(function(){
+           sidToDelete.push($( this ).attr('skartaid'));
+       });
+    if(sidToDelete.length > 0) {
+        var faktDelete = window.confirm("Skutečně vymazat vybrané skl.karty? (" + sidToDelete.length + ")");   
+        if(faktDelete===true){
+         var t = new Date();    
+    		 $.nette.ajax(
+        {			 	        
+		  url: "/ciselniky/?do=deleteSkartu",
+        type: "POST",
+		  off: ['unique'],
+        data: {
+            "t": t.getTime(),
+            "sids": Object.assign({}, sidToDelete)
+        },
+        success: function(payload)
+        {		
+            if(payload.skarty){
+               
+            }
+            
+        },
+        error: function(xhr, ajaxOptions, thrownError)
+        {
+        //    infoModal("Neočekávaná chyba programu. Chyba byla zaznamenána a bude opravena.", "Chyba v běhu programu");
+        }
+        });  
+            
+            
+        }
+    }                  
+});  
+$("#skarty-create-kusovnik-btn").on("click", function() {
+    event.preventDefault();  
+    var checkedSkarty = [];
+       $("tr td input[type='checkbox']:checked").parents("tr").each(function(index){
+                if(index ==0) {
+                 $("#input-parentsid").val($(this).find(".row-skarta").text());
+                 $("#input-parentsid").attr("parentsid",$(this).attr("skartaid"));   
+                } else {
+                  $("#produkt-items").append('<li><a class="produkt-item" href="#" sid="'+$(this).attr("skartaid")+'">'+$(this).find(".row-skarta").text()+'</a></li>');      
+                    
+                }
+       });    
+    $("#modalProdukt").modal("show");
+
+});
+    
+$("#submit-create-product").on("click", function(ev){
+    event.preventDefault();    
+    var sidToKusovnik = [];
+    $("#produkt-items").find(".produkt-item").each(function(index){        
+        sidToKusovnik.push($( this ).attr('sid')*1);
+    });
+    createProdukt($("#input-parentsid").attr("parentsid"), sidToKusovnik);
+       clearInputsSkarta();  
+    $("#modalProdukt").modal("hide");
+}); 
+ 
+  
+$(document).off("dblclick",".produkt-item").on("dblclick",".produkt-item", function(ev){
+    //použito preventivně off aby se neprovedl event dvakrát 
+   event.preventDefault();    
+   switchParent($(this));   
+    
+});
+function switchParent(productItem) {
+    
+    
+    var fromParent = {"text":$("#input-parentsid").val(),"sid":$("#input-parentsid").attr("parentsid")};
+    var toParent = {"text":$(productItem).text(), "sid":$(productItem).attr("sid")};   
+    console.log(fromParent);
+    console.log(toParent);
+        $(productItem).text(fromParent.text);
+        $(productItem).attr("sid",fromParent.sid);
+        $("#input-parentsid").val(toParent.text);
+        $("#input-parentsid").attr("parentsid",toParent.sid);
+}    
+function createProdukt(parentsid, sidToKusovnik)    {
+    /*var sidToKusovnik = [];
+       $("tr td input[type='checkbox']:checked").parents("tr").each(function(){
+           sidToKusovnik.push($( this ).attr('skartaid'));
+       });*/
+    if(sidToKusovnik.length > 0) {
+         var t = new Date();    
+    		 $.nette.ajax(
+        {			 	        
+		  url: "/ciselniky/?do=addSkartuAsProdukt",
+        type: "POST",
+		  off: ['unique'],
+        data: {
+            "t": t.getTime(),
+            "parentsid" : parentsid*1,
+            "sids": Object.assign({}, sidToKusovnik)
+        },
+        success: function(payload)
+        {		
+            if(payload.skarty){
+                //otevre edit nove karty vytvořené z ostatních  
+            }
+            
+        },
+        error: function(xhr, ajaxOptions, thrownError)
+        {
+        //    infoModal("Neočekávaná chyba programu. Chyba byla zaznamenána a bude opravena.", "Chyba v běhu programu");
+        }
+        });  
+            
+            
+        
+    }                  
+};      
+
+    
+    function clearInputsSkarta(onlyAppendet=false){
+     if(onlyAppendet==false) {
+          $("#modalSkarta").find("input[field]").each(function( index ) {                
+               $(this).val("");
+            });
+       $("#input-skarta-popis").summernote('code','');
+         
+        } else {
+        $("#form-produkt-items").html('');
+            }
+    }
+</script>

@@ -58,14 +58,35 @@ public $username;
 		 parent::__construct();
         $this->container = $container;
         $this->konstanty = $container->getParameters()["konstanty"];
+       
         //var_dump($container->getParameters()["konstanty"]);
         
 	}
     public function startup() {
-        parent::startup(); //V každém presenteru je NUTNÉ volat startup předka, pokud je startup v presenteru použitý.
+        parent::startup(); //V každém presenteru je NUTNÉ volat startup předka, pokud je startup v presenteru použitý. 
     }
+protected function beforeRender() {
+    //vlastní filtry do šablony     
+        $this->template->addFilter('filterdsplatnosti', function ($dvystaveni, $splatnost) {             
+            return date('Y-m-d', strtotime($dvystaveni. ' + '. abs($splatnost).' days'));
+        });
+    }
+    
 
+    
+public function renderShow (){
+    //funkce která je modifikována v konkrétních musí existovat i v basePresenteru
+    
+}
 
+    
+    public function handleupdateTags($table =NULL, $idecko=NULL, $value="") {        
+        if($table!==NULL && $idecko !==NULL){
+            $userm = new \App\Model\MyAuthenticator($this->db, $this->container);
+            $userm->updateTags($userm->getParent($this->user->getId())["subj_id"], $table, $idecko, $value );
+        }
+    }
+    
 public function handleresetPass ($email=NULL, $key=NULL){
     $chyba = true;
     $chybatext = "";
@@ -91,6 +112,90 @@ public function handleresetPass ($email=NULL, $key=NULL){
    	$this->sendPayload();			   
     }    
 }
+    
+/**
+ * @return ModalPrijemEET
+ */
+protected function createComponentModalPrijemEET () {		
+    return new AC\ModalPrijemEET($this->db, $this->container,$this->user);    
+}
+ 
+/**
+ * @return ModalNabidka
+ */
+protected function createComponentModalNabidka () {		
+    return new AC\ModalNabidka($this->db, $this->container,$this->user);    
+}    
+
+/**
+ * @return ModalFakturace
+ */
+protected function createComponentModalFakturace () {		
+    return new AC\ModalFakturace($this->db, $this->container,$this->user);    
+}  
+
+public function handlefindAdresByIcoAres($ico=NULL){
+
+    if (!$this->isAjax()) {
+					 $this->redirect('this');
+	} else {        
+        $adresar = new Model\Adresar($this->db, $this->container);
+        $userm = new \App\Model\MyAuthenticator($this->db, $this->container); 
+        $dataObj = $adresar->getFirmaByIcoAres($ico); 
+        
+            $this->payload->adresy = $dataObj;
+   	        $this->sendPayload();
+    }
+}      
+    
+public function handlefindAdresByIco($ico=NULL, $icofirma=NULL){
+
+    if (!$this->isAjax()) {
+					 $this->redirect('this');
+	} else {        
+        $adresar = new Model\Adresar($this->db, $this->container);
+        $userm = new \App\Model\MyAuthenticator($this->db, $this->container); 
+        $dataObj = $adresar->getFirmaByIco($userm->getParent($this->user->getId())["subj_id"],$ico, $icofirma); 
+        
+            $this->payload->adresy = $dataObj;
+   	        $this->sendPayload();
+    }
+}    
+    
+public function handlegetAdresuByAid($aid){
+    if (!$this->isAjax()) {
+					 $this->redirect('this');
+	} else {     
+        $adresar = new Model\Adresar($this->db, $this->container);        
+        $dataObj = $adresar->getAdresaByAid($aid); 
+            $this->payload->dataObj = $dataObj;
+   	        $this->sendPayload();
+    }
+}  
+    
+public function handlegetSkartuBySid($sid){
+    if (!$this->isAjax()) {
+					 $this->redirect('this');
+	} else {     
+         $skarty = new Model\Skarty($this->db, $this->container);       
+        $dataObj = $skarty->getSkartuBySid($sid); 
+            $this->payload->dataObj = $dataObj;
+   	        $this->sendPayload();
+    }
+}        
+public function handlegetKidSids($kid){
+     if (!$this->isAjax()) {
+					 $this->redirect('this');
+	} else {     
+         $skarty = new Model\Skarty($this->db, $this->container);       
+        $dataObj = $skarty->getKidSids((integer)$kid);
+            $this->payload->dataObj = $dataObj;
+   	        $this->sendPayload();
+    }
+}    
+    
+    
+    
 public function handlepassChange($newPass){
 
     if (!$this->isAjax()) {
@@ -173,4 +278,5 @@ public function handleLogout()    {
 		$this->MyAuthorizator->afterLogoutRedirect($this);
 		//$this->flashMessage('Jste odhlášeni. Děkujeme za Váš čas.');
 }
+    
 }

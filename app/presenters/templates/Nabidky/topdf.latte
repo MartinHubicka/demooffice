@@ -1,0 +1,265 @@
+
+<html>
+    header('Content-Type: application/pdf',charset=utf-8');
+<style>
+	@page { size: auto;
+      header: html_dokumentHeader;
+      footer: html_dokumentFooter;
+		margin-top: 1cm;
+		margin-bottom: 4.5cm;
+		margin-left: .7cm;
+		margin-right: .7cm; 
+        background-image: url('.__DIR__.'/../../www/IM/twpdffakturabottom.jpg); 
+		background-image-resize: 4; 
+		background-repeat:no-repeat; 
+		background-position: bottom right;
+		}
+    .f10 { font-size: 10px; }
+    .f12 { font-size: 12px; }
+    .f14 { font-size: 14px; }    
+    .f16 { font-size: 16px; }    
+    .f18 { font-size: 18px; }
+    .f22 { font-size: 22px; }
+    .h2  { font-size: 20px; font-weight: normal; } 
+    .h1 { font-size: 24px; font-weight: bold; }
+    .textr { text-align: right;}
+    .textl { text-align: left;}
+    .textc { text-align: center;}
+    .textb { font-weight: bold;}
+	.dottedbot {
+		border-bottom: 1px dotted silver;
+	}
+    .dottedtop {
+		border-top: 1px dotted silver;
+	}
+    .gold { background-color: gold; }
+    h3 { font-size: 16px; }
+    .logo {  
+        background-image: url('.__DIR__.'/../../www/IM/ThermoWhite_Logo.jpg); 		
+        	background-image-resize: 4; 
+        background-repeat: no-repeat; 
+		background-position:   center -2cm;
+     
+    }
+    table.rows {
+        border: 1px solid whitesmoke;
+        border-collapse: collapse; 
+        
+    }
+    table.rows td { padding: 5px 5px 5px 5px; vertical-align: top; border: 1px solid whitesmoke;}
+	table.rows th { background-color:whitesmoke; font-weight: normal; font-size: 14px; }
+    
+	</style>	
+<body width="100%" height="100%">
+<htmlpageheader name="dokumentHeader">
+    
+</htmlpageheader>
+<htmlpagefooter name="dokumentFooter">
+<table width="100%" class="dottedtop">
+ <tr>
+        <td width="15.5cm"  height="4cm" style="text-align: center; vertical-align: top">		  				  			  	
+			<p class="f16">			
+			{$this->getParameter('nabidka')->zkraceny_nazev|upper} {$this->getParameter('subject')['prefix']}/{$this->getParameter('nabidka')->refcislo} | <span class="f14">strana: {l}PAGENO{r}/{l}nbpg{r}</span> 
+            </p>
+			<br>
+            <p class="f10">			
+                {$this->getParameter('subject')['spisovaznacka']}
+            </p>  							
+			<p class="f14"><a href="https://www.thermowhite.cz">www.thermowhite.cz</a></p>		  			
+		  </td>      
+     <td></td>
+    </tr>
+</table>
+</htmlpagefooter>	
+<table width="100%">
+  		<tr>				
+			<td width="45%" height="2cm" class="logo" style="vertical-align: top; text-align: center;">
+            <table style="margin-top: 3cm; padding: 5px 5px 5px 5px;" >			
+            <tr>
+				<td class="textl f12" >Dodavatel:</td>		
+			</tr>	
+            <tr>
+				<td class="textl f18">{$this->getParameter('nabidka')->FIRMAD}</td>		
+			</tr>	
+			<tr>	
+				<td class="textl">{$this->getParameter('nabidka')->PODNAZEVD}</td>		
+			</tr>				
+			<tr>				
+				<td class="textl">{$this->getParameter('nabidka')->ULICECPD}</td>				
+			</tr>	
+			<tr>				
+				<td class="textl">{$this->getParameter('nabidka')->MISTOD} {$this->getParameter('nabidka')->PSCD} {$this->getParameter('nabidka')->MESTOD}</td>				
+			</tr>	
+			<tr>				
+				<td class="textl">{$this->getParameter('nabidka')->STATD}</td>				
+			</tr>			
+			<tr>				
+				<td class="textl"><br>{$this->getParameter('subject')['kontakt']|noescape}</td>				
+			</tr>	
+            
+            
+            </table>
+        </td>
+            <td width="1.5cm"></td>
+            <td style="vertical-align: top; text-align: left;">
+                <span class="h2">{$this->getParameter('nabidka')->zkraceny_nazev|upper} číslo:</span> <span class="h1">{$this->getParameter('subject')['prefix']}/{$this->getParameter('nabidka')->refcislo}</span>            
+
+            <table style="margin-top: 0.5cm; padding: 5px 5px 5px 5px;" >	
+             <tr>
+            <td>
+            <table>    
+                
+            <tr>
+				<td class="textr">Datum vytsavení: </td><td class="textl">{$this->getParameter('nabidka')->dvystaveni}</td>		
+			</tr>	
+
+			<tr>				
+				<td class="textr">Platnost nabídky do: </td><td class="textl "> {$this->params['platnost']}</td>				
+			</tr>                
+            <tr>	
+				<td class="textr">Termín: </td><td class="textl textb">{$this->getParameter('nabidka')->termin}</td>		
+			</tr>			    
+                </table>
+             </td>
+            </tr>    
+                
+            <tr>				
+				<td class="textl"><br>Poptávka: {$this->getParameter('nabidka')->poptavka}</td>				
+			</tr>                                        
+            <tr>
+				<td class="textl f12" ><br>Odběratel:</td>		
+			</tr>
+            <tr>
+				<td class="textl f18">{$this->getParameter('nabidka')->FIRMAO}</td>		
+			</tr>	
+			<tr>	
+				<td class="textl">{$this->getParameter('nabidka')->PODNAZEVO}</td>		
+			</tr>				
+			<tr>				
+				<td class="textl">{$this->getParameter('nabidka')->ULICECPO}</td>				
+			</tr>	
+			<tr>				
+				<td class="textl">{$this->getParameter('nabidka')->MISTOO} {$this->getParameter('nabidka')->PSCO} {$this->getParameter('nabidka')->MESTOO}</td>				
+			</tr>	
+			<tr>				
+				<td class="textl">{$this->getParameter('nabidka')->STATO}</td>				
+			</tr>	
+
+			<tr>				
+				<td class="textl"><br>Místo určení/realizace:</td>				
+			</tr>	
+            <tr>				
+				<td class="textl"><br>{$this->getParameter('nabidka')->FIRMAM}</td>				
+			</tr>	
+			<tr>				
+				<td class="textl">{$this->getParameter('nabidka')->MISTOM}</td>				
+			</tr>    
+            </table>    
+                
+            </td>
+            
+		</tr>		
+    
+    
+</table>
+    
+     {if isset($this->getParameter('nabidka')->_DOM)}   
+<table class="rows" style="margin-top: 0.5cm; margin-left:0.5cm;  margin-right:0.5cm;" width="100%">
+    <thead>
+    <tr>
+        <th class="textc">položka</th>    
+        <th class="textc">popis položky</th>    
+        <th class="textc">množství</th>    
+        <th class="textc">mj</th>    
+        <th class="textc">cena/mj</th>    
+        
+        <th class="textc">cena celkem</th>    
+    </tr>
+    </thead>
+    <tbody>
+    {var $dph = []}
+    {var $zaklad = []}
+    {var $suma = 0}   
+    
+    {foreach $this->getParameter('nabidka')->_DOM as $polozka} 	
+        {$soucty['dph'.$polozka["dph"]] = $polozka["dph"]}
+        {if isset($zaklad['dph'.$polozka["dph"]])}        
+        {$zaklad['dph'.$polozka["dph"]] = $zaklad['dph'.$polozka["dph"]] + ($polozka["mnozstvi"] * $polozka["cena_mj"] )}
+        {else}
+        {$zaklad['dph'.$polozka["dph"]] = ($polozka["mnozstvi"] * $polozka["cena_mj"])}
+        {/if}
+        {$suma = $suma + ($polozka["cena_mj"]*$polozka["mnozstvi"]*(1+$polozka["dph"]/100))}
+        <tr>
+        <td class="textc">{$polozka["skarta"]}</td>    
+        <td class="textl">{$polozka["popis"]|noescape}</td>    
+        <td class="textr">{$polozka["mnozstvi"]|number:2:',':' '}</td>    
+        <td class="textl">{$polozka["mj"]}</td>    
+        <td class="textr">{$polozka["cena_mj"]|number:2:',':' '} Kč</td>            
+        <td class="textr">{($polozka["cena_mj"]*$polozka["mnozstvi"]*(1+$polozka["dph"]/100))|number:2:',':' '} Kč</td>    
+    </tr>
+    {/foreach}	    
+   
+    </tbody>
+</table>   
+<table width="100%" style="margin-left: 0.5cm; margin-right: 0.5cm">
+<tr>
+<td width="55%" >
+    
+    <br>{$this->getParameter('nabidka')->TEXTY|noescape}
+</td>    
+<td class="textr">
+
+</td>        
+</tr>
+<tr>
+<td width="62%" class="textl" style="padding-left: 1cm;">
+    <p>
+    {$this->getParameter('nabidka')->TEXTY|noescape}
+    </p>
+    <p>
+    {$this->getParameter('nabidka')->public_note|noescape}
+    </p>
+    
+    </td>       
+<td class="textr"><br><h3 class="textb">Částka celkem: {$suma|number:2:',':' '} Kč</h3>
+
+</td>
+</tr>
+<tr>
+<td>
+    
+<table style="width=100%; font-size: 90%;">
+<tr>
+    <td style="height:1.2cm; width: 1.2cm; background: url('.__DIR__.'/../../www/IM/info1x1.jpg) no-repeat center center;"></td>
+    <td><h6>Ceny v nabídce neobsahují DPH (15% resp. 21 %)</h6></td>    
+</tr>
+<tr>
+    <td style="height:1.2cm; width: 1.2cm; background: url('.__DIR__.'/../../www/IM/voda1x1.jpg) no-repeat center center;"></td>
+    <td><h6>Vodovodní přípojka, tlak min. 2 bary; standardní připojení 1/2", 3/4" nebo zahradní rychlospojka; vodu hradí objednatel/stavba</h6></td>    
+</tr>
+<tr>
+     <td style="height:1.2cm; width: 1.2cm; background: url('.__DIR__.'/../../www/IM/elektro1x1.jpg) no-repeat center center;"></td>
+    <td><h6>Připojení elektro 400V/jistič 32 A; energii hradí objednavatel/stavba</h6></td>    
+</tr>
+<tr>
+ <td style="height:1.2cm; width: 1.2cm; background: url('.__DIR__.'/../../www/IM/level1x1.jpg) no-repeat center center;"></td>
+    <td><h6>Stavba určí váhorys + výšku aplikovaného izolantu</h6></td>    
+</tr>
+<tr>
+  <td style="height:1.2cm; width: 1.2cm; background: url('.__DIR__.'/../../www/IM/parking1x1.jpg) no-repeat center center;"></td>
+    <td><h6>Parkovací polocha pro nákladní automobil 4 x 10 m</h6></td>    
+</tr>
+</table>
+    
+    
+</td>    
+    <td class="textl">
+    <br>Nabídku zpracoval:<br><br>
+    {$this->getParameter('nabidka')->vystavil}<br>    
+    {$this->getParameter('userinfo')->kontakt|noescape}</td>
+</tr>
+
+</table>
+  {/if}
+</body>
+</html>	

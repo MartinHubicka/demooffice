@@ -1,0 +1,154 @@
+{block content}
+<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+  <a class="navbar-brand" href="{link Homepage:}">Hlavní menu</a>
+  
+  {if $user->isInRole('fakturace') OR $user->isInRole('admin') OR $user->isInRole('pokladna')}  
+  <button type="button" class="btn btn-success" id="butt-fakturace-nova">Vytvořit doklad</button>    
+  {/if}
+  <a class="btn btn-light ml-3" target="_ciselniky" href="{link Ciselniky:}">Číselníky a adresář</a>	     
+</nav>  
+{if $user->isInRole('fakturace') OR $user->isInRole('admin') OR $user->isInRole('obchod') }
+
+  {control modalFakturace} 
+<div id="content">
+
+
+<main role="main">
+
+  <div class="jumbotron">
+    <div class="container">
+
+        <div class="row">
+            <div class="col-md-6">
+                <h2 class="display-4">Přehled faktur</h2>              
+            </div>
+        </div>
+        
+                
+      </div>
+    </div>
+    
+<table class="table table-sm table-hover">
+  <thead>
+    <tr class="table-light ">
+      <th scope="col" class="text-center">Číslo faktury</th>    
+      <th scope="col" class="text-center"></th>
+      <th scope="col" class="text-center">Odběratel</th>
+      <th scope="col" class="text-center">Objednávka</th>
+      <th scope="col" class="text-center f14">Místo</th>
+      <th scope="col" class="text-center f14">Datum/DUZP</th>    
+      <th scope="col" class="text-center">Vyřizuje</th>
+      <th scope="col" class="text-center f14">Splatné k</th>        
+      <th scope="col" class="text-center">Stav faktury</th>
+      <th scope="col" class="text-center">Částka CELKEM</th>
+      <th scope="col" class="text-center f14">Účet/FIK</th>
+      <th scope="col" class="text-center f14">Související dokumenty</th>
+     
+    </tr>      
+  </thead>
+  <tbody id="dokument-rows">
+   
+
+     {ifset $faktury}
+        {foreach $faktury as $zaznam}
+      <tr>
+      <td class="text-center">
+          <span class="badge badge-pill badge-secondary text-sm">{$zaznam->druh_dokladu}</span> {$zaznam->refcislo}
+      </td>
+    <td>
+        <div class="btn-group btn-group-sm" role="group" aria-label="document-btns">
+            <a class="btn btn-success" id="edit-dokument" href="{link Fakturace:editor, $zaznam->druh_dokladu, $zaznam->refcislo}">Upravit</a>
+            <a class="btn btn-warning" id="print-dokument" href="{link Fakturace:topdf, $zaznam->idecko}">Tisk [PDF]</a>
+        </div>
+    </td>
+    <td>{$zaznam->FIRMAO}</td>
+    <td>{$zaznam->objednavka}</td>
+    <td class="f14">{$zaznam->FIRMAM} {$zaznam->MISTOM}</td>
+    <td class="text-center f14">{$zaznam->duzp|date:'%d.%m.%Y'}</td>
+    <td class="text-center">{$zaznam->fakturoval}</td>
+    <td class="text-center f14">{$zaznam->dvystaveni,$zaznam->dsplatnosti|filterdsplatnosti|date:'%d.%m.%Y'}</td>         
+    <td style="max-width: 200px;"><input edit="{$zaznam->idecko}"  style="font-size: 12px;" type="text" name="tags" value="{$zaznam->tagy}"></td>
+    <td class="text-right">{$zaznam->celkem|number:2:',':' '} Kč</td>          
+    <td class="text-center f14">{$zaznam->banka} {$zaznam->ucet}</td>   
+    <td class="f14"></td>        
+    </tr>   
+        {/foreach}            
+      {/ifset}
+           </tbody>
+    </table>
+</main>
+</div>
+    
+<script>
+    $(document).ready(function(){  
+    var onload = true; //zabrání onload zachycení eventu update tagů
+    $('input[name="tags"]').amsifySuggestags({
+    type :'bootstrap',
+    suggestions: ['uhrazeno','odesláno @','po splatnosti','čeká na úhradu','urgovaná pohledávka'],
+    classes: ['bg-success', 'bg-info','bg-danger',   'bg-warning','bg-danger'],
+        afterAdd:function(value, rodic) {
+    if(!onload) {
+        
+        updateTags($(rodic).attr("edit"),$(rodic).val());
+    }    
+    // after add
+  },
+  afterRemove:function(value, rodic) {
+    // after remove
+     if(!onload) {
+         
+       updateTags($(rodic).attr("edit"),$(rodic).val());
+    }    
+  }
+
+});
+   onload = false;
+});
+
+function updateTags(idecko,value){
+   
+    		var t = new Date		
+			$.nette.ajax(
+    {			 	       
+		  url: "/fakturace/?do=updateTags",
+        type: "POST",
+		  off: ['unique'],
+        data: {
+          "t": t.getTime(),        
+          "table": "faktury",
+		  "idecko": idecko*1,
+          "value": value        
+        }, 		 
+        success: function(payload)
+        {		
+                
+        /* 
+          if(!payload.result.chyba){
+           
+          } 
+            
+          */  
+           
+        },	  
+        error: function(xhr, ajaxOptions, thrownError)
+        {
+            
+          //	jsFlashMessage('Koncept nebyl z důvodu chyby uložen. Chyba byla logována. Opakujte akci později.');		
+			   //console.warn(xhr.status);
+            //console.warn(thrownError);
+        }
+	});
+    
+}  
+          $("#butt-fakturace-nova").on("click", function(ev){
+        event.preventDefault();    
+          $("#modalFakturace").attr("fid", -1); //nový dokument
+          $("#modalFakturace").modal('show');
+      
+    });
+</script>
+{else} 
+
+
+
+{/if}

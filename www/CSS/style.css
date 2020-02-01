@@ -6,10 +6,39 @@
   			padding-top: 3.5rem;
 		}
 .row { margin-bottom: 1.5rem; }
+.hide { display: none !important;}
 
+.w50 {max-width: 50px; }
 .w2rem {width: 2rem; }
 .w3rem {width: 3rem; }
 .w4rem {width: 4rem; }
 .w5rem {width: 5rem; }
+.w6rem {width: 6rem; }
+.w7rem {width: 7rem; }
+.w8rem {width: 8rem; }
+.w9rem {width: 9rem; }
 .w10rem {width: 10rem; }
-
+.w11rem {width: 11rem; }
+.w12rem {width: 12rem; }
+.w13rem {width: 13rem; }
+.w14rem {width: 14rem; }
+.w15rem {width: 15rem; }
+.f10 {font-size: 10px;}
+.f12 {font-size: 12px;}
+.f14 {font-size: 14px;}
+.f16 {font-size: 16px;}
+.loader {
+    width: 100% !important;
+    height: 130% !important;
+    left:0;
+    top: 0;
+    opacity: 0.2;
+    display: none;
+    position: absolute;
+    background: url(../JS/images/cubeloader.gif) no-repeat center center;    
+    background-size: cover;
+    z-index: 999999;            
+}
+.loader.block{
+    display: block;    
+}

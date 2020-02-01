@@ -1,0 +1,151 @@
+{if $user->isInRole('settings') || $user->isInRole('admin')}
+<div class="container">
+<p class=" mt-5">
+    Nastavení číselných řad <strong>nevoliňuje existující čísla dokladů</strong>. Zpravidla není nutno editovat. 
+</p>
+<p>
+    Editace je pro potřeby změn čísel na začátku nového roku, nebo v případě, že je daná číselná řada nekonzistentní a je třeba ji vyplnit. 
+    Systém <strong>od zadaného čísla</strong> naváže a obsadí <strong>volná čísla</strong> a po obsazení mezer v číslné řadě, v řadě pokračuje (tzn. nový doklad bude mít hodnotu <strong>zadané číslo + 1</strong>, pokud již takové číslo neexistuje).
+</p>    
+<p class="mb-5">
+    Hodnoty jsou proměnné a zobrazují poslední číslo dokladu v dané řadě.
+</p>        
+<div class="input-group mb-3">
+  <div class="input-group-prepend w15rem">
+    <div class="input-group-text text-center w15rem">NABÍDKY</div>
+  </div>
+    <!-- nabidky, zakazky, ppd, vpd, faktury, zlist, prijemky, vydejky, prevodky, recyklist -->
+  <input type="number" class="form-control" placeholder="číslo dokladu např. {date('y')}0000" aria-label="cislonabidky" value="{$ciselnerady->nabidky}">
+  <div class="input-group-append">
+    <button class="btn btn-success" type="button" id="btn-cislonabidky-save" field="nabidky">Uložit</button>
+  </div>
+</div>
+
+<div class="input-group mb-3">
+  <div class="input-group-prepend">    
+    <div class="input-group-text text-center w15rem">ZAKÁZKY</div>
+  </div>
+  <input type="number" class="form-control" placeholder="číslo dokladu např. {date('y')}0000" aria-label="cislozakazky" value="{$ciselnerady->zakazky}">
+  <div class="input-group-append">
+    <button class="btn btn-success" type="button" id="btn-cislozakazky-save" field="zakazky">Uložit</button>
+  </div>
+</div>
+   
+<div class="input-group mb-3">
+  <div class="input-group-prepend">
+    <div class="input-group-text text-center w15rem">PŘÍJMOVÝ POKLADNÍ DOKLAD</div>    
+  </div>
+  <input type="number" class="form-control" placeholder="číslo dokladu např. {date('y')}0000" aria-label="cisloppd" value="{$ciselnerady->ppd}">
+  <div class="input-group-append">
+    <button class="btn btn-success" type="button" id="btn-cisloppd-save" field="ppd">Uložit</button>
+  </div>
+</div>
+
+<div class="input-group mb-3">
+  <div class="input-group-prepend">
+    <div class="input-group-text text-center w15rem">VÝDEJNÍ POKLADNÍ DOKLAD</div>    
+  </div>
+  <input type="number" class="form-control" placeholder="číslo dokladu např. {date('y')}0000" aria-label="cislovpd" value="{$ciselnerady->vpd}">
+  <div class="input-group-append">
+    <button class="btn btn-success" type="button" id="btn-cislovpd-save" field="vpd">Uložit</button>
+  </div>
+</div>   
+
+<div class="input-group mb-3">
+  <div class="input-group-prepend">
+    <div class="input-group-text text-center w15rem">FAKTURA</div>    
+  </div>
+  <input type="number" class="form-control" placeholder="číslo dokladu např. {date('y')}0000" aria-label="cislofaktury" value="{$ciselnerady->faktury}">
+  <div class="input-group-append">
+    <button class="btn btn-success" type="button" id="btn-cislofaktury-save" field="faktury">Uložit</button>
+  </div>
+</div> 
+    
+<div class="input-group mb-3">
+  <div class="input-group-prepend">
+    <div class="input-group-text text-center w15rem">ZÁLOHOVÝ LIST</div>    
+  </div>
+  <input type="number" class="form-control" placeholder="číslo dokladu např. {date('y')}0000" aria-label="cislozalohy" value="{$ciselnerady->zlist}">
+  <div class="input-group-append">
+    <button class="btn btn-success" type="button" id="btn-cislozalohy-save" field="zlist">Uložit</button>
+  </div>
+</div>     
+
+<div class="input-group mb-3">
+  <div class="input-group-prepend">
+    <div class="input-group-text text-center w15rem">PŘÍJEMKA</div>    
+  </div>
+  <input type="number" class="form-control" placeholder="číslo dokladu např. {date('y')}0000" aria-label="cisloprijemky" value="{$ciselnerady->prijemky}">
+  <div class="input-group-append">
+    <button class="btn btn-success" type="button" id="btn-cisloprijemky-save" field="prijemky">Uložit</button>
+  </div>
+</div>         
+    
+<div class="input-group mb-3">
+  <div class="input-group-prepend">
+    <div class="input-group-text text-center w15rem">VÝDEJKA</div>    
+  </div>
+  <input type="number" class="form-control" placeholder="číslo dokladu např. {date('y')}0000" aria-label="cislovydejky" value="{$ciselnerady->vydejky}">
+  <div class="input-group-append">
+    <button class="btn btn-success" type="button" id="btn-cislovydejky-save" field="vydejky">Uložit</button>
+  </div>
+</div>             
+
+<div class="input-group mb-3">
+  <div class="input-group-prepend">
+    <div class="input-group-text text-center w15rem">PŘEVODKA</div>    
+  </div>
+  <input type="number" class="form-control" placeholder="číslo dokladu např. {date('y')}0000" aria-label="cisloprevodky" value="{$ciselnerady->prevodky}">
+  <div class="input-group-append">
+    <button class="btn btn-success" type="button" id="btn-cisloprevodky-save" field="prevodky">Uložit</button>
+  </div>
+</div>                 
+
+<div class="input-group mb-3">
+  <div class="input-group-prepend">
+    <div class="input-group-text text-center w15rem">RECYKLAČNÍ LIST</div>    
+  </div>
+  <input type="number" class="form-control" placeholder="číslo dokladu např. {date('y')}0000" aria-label="cislorecyklace" value="{$ciselnerady->recyklist}">
+  <div class="input-group-append">
+    <button class="btn btn-success" type="button" id="btn-cislorecyklace-save" field="recyklist">Uložit</button>
+  </div>
+</div>                     
+</div>  
+{else}
+<div class="container mb-5">
+<div class="jumbotron  mb-5">
+    <h1 class="display-3">Nastavení - číselníky</h1>  
+    <h3 class="mt-5">Nemáte oprávnění k zobrazení obsahu.</h3>  
+    <a class="btn btn-info mb-4 mt-4" role="button" href="/">úvodní stránka</a>	  
+</div>
+</div>
+{/if}
+<script>
+$("button[field]").on("click", function(ev){
+    event.preventDefault;
+    var inputtag =$(this).delegate().parent().parent(".input-group").children('[type="number"]'); 
+    
+             var t = new Date();    
+    		 $.nette.ajax(
+        {			 	        
+		  url: "/ciselniky/?do=updateCisr",
+        type: "POST",
+		  off: ['unique'],
+        data: {
+            "t": t.getTime(),
+            "field":  $(this).delegate().attr("field"),
+            "value": $(inputtag).val()
+        },
+        success: function(payload)
+        {		
+            //if(payload.adresy){}
+            
+        },
+        error: function(xhr, ajaxOptions, thrownError)
+        {
+        //    infoModal("Neočekávaná chyba programu. Chyba byla zaznamenána a bude opravena.", "Chyba v běhu programu");
+        }
+        }); 
+});
+
+</script>

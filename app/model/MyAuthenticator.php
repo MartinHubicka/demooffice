@@ -219,13 +219,37 @@ class MyAuthenticator extends BaseModel  implements IAuthenticator
 		}
 		return $rec;
 	}	
-	public function getParent($uid=NULL){		
+	public function getParent($uid=NULL){	
+        
 		if($uid && $uid!==NULL) {
 		$rec = $this->db->fetch("SELECT * FROM subjects WHERE subj_id = (SELECT parent FROM users WHERE uid = ?)",  $uid);		
 		return $rec;
 		}
 	}
+    	public function getParentId($uid=NULL){	
+        
+		if($uid && $uid!==NULL) {
+		$rec = $this->db->fetch("SELECT subj_id FROM subjects WHERE subj_id = (SELECT parent FROM users WHERE uid = ?)",  $uid);		
+		return $rec->subj_id;
+		}
+	}
 	
+    public function getCiselneRady($uid = NULL) {
+        if($uid && $uid!==NULL) {
+        $rec = $this->db->fetch("SELECT nabidky, zakazky, ppd, vpd, faktury, zlist, prijemky, vydejky, prevodky, recyklist FROM subjects WHERE subj_id = ?",  $this->getParentId($uid));		
+        return $rec;
+        }
+		
+        
+    }
+    
+    public function updateCisr($uid, $field, $value){
+    
+        if($uid && $uid!==NULL) {
+        	$this->db->query("UPDATE subjects SET ".$field." = ? WHERE subj_id = ?",  $value, $this->getParentId($uid));        
+        }        
+    } 
+    
 	/**
 	* @param mixed
 	* @return boolean

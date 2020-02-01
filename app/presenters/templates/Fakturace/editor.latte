@@ -1,0 +1,728 @@
+{block content}
+{if $user->isInRole('fakturace') OR $user->isInRole('admin') }
+  <div class="loader" id="loader-dokument"></div>
+<nav class="fixed-top bg-dark">
+<div class="container">
+    <div class="row mt-2 mb-2 align-items-center">
+         <div class="col-4 text-left">
+        <div class="btn-group" role="group" aria-label="document-btns">
+            <a class="btn btn-success" id="save-dokument" href="#">Uložit</a>
+               <a class="btn btn-warning disabled" id="print-dokument" href="#">Tisk</a>
+        </div>
+   </div>
+        <div class="col-4 text-center">
+            <h2 class="text-white" id="dok-ref">{$this->getParameter('faktura')->refcislo ? $this->getParameter('faktura')->druh_dokladu . $this->getParameter('faktura')->refcislo : 'Nový'}</h2>
+            <span class="badge badge-secondary" id="dok-info-type">{$this->getParameter('faktura')->info_druh_dokladu}</span>
+        </div>
+        <div class="col-4 text-right">
+            <a class="btn btn-danger" id="close-dokument" href="{link Fakturace:}">Zavřít</a>    
+        </div>
+    </div>
+</div>
+</nav>
+
+<div id="content">
+
+
+<main role="main">
+
+  <div class="jumbotron">
+    <div class="container">
+        
+    <div class="accordion" id="dokumentcontent">
+        
+  <div class="card  bg-light">
+    <div class="card-header card-primary" id="headingHlavicka">
+      <h2 class="mb-0">
+        <button class="btn btn-light" type="button" data-toggle="collapse" data-target="#collapseHlavicka" aria-expanded="true" aria-controls="collapseHlavicka">
+          Hlavička dokumentu
+        </button>
+      </h2>
+    </div>
+
+    <div id="collapseHlavicka" class="collapse show" aria-labelledby="headingHlavicka" data-parent="#dokumentcontent">
+      <div class="card-body">
+        <div class="row mt-2 mb-2 align-items-center">
+        <div class="col-6">
+           <h5>Dodavatel:</h5>
+            <div class="input-group mb-3 disabled">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="inputGroup-dodavatel-firmaEEEAAAA">Firma</span>
+                </div>
+                    <input type="text" class="form-control  noCSS_field" field="FIRMAD" aria-label="" aria-describedby="inputGroup-dodavatel-firmaEEEAAAA" value="{$this->getParameter('faktura')->FIRMAD}">
+            </div>
+            <div class="input-group input-group-sm mb-3 disabled">
+                                <div class="input-group-prepend">
+                    <span class="input-group-text" id="inputGroup-dodavatel-podnazev"></span>
+                </div>
+                    <input type="text" class="form-control  noCSS_field" field="PODNAZEVD" aria-label="" aria-describedby="inputGroup-dodavatel-podnazev" value="{$this->getParameter('faktura')->PODNAZEVD}">
+
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="inputGroup-dodavatel-ico">IČO</span>
+                </div>
+                    <input type="text" class="form-control  noCSS_field" field="ICOD" aria-label="" aria-describedby="inputGroup-dodavatel-ico" value="{$this->getParameter('faktura')->ICOD}">
+                 <div class="input-group-prepend">
+                    <span class="input-group-text" id="inputGroup-dodavatel-dic">DIČ</span>
+                </div>
+                    <input type="text" class="form-control  noCSS_field" field="DICD" aria-label="" aria-describedby="inputGroup-dodavatel-dic" value="{$this->getParameter('faktura')->DICD}">
+
+            </div>  
+            
+            <div class="input-group input-group-sm mb-3 disabled">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="inputGroup-dodavatel-ulicecp"></span>
+                </div>
+                    <input type="text" class="form-control  noCSS_field" field="ULICECPD" aria-label="" aria-describedby="inputGroup-dodavatel-ulicecp" value="{$this->getParameter('faktura')->ULICECPD}">
+                <div class="input-group-prepend">
+                <span class="input-group-text" id="inputGroup-dodavatel-misto"></span>
+                </div>
+                    <input type="text" class="form-control  noCSS_field" field="MISTOD" aria-label="" aria-describedby="inputGroup-dodavatel-misto" value="{$this->getParameter('faktura')->MISTOD}">
+            </div>  
+            
+            <div class="input-group input-group-sm mb-3 disabled">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="inputGroup-dodavatel-psc"></span>
+                </div>
+                    <input type="text" class="form-control  noCSS_field" field="PSCD" aria-label="" aria-describedby="inputGroup-dodavatel-psc" value="{$this->getParameter('faktura')->PSCD}">
+                <div class="input-group-prepend">
+                <span class="input-group-text" id="inputGroup-dodavatel-mesto"></span>
+                </div>
+                    <input type="text" class="form-control  noCSS_field" field="MESTOD" aria-label="" aria-describedby="inputGroup-dodavatel-mesto" value="{$this->getParameter('faktura')->MESTOD}">
+                <div class="input-group-prepend">
+                <span class="input-group-text" id="inputGroup-dodavatel-stat"></span>
+                </div>
+                    <input type="text" class="form-control  noCSS_field" field="STATD" aria-label="" aria-describedby="inputGroup-dodavatel-stat" value="{$this->getParameter('faktura')->STATD}">
+            </div>  
+            
+           <h6>Parametry dokladu:</h6>    
+            
+            
+            <div class="custom-control custom-switch mb-3">
+            <input type="checkbox" class="custom-control-input " id="isPDP" {$faktura->druh_dokladu=='ZP' || $faktura->druh_dokladu=='FH' ? disabled : ''}>
+            <label class="custom-control-label" for="isPDP">Přenesená daň.povinnost</label>
+            </div>
+            
+            <div class="input-group input-group-sm mb-3">           
+            <div class="input-group-prepend ">
+                <span class="input-group-text {$faktura->druh_dokladu=='ZP' ? 'hide' : ''}" id="inputGroup-doklad-duzp">DUZP:</span>
+            </div>            
+                <input type="text" class="form-control  noCSS_field {$faktura->druh_dokladu=='ZP' ? 'hide' : ''}" field="duzp" aria-label="" aria-describedby="inputGroup-doklad-duzp" value="{$this->getParameter('faktura')->duzp|date:'%d.%m.%Y'}">                           
+           
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="inputGroup-doklad-dvystaveni">dat.vyst.:</span>
+            </div>
+                <input type="text" class="form-control  noCSS_field" field="dvystaveni" aria-label="" aria-describedby="inputGroup-doklad-dvystaveni" value="{$this->getParameter('faktura')->dvystaveni|date:'%d.%m.%Y'}">                                           
+             <div class="input-group-prepend">
+                <span class="input-group-text" id="inputGroup-doklad-dsplatnosti">Spl.dny:</span>
+            </div>
+                <input type="number" min="0" step="1" pattern="\d+" oninput="this.value=this.value.replace(/[^0-9]/g,'');" class="form-control noCSS_field w50" field="dsplatnosti" aria-label="" aria-describedby="inputGroup-doklad-dsplatnosti" value="{$this->getParameter('faktura')->dsplatnosti}">                                           
+            </div>
+            <div class="input-group input-group-sm mb-3">           
+            <div class="input-group-prepend ">
+                <span class="input-group-text" id="inputGroup-doklad-banka">Banka:</span>
+            </div>            
+                <input type="text" class="form-control  noCSS_field " field="banka" aria-label="" aria-describedby="inputGroup-doklad-banka" value="{$this->getParameter('faktura')->banka}">                               
+                        <div class="input-group-prepend ">
+                <span class="input-group-text" id="inputGroup-doklad-ucet">Číslo účtu:</span>
+            </div>            
+                <input type="text" class="form-control  noCSS_field " field="ucet" aria-label="" aria-describedby="inputGroup-doklad-ucet" value="{$this->getParameter('faktura')->ucet}">                               
+            </div>
+            
+        </div>
+        <div class="col-6">
+            <div class="loader" id="loader-odberatel"></div>
+           <h5>Odběratel:</h5>
+            
+                <div class="input-group input-group-sm  mb-3">
+                    <div class="input-group-prepend">
+                    <span class="input-group-text" id="inputGroup-odberatel-objAAA">Objednávka</span>
+                </div>
+                    <input type="text" class="form-control noCSS_field" field="objednavka" aria-label="" aria-describedby="inputGroup-odberatel-objAAA" value="{$this->getParameter('faktura')->objednavka}">
+                </div>
+                    <div class="input-group mb-3">    
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="inputGroup-odberatel-firmaAAA">Firma</span>
+                </div>
+                    <input type="text" class="form-control noCSS_field" field="FIRMAO" aria-label="" aria-describedby="inputGroup-odberatel-firmaAAA" value="{$this->getParameter('faktura')->FIRMAO}">
+                  <div class="input-group-append" id="button-addon4">
+                    <a href="{link Ciselniky:}" target="_adresar" class="btn btn-outline-secondary" type="button">...</a>
+                    <button class="btn text-sm btn-outline-warning disabled" id="btn-ares-by-ico" type="button">ARES</button>  
+                </div>                
+                </div>
+            <div class="input-group input-group-sm mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="inputGroup-odberatel-podnazev"></span>
+                </div>
+                    <input type="text" class="form-control  noCSS_field" field="PODNAZEVO" aria-label="" aria-describedby="inputGroup-odberatel-podnazev" value="{$this->getParameter('faktura')->PODNAZEVO}">
+
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="inputGroup-odberatel-ico">IČO</span>
+                </div>
+                    <input type="text" class="form-control  noCSS_field" field="ICOO" aria-label="" aria-describedby="inputGroup-odberatel-ico" value="{$this->getParameter('faktura')->ICOO}">
+                 <div class="input-group-prepend">
+                    <span class="input-group-text" id="inputGroup-odberatel-dic">DIČ</span>
+                </div>
+                    <input type="text" class="form-control  noCSS_field" field="DICO" aria-label="" aria-describedby="inputGroup-odberatel-dic" value="{$this->getParameter('faktura')->DICO}">
+
+            </div>  
+            
+            <div class="input-group input-group-sm mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="inputGroup-odberatel-ulicecp">Ulice, č.p.</span>
+                </div>
+                    <input type="text" class="form-control  noCSS_field" field="ULICECPO" aria-label="" aria-describedby="inputGroup-odberatel-ulicecp" value="{$this->getParameter('faktura')->ULICECPO}">
+                <div class="input-group-prepend">
+                <span class="input-group-text" id="inputGroup-odberatel-misto">Místo</span>
+                </div>
+                    <input type="text" class="form-control  noCSS_field" field="MISTOO" aria-label="" aria-describedby="inputGroup-odberatel-misto" value="{$this->getParameter('faktura')->MISTOO}">
+            </div>  
+            
+            <div class="input-group input-group-sm mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="inputGroup-odberatel-psc">PSČ</span>
+                </div>
+                    <input type="text" class="form-control  noCSS_field" field="PSCO" aria-label="" aria-describedby="inputGroup-odberatel-psc" value="{$this->getParameter('faktura')->PSCO}">
+                <div class="input-group-prepend">
+                <span class="input-group-text" id="inputGroup-odberatel-mesto">Město</span>
+                </div>
+                    <input type="text" class="form-control  noCSS_field" field="MESTOO" aria-label="" aria-describedby="inputGroup-odberatel-mesto" value="{$this->getParameter('faktura')->MESTOO}">
+                <div class="input-group-prepend">
+                <span class="input-group-text" id="inputGroup-odberatel-stat">Stát</span>
+                </div>
+                    <input type="text" class="form-control  noCSS_field" field="STATO" aria-label="" aria-describedby="inputGroup-odberatel-stat" value="{$this->getParameter('faktura')->STATO}">
+            </div>
+                
+            
+            
+            
+            
+           <h6>Firma/Místo dodání:</h6>
+               <div class="input-group input-group-sm mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="inputGroup-ABC-firmaMAAABGA">Firma</span>
+                </div>
+                    <input type="text" class="form-control  noCSS_field" field="FIRMAM" aria-label="FrimaM" aria-describedby="inputGroup-ABC-firmaMAAABGA" value="{$this->getParameter('faktura')->FIRMAM}">               
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="inputGroup-misto-firmaBBEB">Místo</span>
+                </div>
+                    <input type="text" class="form-control  noCSS_field" field="MISTOM" aria-label="" aria-describedby="inputGroup-misto-firmaBBEB" value="{$this->getParameter('faktura')->MISTOM}">
+                </div>
+
+        </div>
+        
+        </div>
+      </div>
+    </div>
+  </div>
+        
+   <div class="card  bg-light">
+    <div class="card-header" id="headingPolozky">
+      <h2 class="mb-0">
+        <button class="btn btn-light" type="button" data-toggle="collapse" data-target="#collapsePolozky" aria-expanded="true" aria-controls="collapsePolozky">
+          Položky dokumentu
+        </button>
+        <button class="btn btn-light" id="btn-add-row" type="button"  >
+          +
+        </button>  
+      </h2>
+    </div>
+
+    <div id="collapsePolozky" class="collapse show" aria-labelledby="headingPolozky" data-parent="#dokumentcontent">
+      <div class="card-body">
+       <table class="table table-sm">
+  <thead>
+    <tr>
+      <th scope="col" class="text-center"></th>    
+      <th scope="col" class="text-center">Skl.k.</th>
+      <th scope="col" class="text-center">Popis</th>
+      <th scope="col" class="text-center">Množství</th>
+      <th scope="col" class="text-center"></th>
+      <th scope="col" class="text-center">Cena/mj.</th>
+      <th scope="col" class="text-center">DPH</th>
+      <th scope="col" class="text-center">Cena CELKEM</th>   
+      <th scope="col" class="text-center"></th>
+    </tr>      
+  </thead>
+  <tbody id="dokument-rows">
+   
+  </tbody>
+ <tfoot>
+
+     <table class="table table-sm text-sm text-right">
+      <thead class="noCSS_dphp_recap {$faktura->druh_dokladu=='ZP' || $faktura->ispdp ? hide : ''}" >
+    <tr >
+      <th scope="col-6" style="width:50%;" >&nbsp;</th>
+      <th scope="col" class="text-center">Sazba DPH</th>
+      <th scope="col" class="text-center">Základ</th>
+      <th scope="col" class="text-center">Daň</th>   
+      
+    </tr>      
+     </thead>
+        <tbody class="noCSS_dphp_recap {$faktura->druh_dokladu=='ZP' || $faktura->ispdp ? hide : ''}"  id="dokument-dph-recap">
+        </tbody>      
+        <tfoot>
+            <tr><td></td><td></td><td  class="text-lg-right font-weight-bold" id="doklad-soucet"></td><td></td></tr>
+        </tfoot>     
+     </table>
+
+</tfoot>     
+</table>
+          
+          
+          
+      </div>
+    </div>
+  </div>
+        
+    </div>    
+    
+      </div>
+    </div>
+
+    
+    </main>
+</div>
+{else}
+<div class="jumbotron">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <h1 class="display-3">Nemáte oprávnění ke zobrazení obsahu.</h1>              
+                <p>Nastavená práva: 
+                {foreach $user->roles as $item}
+                    <strong> {$item} </strong>
+                {/foreach}
+                </p>
+            </div>
+        </div>
+</div>
+</div>
+{/if}
+<script>
+    var isPDP = false;
+    var druh_dokumentu = {$this->getParameter('faktura')->druh_dokladu};
+    var idecko = {$this->getParameter('faktura')->idecko}
+    var ref_nr ={$this->getParameter('faktura')->refcislo}; 
+$(document).ready(function(){
+    $("[field='duzp']").datepicker();
+    $("[field='dvystaveni']").datepicker();
+    $("#dokument-rows").html({$this->getParameter('faktura')->_DOM});
+    if({$faktura->druh_dokladu}=='ZP') {
+    $("#isPDP").prop("checked", false);    
+    }
+    $("#isPDP").prop("checked", {$this->getParameter('faktura')->ispdp});    
+    $("#isPDP").trigger("change");
+    
+    
+});    
+ $("[field='duzp']").on("change", function(ev){ 
+     checkLogicDates();
+ });
+ $("[field='dvystaveni']").on("change", function(ev){ 
+     checkLogicDates();
+ });    
+
+    function checkLogicDates() {
+     var duzp =  $("[field='duzp']").val().split(".");  // [0] - DD, [1] - MM, [2] - YYYY     
+        duzp[0] = duzp[0]*1;
+        duzp[1] = duzp[1]*1 -1;          
+        duzp = new Date(duzp[2], duzp[1], duzp[0]);   
+     var dvyst =  $("[field='dvystaveni']").val().split(".");  // [0] - DD, [1] - MM, [2] - YYYY             
+        dvyst[0] = dvyst[0]*1;
+        dvyst[1] = dvyst[1]*1 -1;          
+        dvyst = new Date(dvyst[2], dvyst[1], dvyst[0]);           
+    if(duzp>dvyst) {
+      dvyst = duzp;
+       dateToSting($("[field='dvystaveni']"), dvyst);
+    }
+        
+    }
+function dateToSting(objInputDate, jsDate) {
+    var dd = (jsDate.getDate()<10) ? "0"+jsDate.getDate() : jsDate.getDate();
+    var mm = (jsDate.getMonth() + 1 < 10) ? "0" + (jsDate.getMonth() + 1) : jsDate.getMonth() + 1; 
+    var yyyy = jsDate.getFullYear();    
+    objInputDate.val(dd+"."+mm+"."+yyyy);    
+}   
+$("#isPDP").on("change", function(ev){
+   
+  if($(ev.delegateTarget).is(':checked') || {$faktura->druh_dokladu}=='ZP') {
+     $("th:contains(DPH)").addClass("hide");
+      $("[field='dph']").addClass("hide");     
+      isPDP = true;
+      $(".noCSS_dphp_recap").addClass('hide');
+  } else {
+      $("th:contains(DPH)").removeClass("hide");
+      $("[field='dph']").removeClass("hide");      
+      isPDP = false;
+      $(".noCSS_dphp_recap").removeClass("hide"); 
+  }
+    
+     $(document).find(".noCSS_dokument_row").each(function(index){   
+     soucty(this); 
+     });
+     
+});   
+$("#btn-add-row").on("click", function(ev){
+  
+var html='<tr class="noCSS_dokument_row" sid="" vydejka="" druh="" idecko=""><td><div class="btn-group" role="group" aria-label="move-row"><button type="button" class="btn btn-light btn-sm noCSS_move_up">&#8593;</button><button type="button" class="btn btn-light btn-sm noCSS_move_down">&#8595;</button></div></td><td contenteditable="true" class="noCSS_col_field text-right" field="skarta"></td><td contenteditable="true" class="noCSS_col_field" field="popis"></td><td contenteditable="true" class="noCSS_col_field text-center noCSS_number" format="0.00" selectOnFocus field="vydej_mj"></td><td contenteditable="true" class="noCSS_col_field text-center" field="mj"></td><td contenteditable="true" class="noCSS_col_field text-right noCSS_number" selectOnFocus format="0.00" field="cena_mj"></td><td contenteditable="true" class="noCSS_col_field text-center noCSS_number" selectOnFocus format="0" field="dph"></td><td class="noCSS_row_cena text-right noCSS_number" format="0.00"></td><td><button type="button" class="btn btn-light btn-sm noCSS_row_remove">x</button></td></tr>';
+    $("#dokument-rows").append(html);
+    $("#isPDP").trigger("change");
+});
+    
+ $(document).off("click",".noCSS_row_remove").on("click",".noCSS_row_remove",  function(ev){
+var row =  $(ev.target).parents("[sid]");
+  $(row).remove();    
+   soucty();
+});
+    
+ $(document).off("click",".noCSS_move_up").on("click",".noCSS_move_up",  function(ev){
+var row =  $(ev.target).parents("[sid]");
+     row.prev().insertAfter(row);
+});
+    
+$(document).off("click",".noCSS_move_down").on("click",".noCSS_move_down",  function(ev){
+var row =  $(ev.target).parents("[sid]");
+row.next().insertBefore(row);
+});    
+    
+
+    
+$(document).off("blur",".noCSS_number").on("blur",".noCSS_number",  function(ev) {    
+    var temp = $(this);
+    $(temp).text($(temp).text().replace(new RegExp(",", 'g'), ".")*1);
+    if(isNaN($(temp).text())) {
+      $(temp).text(0);  
+    }
+    var format = $(temp).attr("format").split(".");
+    format = (format[1]) ? format[1].length : 0;
+    $(temp).text(($(temp).text()*1).toFixed(format));
+    
+    soucty($(this).parent());
+    
+    
+});    
+ 
+function soucty (objRow){
+    
+var celkem = 0;
+   
+ celkem = $(objRow).children("[field='vydej_mj']").text() * $(objRow).children("[field='cena_mj']").text();
+ celkem = (isPDP) ? celkem : celkem * (1+$(objRow).children("[field='dph']").text()/100);
+  
+ $(objRow).children(".noCSS_row_cena").text(celkem.toFixed(2));
+
+var doklad_celkem = 0;
+var arr_dph = Array();
+ $(document).find(".noCSS_dokument_row").each(function(index){    
+    doklad_celkem = doklad_celkem+$(this).children(".noCSS_row_cena").text()*1;
+    tempdph = (isPDP) ? 0 : $(this).children("[field='dph']").text()*1;
+     
+    arr_dph[tempdph] =  (arr_dph[tempdph]) ? arr_dph[tempdph] + ($(this).children("[field='vydej_mj']").text()* $(this).children("[field='cena_mj']").text()) : ($(this).children("[field='vydej_mj']").text()* $(this).children("[field='cena_mj']").text());
+});    
+    
+    temprecap = '';
+    $.each(arr_dph,function(index, value){
+        if(value) {
+        temprecap = temprecap + '<tr><td></td><td>'+index+' %</td><td>'+(value).toFixed(2)+'</td><td>'+(value*(index/100)).toFixed(2)+'</td></tr>';
+            }
+    });
+    $("#dokument-dph-recap").html(temprecap);
+    $("#doklad-soucet").text("CELKEM: " +  doklad_celkem.toFixed(2) + " Kč");
+}    
+$("#print-dokument").on("click", function (ev){
+    event.preventDefault;
+        var t = new Date();    
+    	$.nette.ajax(
+        {			 	        
+		  url: "/fakturace/topdf/?do=topdf",
+            type: "POST",
+            off: ['unique'],
+            data: {
+                "t": t.getTime(),
+                "idecko":  idecko                
+            },
+        success: function(payload)
+        {		
+            //alert(payload.info);//if(payload.adresy){}
+            
+        },
+        error: function(xhr, ajaxOptions, thrownError)
+        {
+        //    infoModal("Neočekávaná chyba programu. Chyba byla zaznamenána a bude opravena.", "Chyba v běhu programu");
+        }
+        }); 
+    
+});
+$("#save-dokument").on("click", function(ev){
+    event.preventDefault();      
+    $("#loader-dokument").toggleClass("block");
+    var _data = [];
+	$("#collapseHlavicka").find("[field]").each(function(index){
+		_data[$(this).attr("field")] = $(this).val();
+	});
+    //ruční zadání
+    _data["ispdp"] = isPDP;
+    _data["refcislo"] = ref_nr;
+    _data["idecko"] = idecko;
+    _data["druh_dokladu"] = druh_dokumentu;
+ 	
+	var hlavicka_data = Object.assign({}, _data);
+    
+    //připravíme řádky pro uložení
+    _data = [];
+    //noCSS_dokument_row
+    var row_index = 0; 
+    $(document).find(".noCSS_dokument_row").each(function(index){        
+        //this na této úrovni je dom row        
+       
+        _temprow = [];
+        temprow = $(this);        
+		_temprow["sid"] = $(temprow).attr("sid");
+        _temprow["druh"] = $(temprow).attr("druh");
+        _temprow["vydejka"] = $(temprow).attr("vydejka");
+        _temprow["idecko"] = $(temprow).attr("idecko");
+        $(temprow).find("[field]").each(function(index) {
+            _temprow[$(this).attr("field")] = ($(this).attr("field")=="popis") ? $(this).html() : $(this).text();
+            if(isPDP) {
+                _temprow["dph"] = 0;            }
+        });
+         _data[row_index] = Object.assign({}, _temprow);
+        row_index++;
+	});    
+  
+    var arrRows = Object.assign({}, _data);
+      
+    
+    		var t = new Date		
+			$.nette.ajax(
+    {			 	       
+		  url: "/fakturace/?do=saveDokument",
+        type: "POST",
+		  off: ['unique'],
+        data: {
+          "t": t.getTime(),        
+          "arrRows": _data,
+		  "arrHlavicka": hlavicka_data,
+		  
+		  
+        }, 		 
+        success: function(payload)
+        {			  
+         // $("#basket-sum").text(payload.kosikKc);
+          if(!payload.result.chyba){
+            $("#print-dokument").removeClass("disabled");  
+             ref_nr = payload.result.data['refnr'];  
+             idecko = payload.result.data['idecko'];
+             $("#dok-ref").text(druh_dokumentu + ref_nr);
+          } 
+            
+            
+            $("#loader-dokument").toggleClass("block");
+        },	  
+        error: function(xhr, ajaxOptions, thrownError)
+        {
+          //	jsFlashMessage('Koncept nebyl z důvodu chyby uložen. Chyba byla logována. Opakujte akci později.');		
+			   //console.warn(xhr.status);
+            //console.warn(thrownError);
+        }
+	});
+    
+    
+    
+    
+    
+    
+    
+});    
+    
+ //noCSS_col_field skarta
+ $(document).off("keyup",".noCSS_col_field[field='skarta']").on("keyup",".noCSS_col_field[field='skarta']",  function(ev) {
+    
+     if($(this).text().length >= 3) {
+        var temp = $(this);
+         var t = new Date();        
+    $.nette.ajax(
+        {			 	        
+		  url: "/ciselniky/?do=getSkartyAutocompleteByString",
+        type: "POST",
+		  off: ['unique'],
+        data: {
+            "t": t.getTime(),
+            "str": $(temp).text()
+        },
+        success: function(payload)
+        {
+           $(temp).autocomplete({        
+        source: function(request, response) {
+           
+            response(payload.skarty);
+        },
+        select: function( event, ui ) {
+            //console.log(ui.item.aid); 
+            
+            
+        //----
+                    var t = new Date();        
+        $.nette.ajax(
+                    {			 	        
+                      url: "/ciselniky/?do=getSkartuBySid",
+                    type: "POST",
+                      off: ['unique'],
+                    data: {
+                        "t": t.getTime(),
+                        "sid": ui.item.sid
+                    },
+                    success: function(payload)
+        {		
+            if(!payload.dataObj.chyba){    
+                            
+                 doplnRowSkarta($(temp).parent(), payload.dataObj.data);                  
+            }
+        },
+        error: function(xhr, ajaxOptions, thrownError)
+        {
+            //$("#loader-odberatel").toggleClass("block");
+           // infoModal("Neočekávaná chyba programu. Chyba byla zaznamenána a bude opravena.", "Chyba v běhu programu");
+        }
+        });  
+            
+            return false;
+           }
+    });    
+                 
+        //----    
+        },
+        error: function(xhr, ajaxOptions, thrownError)
+        {
+            //$("#loader-odberatel").toggleClass("block");
+           // infoModal("Neočekávaná chyba programu. Chyba byla zaznamenána a bude opravena.", "Chyba v běhu programu");
+        }
+        }); 
+     
+     } 
+     
+ })   
+function doplnRowSkarta(objRow, data){
+    //sid="" druh=""
+    $(objRow).attr("sid", data.sid);
+    $(objRow).attr("druh", 'skarta'); //todo - dodelat i ostatní alternativy druhu, nyní natvrdo skarta - natvrdo je to i v modelu vracející skarty 
+    $(objRow).children("[field=skarta]").text(data.skarta);
+    $(objRow).children("[field=popis]").html(data.popis);
+    $(objRow).children("[field=mj]").html(data.mj);
+}
+$("[field='FIRMAO']").on("keyup", function(ev){
+     var tempIcoFirma = $("[field='FIRMAO'").val();
+    //jde li o formát ičo připraví tlačítko ares
+    (tempIcoFirma.length == 8 && !isNaN(tempIcoFirma)) ? $("#btn-ares-by-ico").removeClass("disabled") :  $("#btn-ares-by-ico").addClass("disabled");
+    if(tempIcoFirma.length >= 3) {
+        
+      var t = new Date();        
+    $.nette.ajax(
+        {			 	        
+		  url: "/ciselniky/?do=getAdresyAutocompleteByString",
+        type: "POST",
+		  off: ['unique'],
+        data: {
+            "t": t.getTime(),
+            "str": $("[field='FIRMAO']").val()
+        },
+        success: function(payload)
+        {		
+            if(payload.adresy){
+             
+       
+         $("[field='FIRMAO']").autocomplete({        
+        source: function(request, response) {
+             
+            response(payload.adresy);
+        },
+        select: function( event, ui ) {
+            //console.log(ui.item.aid);
+       $("#loader-odberatel").toggleClass("block");
+            //-----
+               var t = new Date();        
+        $.nette.ajax(
+                    {			 	        
+                      url: "/ciselniky/?do=getAdresuByAid",
+                    type: "POST",
+                      off: ['unique'],
+                    data: {
+                        "t": t.getTime(),
+                        "aid": ui.item.aid
+                    },
+                    success: function(payload)
+        {		
+            if(!payload.dataObj.chyba){                
+                 doplnPoleAdresy(payload.dataObj.data);  //doplnime pole, protože na základě aid je jedna adresa
+                $("#loader-odberatel").toggleClass("block");
+                $("#btn-ares-by-ico").addClass("disabled"); //doplněním adresy ztratí pole formát iča, proto opět ares disable
+            }
+        },
+        error: function(xhr, ajaxOptions, thrownError)
+        {
+            $("#loader-odberatel").toggleClass("block");
+           // infoModal("Neočekávaná chyba programu. Chyba byla zaznamenána a bude opravena.", "Chyba v běhu programu");
+        }
+        });  
+            //-----
+            return false;
+        }
+    });    
+                
+        
+                
+            }    
+        },
+        error: function(xhr, ajaxOptions, thrownError)
+        {
+            
+           // infoModal("Neočekávaná chyba programu. Chyba byla zaznamenána a bude opravena.", "Chyba v běhu programu");
+        }
+    });
+
+        
+    }
+    
+});    
+$("#btn-ares-by-ico").on("click", function(ev){ //hledani poze dle IC
+    event.preventDefault();     
+     var t = new Date();    
+    $("#loader-odberatel").toggleClass("block");
+    		 $.nette.ajax(
+        {			 	        
+		  url: "/ciselniky/?do=findAdresByIcoAres",
+        type: "POST",
+		  off: ['unique'],
+        data: {
+            "t": t.getTime(),
+            "ico": $("[field='FIRMAO']").val()
+        },
+        success: function(payload)
+        {		
+            if(payload.adresy){
+                doplnPoleAdresy(payload.adresy);  //doplnime pole, protože na základě IČ je jedna adresa
+                $("#loader-odberatel").toggleClass("block");
+                $("#btn-ares-by-ico").addClass("disabled"); //doplněním adresy ztratí pole formát iča, proto opět ares disable
+            }    
+        },
+        error: function(xhr, ajaxOptions, thrownError)
+        {
+            $("#loader-odberatel").toggleClass("block");
+           // infoModal("Neočekávaná chyba programu. Chyba byla zaznamenána a bude opravena.", "Chyba v běhu programu");
+        }
+    });  
+}); 
+    
+    function doplnPoleAdresy(objAdresa) {
+        $("[field='FIRMAO']").val(objAdresa.FIRMA);
+        $("[field='ICOO']").val(objAdresa.ICO);
+        $("[field='DICO']").val(objAdresa.DIC);
+        $("[field='ULICECPO']").val(objAdresa.ULICECP);
+        $("[field='MISTOO']").val(objAdresa.MISTO);
+        $("[field='PSCO']").val(objAdresa.PSC);
+        $("[field='MESTOO']").val(objAdresa.MESTO);
+        $("[field='STATO']").val(objAdresa.STAT);        
+    }    
+
+</script>
+{/block}

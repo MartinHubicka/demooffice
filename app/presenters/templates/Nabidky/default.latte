@@ -1,0 +1,156 @@
+{block content}
+<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+  <a class="navbar-brand" href="{link Homepage:}">Hlavní menu</a>
+  
+  {if $user->isInRole('obchod') OR $user->isInRole('admin') }  
+   <a class="btn btn-success" href="{link Nabidky:editor}" id="butt-nabidka-nova">Nová nabídka</a>
+  {/if}
+  <a class="btn btn-light ml-3" target="_ciselniky" href="{link Ciselniky:}">Číselníky a adresář</a>	     
+</nav>  
+{if $user->isInRole('admin') OR $user->isInRole('obchod') }
+<div id="content">
+
+
+<main role="main">
+
+  <div class="jumbotron">
+    <div class="container">
+
+        <div class="row">
+            <div class="col-md-6">
+                <h2 class="display-4">Přehled nabídek</h2>              
+            </div>
+        </div>
+        
+                
+      </div>
+    </div>
+    
+<table class="table table-sm table-hover">
+  <thead>
+    <tr class="table-light ">
+      <th scope="col" class="text-center">Číslo nabídky</th>    
+      <th scope="col" class="text-center"></th>
+      <th scope="col" class="text-center">Odběratel</th>
+      <th scope="col" class="text-center">Poptávka</th>
+      <th scope="col" class="text-center">Místo</th>
+      <th scope="col" class="text-center">Datum</th>    
+      <th scope="col" class="text-center">Termín</th>      
+      <th scope="col" class="text-center">Vyřizuje</th>
+      <th scope="col" class="text-center">Zakázka č.</th>
+      <th scope="col" class="text-center">Stav nabídky</th>
+      <th scope="col" class="text-center">Částka CELKEM [bez DPH]</th>            
+      <th scope="col" class="text-center">Související dokumenty</th>
+     
+    </tr>      
+  </thead>
+  <tbody id="dokument-rows">
+   
+
+     {ifset $nabidky}
+        {foreach $nabidky as $zaznam}
+      <tr>
+      <td class="text-center">
+          {$zaznam->refcislo}
+      </td>
+    <td>
+        <div class="btn-group btn-group-sm" role="group" aria-label="document-btns">
+            <a class="btn btn-success" id="edit-dokument" href="{link Nabidky:editor, $zaznam->refcislo}">Upravit</a>
+            <a class="btn btn-warning" id="print-dokument" href="{link Nabidky:topdf, $zaznam->idecko}">Tisk [PDF]</a>
+        </div>
+    </td>
+    <td>{$zaznam->FIRMAO}</td>
+    <td>{$zaznam->poptavka}</td>
+    <td>{$zaznam->FIRMAM} {$zaznam->MISTOM}</td>
+    <td class="text-center">{$zaznam->dvystaveni|date:'%d.%m.%Y'}</td>
+    <td class="text-center">{$zaznam->termin}</td>         
+    <td class="text-center">{$zaznam->vystavil}</td>
+          <td class="text-center">
+              {if $zaznam->zakazka===NULL}
+              <a class="btn btn-warning" style="font-size: 12px;" id="test" href="#">Vytvořit zak.</a>
+              {else}
+              {$zaznam->zakazka}
+                {/if}
+          </td>
+    <td style="max-width: 200px;"><input edit="{$zaznam->idecko}"  style="font-size: 12px;" type="text" name="tags" value="{$zaznam->tagy}"></td>
+    <td class="text-right">{$zaznam->celkem|number:2:',':' '} Kč</td>          
+    
+    <td></td>    
+    
+    
+    </tr>   
+        {/foreach}            
+      {/ifset}
+           </tbody>
+    </table>
+</main>
+</div>
+    
+<script>
+    
+$(document).ready(function(){  
+    var onload = true; //zabrání onload zachycení eventu update tagů
+    $('input[name="tags"]').amsifySuggestags({
+    type :'bootstrap',
+    suggestions: ['neakceptováno','odesláno @','přepracovat','čeká'],
+    classes: ['bg-danger', 'bg-info', 'bg-danger', 'bg-warning'],
+        afterAdd:function(value, rodic) {
+    if(!onload) {
+        
+        updateTags($(rodic).attr("edit"),$(rodic).val());
+    }    
+    // after add
+  },
+  afterRemove:function(value, rodic) {
+    // after remove
+     if(!onload) {
+         
+       updateTags($(rodic).attr("edit"),$(rodic).val());
+    }    
+  }
+
+});
+   onload = false;
+});
+
+function updateTags(idecko,value){
+   
+    		var t = new Date		
+			$.nette.ajax(
+    {			 	       
+		  url: "/nabidky/?do=updateTags",
+        type: "POST",
+		  off: ['unique'],
+        data: {
+          "t": t.getTime(),        
+          "table": "nabidky",
+		  "idecko": idecko*1,
+          "value": value        
+        }, 		 
+        success: function(payload)
+        {		
+                
+        /* 
+          if(!payload.result.chyba){
+           
+          } 
+            
+          */  
+           
+        },	  
+        error: function(xhr, ajaxOptions, thrownError)
+        {
+            
+          //	jsFlashMessage('Koncept nebyl z důvodu chyby uložen. Chyba byla logována. Opakujte akci později.');		
+			   //console.warn(xhr.status);
+            //console.warn(thrownError);
+        }
+	});
+    
+}    
+</script>
+{else} 
+
+
+
+{/if}

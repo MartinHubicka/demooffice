@@ -1,0 +1,412 @@
+
+<button type="button" class="btn btn-primary mt-4 mb-4 ml-4 mr-4" id="adresar-add-new-adr-btn">Nový kontakt</button>
+<button type="button" class="btn btn-danger mt-4 mb-4 ml-4 mr-4 disabled" id="adresar-delete-adr-btn">Vymazat označené kontakty</button>
+<span class="badge badge-light mt-4 mb-4 ml-4 mr-4">! Kontakt upravíte dvojklikem na vybraný řádek</span> 
+<table class="table table-striped table-responsive table-hover">
+  <thead class="thead-dark">
+    <tr>
+      <th scope="col text-center"></th>
+      <th scope="col">firma/jméno</th>
+      <th scope="col">podnázev firmy</th>
+      <th scope="col">IČO</th>
+      <th scope="col">DIČ</th>
+      <th scope="col">ulice č.p.</th>
+      <th scope="col">místo</th>
+      <th scope="col">PSČ</th>
+      <th scope="col">město</th>
+      <th scope="col">stát</th>
+      <th scope="col">poznámky/kontakty</th>
+      <th scope="col">hlavní email</th>
+        
+    </tr>
+  </thead>
+  <tbody>
+      {ifset $adresy}
+        {foreach $adresy as $item}
+    <tr adresaid='{$item->aid}'>
+      <td >
+        <div class="input-group-prepend">
+            <div class="input-group-text" >
+            <input type="checkbox" aria-label="">
+            </div>
+        </div>
+      </td>
+      <td>{$item->FIRMA}</td>
+      <td>{$item->PODNAZEV}</td>
+      <td>{$item->ICO}</td>
+      <td>{$item->DIC}</td>
+      <td>{$item->ULICECP}</td>
+      <td>{$item->MISTO}</td>
+      <td>{$item->PSC}</td>
+      <td>{$item->MESTO}</td>
+      <td>{$item->STAT}</td>      
+      <td>{$item->poznamky|noescape}</td>    
+      <td>{$item->email}</td>    
+  
+    </tr>   
+        {/foreach}            
+      {/ifset}
+
+  </tbody>
+</table>
+
+<!-- Modal -->
+<div class="modal " id="modalKontakt" tabindex="-1" role="dialog" aid="-1" aria-labelledby="modalKontakt" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="ModalLabel">Kontakt</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+                <form class="form" id="formKontakt">
+  
+
+                    
+                <div class="input-group mb-2 mr-sm-2">
+                <div class="input-group-prepend">
+                <div class="input-group-text text-center w8rem">Zákazník/Firma</div>
+                </div>
+                <input type="text" class="form-control  form-control-lg" id="input-ico-firma" field="FIRMA" placeholder="IČO, nebo část jména">
+                     <div class="input-group-append">
+    <div class="input-group-prepend">
+    <button class="btn btn-outline-secondary dropdown-toggle btn-secondary" type="button" id="adresa-find-btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
+    <div class="dropdown-menu">
+      <a class="dropdown-item disabled" id="adresa-find-by-ico" href="#">Vyhledat dle IČO</a>        
+  </div>
+  </div>
+                           </div>
+                </div>
+                
+                <div class="form-row">   
+                    <div class="col-md-6 mb-3">
+                    <div class="input-group mb-2 mr-sm-2">
+                    <div class="input-group-prepend">
+                    <div class="input-group-text text-center w3rem">IČO</div>
+                    </div>
+                    <input type="text" class="form-control  form-control-lg" field="ICO" id="input-ico" placeholder="">
+                    </div>    
+                    </div>
+                    <div class="col-md-6 mb-3">
+                    <div class="input-group mb-2 mr-sm-2">
+                    <div class="input-group-prepend">
+                    <div class="input-group-text text-center w3rem">DIČ</div>
+                    </div>
+                    <input type="text" class="form-control  form-control-lg" field="DIC" id="input-dic" placeholder="">
+                    </div>    
+                    </div>
+                </div>
+                    <div class="input-group mb-2 mr-sm-2">
+                    <div class="input-group-prepend">
+                    <div class="input-group-text text-center w5rem">Ulice, č.p.</div>
+                    </div>
+                    <input type="text" class="form-control  form-control-lg" field="ULICECP" id="input-ulicecp" placeholder="">
+                    </div>    
+                 
+                     <div class="input-group mb-2 mr-sm-2">
+                    <div class="input-group-prepend">
+                    <div class="input-group-text text-center w5rem">Místo</div>
+                    </div>
+                    <input type="text" class="form-control  form-control-lg" field="MISTO" id="input-misto" placeholder="">
+                    </div> 
+                <div class="form-row">   
+                    <div class="col-md-4 mb-3">
+                    <div class="input-group mb-2 mr-sm-2">
+                    <div class="input-group-prepend">
+                    <div class="input-group-text text-center w3rem">PSČ</div>
+                    </div>
+                    <input type="text" class="form-control  form-control-lg" field="PSC" id="input-psc" placeholder="">
+                    </div>    
+                    </div>
+                    <div class="col-md-8 mb-3">
+                    <div class="input-group mb-2 mr-sm-2">
+                    <div class="input-group-prepend">
+                    <div class="input-group-text text-center w5rem">Město</div>
+                    </div>
+                    <input type="text" class="form-control  form-control-lg" field="MESTO" id="input-mesto" placeholder="">
+                    </div>    
+                    </div>
+                </div>     
+                    <div class="input-group mb-2 mr-sm-2">
+                    <div class="input-group-prepend">
+                    <div class="input-group-text text-center w5rem">Stát</div>
+                    </div>
+                    <input type="text" class="form-control  form-control-lg" field="STAT" id="input-stat" placeholder="">
+                    </div> 
+                    <div class="input-group mb-2 mr-sm-2">
+                    <div class="input-group-prepend">
+                    <div class="input-group-text text-center w5rem">Email</div>
+                    </div>
+                    <input type="text" class="form-control  form-control-lg" field="email" id="input-email" placeholder="">
+                    </div>
+                    <div class="input-group mb-2 mr-sm-2">
+                    <div class="input-group-prepend">
+                    <div class="input-group-text text-center w5rem">Email 2</div>
+                    </div>
+                    <input type="text" class="form-control  form-control-lg" field="email2" id="input-email2" placeholder="">
+                    </div>
+                    <div class="input-group mb-2 mr-sm-2">
+                    <div class="input-group-prepend">
+                    <div class="input-group-text text-center w5rem">Email 3</div>
+                    </div>
+                    <input type="text" class="form-control  form-control-lg" field="email3" id="input-email3" placeholder="">
+                    </div>                    
+                    <div class="input-group mb-2 mr-sm-2">                    
+                    <div class="input-group-prepend">
+                    <div class="input-group-text text-center w11rem">Poznámky/kontakty:</div>
+                    </div>
+                    <div class="summernote" id="input-poznamky" style="display:none;"></div>
+                     </div>
+                </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Zavřít</button>
+        <button type="button" class="btn btn-primary" id="submit-edit-adress">Uložit kontakt</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+$("#modalKontakt").on("show.bs.modal", function(){
+$('#input-poznamky').summernote({        
+        lang: "cs-CZ",
+        toolbar: [
+  ['style', ['style']],
+  ['font', ['bold', 'underline', 'clear','superscript', 'subscript']],
+  ['fontname', ['fontname']],
+  ['color', ['color']],
+  ['para', ['ul', 'ol', 'paragraph']],
+  ['table', ['table']],
+  ['insert', ['link', 'picture']],
+  ['view', [ 'codeview', 'help']],
+],      
+	  popover: {
+		  image: [],
+		  link: [],
+          dialogsInBody: true,
+		  air: []
+	  	},
+        maximumImageFileSize: 524288 
+    });
+    //1024 * 512KB = 524288
+         if($('#input-poznamky').summernote("code") =="<p></p>"){
+        //hack
+        $('#input-poznamky').summernote("code","");
+    }
+})    ;
+    
+$("#adresar-add-new-adr-btn").on("click", function(){
+     event.preventDefault(); 
+     $("#modalKontakt").attr("aid", -1); //jedná se o nový kontakt
+
+     $("#modalKontakt").modal("show");
+});
+ $("#modalKontakt").on("hidden.bs.modal", function(){
+    clearInputs(true);
+});   
+$("#submit-edit-adress").on("click", function(){
+       event.preventDefault();    
+            var t = new Date();  
+            // když aid = null (resp. -1) jedná se o nový kontakt, jinak aid určuje číslo id kontaktu v adresáři
+            var aid = ($("#modalKontakt").attr("aid")<0) ? -1 : $("#modalKontakt").attr("aid");
+            var arrData =[];
+            arrData["poznamky"] =$("#input-poznamky").summernote("code");
+        $("#formKontakt").find("input[field]").each(function( index ) {           
+   
+                arrData[$(this).attr("field")] = $(this).val();
+            }); 
+            
+            
+            //console.log(  Array.isArray(arrData));
+            //nize Object.assign({}, arrData) je predan object (konverze z array na object a do presenteru dorazi array - its magic)     
+            
+    		 $.nette.ajax(
+        {			 	        
+		  url: "/ciselniky/?do=updateAdress",
+        type: "POST",
+		  off: ['unique'],
+        data: {
+            "t": t.getTime(),
+            "arrdata": Object.assign({}, arrData),
+            "aid": aid            
+        },
+        success: function(payload)
+        {
+            //console.log(payload);
+            if(payload.result) {
+                   infoModal(payload.result.zpravatext, "Záznam uložen");    
+                }    
+            
+            
+        },
+        error: function(xhr, ajaxOptions, thrownError)
+        {
+            //infoModal("Neočekávaná chyba programu. Chyba byla zaznamenána a bude opravena.", "Chyba v běhu programu");
+        }
+       
+    });
+        clearInputs();
+        $("#modalKontakt").modal("hide");
+});  
+$("#adresa-find-btn").on("click", function(ev){
+    event.preventDefault();       
+    var tempIcoFirma = $("#input-ico-firma").val();
+    if(tempIcoFirma.length == 8 && !isNaN(tempIcoFirma)) {        
+        //jde li o formát ičo
+        $("#adresa-find-by-ico").removeClass("disabled");
+        // 1. zkusí nalézt dle ič aqvdresáři
+        // 2. zkusí nalézt ve veřejném rejstříku                
+    } else {
+        $("#adresa-find-by-ico").addClass("disabled");
+        //zkusí nalézt adresu v databázi (na zaklade IC nebo nazvu) a zobrazit výsledek/schovat progressbar  
+        
+            event.preventDefault();     
+     var t = new Date();    
+    		 $.nette.ajax(
+        {			 	        
+		  url: "/ciselniky/?do=findAdresByIco",
+        type: "POST",
+		  off: ['unique'],
+        data: {
+            "t": t.getTime(),
+            "ico": null,
+            "icofirma": $("#input-ico-firma").val()
+        },
+        success: function(payload)
+        {		
+            if(payload.adresy){
+               
+            }
+            
+        },
+        error: function(xhr, ajaxOptions, thrownError)
+        {
+        //    infoModal("Neočekávaná chyba programu. Chyba byla zaznamenána a bude opravena.", "Chyba v běhu programu");
+        }
+        });  
+        
+    }
+  
+});    
+$("#adresa-find-by-ico").on("click", function(ev){ //hledani poze dle IC
+    event.preventDefault();     
+     var t = new Date();    
+    		 $.nette.ajax(
+        {			 	        
+		  url: "/ciselniky/?do=findAdresByIco",
+        type: "POST",
+		  off: ['unique'],
+        data: {
+            "t": t.getTime(),
+            "ico": $("#input-ico-firma").val()
+        },
+        success: function(payload)
+        {		
+            if(payload.adresy){
+                doplnPoleAdresy(payload.adresy);  //doplnime pole, protože na základě IČ je jedna adresa
+            }    
+        },
+        error: function(xhr, ajaxOptions, thrownError)
+        {
+           // infoModal("Neočekávaná chyba programu. Chyba byla zaznamenána a bude opravena.", "Chyba v běhu programu");
+        }
+    });  
+});   
+    function doplnPoleAdresy(objAdresa) {
+        $("#input-ico-firma").val(objAdresa.FIRMA);
+        $("#input-ico").val(objAdresa.ICO);
+        $("#input-dic").val(objAdresa.DIC);
+        $("#input-ulicecp").val(objAdresa.ULICECP);
+        $("#input-misto").val(objAdresa.MISTO);
+        $("#input-psc").val(objAdresa.PSC);
+        $("#input-mesto").val(objAdresa.MESTO);
+        $("#input-stat").val(objAdresa.STAT);
+        if(objAdresa.poznamky) {
+            $("#input-poznamky").summernote("code",objAdresa.poznamky);
+        }
+    }
+  
+$("tr[adresaid]").on("dblclick", function(ev){
+    event.preventDefault();     
+             var t = new Date();    
+    		 $.nette.ajax(
+        {			 	        
+		  url: "/ciselniky/?do=getAdresuByAid",
+        type: "POST",
+		  off: ['unique'],
+        data: {
+            "t": t.getTime(),
+            "aid": $(ev.delegateTarget).attr("adresaid")
+        },
+        success: function(payload)
+        {		
+            if(payload.dataObj){
+              // console.log(payload.dataObj);
+               doplnPoleAdresy(payload.dataObj.data) ;
+               $("#modalKontakt").attr("aid", $(ev.delegateTarget).attr("adresaid")); 
+                $("#modalKontakt").modal("show"); 
+            }
+            
+        },
+        error: function(xhr, ajaxOptions, thrownError)
+        {
+        //    infoModal("Neočekávaná chyba programu. Chyba byla zaznamenána a bude opravena.", "Chyba v běhu programu");
+        }
+        });  
+});
+    
+$("tr[adresaid] td input[type='checkbox']").change(function(){
+   
+   ($("tr[adresaid] td input[type='checkbox']:checked").length>0) ?  $("#adresar-delete-adr-btn").removeClass("disabled") : $("#adresar-delete-adr-btn").addClass("disabled");
+});
+    
+$("#adresar-delete-adr-btn").on("click", function() {
+    event.preventDefault();  
+    var aidToDelete = [];
+       $("tr td input[type='checkbox']:checked").parents("tr").each(function(){
+           aidToDelete.push($( this ).attr('adresaid'));
+       });
+    if(aidToDelete.length > 0) {
+        var faktDelete = window.confirm("Skutečně vymazat vybrané kontakty? (" + aidToDelete.length + ")");   
+        if(faktDelete===true){
+         var t = new Date();    
+    		 $.nette.ajax(
+        {			 	        
+		  url: "/ciselniky/?do=deleteAdresses",
+        type: "POST",
+		  off: ['unique'],
+        data: {
+            "t": t.getTime(),
+            "aids": Object.assign({}, aidToDelete)
+        },
+        success: function(payload)
+        {		
+            if(payload.adresy){
+               
+            }
+            
+        },
+        error: function(xhr, ajaxOptions, thrownError)
+        {
+        //    infoModal("Neočekávaná chyba programu. Chyba byla zaznamenána a bude opravena.", "Chyba v běhu programu");
+        }
+        });  
+            
+            
+        }
+    }                  
+});  
+    
+    function clearInputs(onlyAppendet= false){
+        if(!onlyAppendet){
+          $("input[field]").each(function( index ) {                
+               $(this).val("");
+            });
+       $("#input-poznamky").summernote('code','');     
+        } else {
+            
+        }
+    }
+</script>
