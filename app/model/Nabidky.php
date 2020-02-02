@@ -114,6 +114,7 @@ public function getDokument(\Nette\Security\user $user, $subjid = NULL, $ref = N
                $html = $res; 
             } else {
              foreach($res as $row) {
+                 // todo - lepší řešení - nevkládat html sem
              $html .= '
 <tr class="noCSS_dokument_row" sid="'.$row->sid.'" nid="'.$row->nid.'" rid="'.$row->rid.'">
     <td><div class="btn-group" role="group" aria-label="move-row">

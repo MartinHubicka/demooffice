@@ -1,4 +1,5 @@
 <?php
+/* todo předělat na továrnu */
 namespace App\Model\tridy;
 class objfaktura { 
 const TABLE = "faktury";
@@ -16,8 +17,8 @@ public $dsplatnosti;
 public $fakturoval;
 public $ispdp;
 public $refcislo;
-public $banka="RB (Raiffeisenbank)";    //zatím natvrdo
-public $ucet = "962717002/5500";    //zatím natvrdo
+public $banka="bez banky";    //todo-zatím natvrdo 
+public $ucet = "bez č.ú.";    //todo-zatím natvrdo
 public $objednavka;
 public $ICOD;
 public $ICOO;

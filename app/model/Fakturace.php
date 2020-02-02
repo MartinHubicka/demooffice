@@ -114,6 +114,7 @@ public function getDokument(\Nette\Security\user $user, $subjid = NULL, $druh = 
                $html = $res; 
             } else {
              foreach($res as $row) {
+                 // todo - lepší řešení - nevkládat html sem
              $html .= '
 <tr class="noCSS_dokument_row" vydejka="'.$row->vydejka.'" idecko="'.$row->idecko.'" sid="'.$row->sid.'" druh="'.$row->druh.'">
 <td>

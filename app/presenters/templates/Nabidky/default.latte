@@ -67,7 +67,7 @@
     <td class="text-center">{$zaznam->vystavil}</td>
           <td class="text-center">
               {if $zaznam->zakazka===NULL}
-              <a class="btn btn-warning" style="font-size: 12px;" id="test" href="#">Vytvořit zak.</a>
+              <a class="btn btn-warning disabled" style="font-size: 12px;" id="test" href="#">Vytvořit zak.</a>
               {else}
               {$zaznam->zakazka}
                 {/if}

@@ -1,4 +1,5 @@
 <?php
+/* todo předělat na továrnu */
 namespace App\Model\tridy;
 class objzakazka { 
 const TABLE = "zakazky";

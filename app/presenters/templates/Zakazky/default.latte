@@ -1,0 +1,20 @@
+{block content}
+{if $user->isInRole('admin') }
+
+{else}
+<div class="jumbotron">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1 class="display-3">Nemáte oprávnění ke zobrazení obsahu.</h1>              
+                <p>Nastavená práva: 
+                {foreach $user->roles as $item}
+                    <strong> {$item} </strong>
+                {/foreach}
+                </p>
+            </div>
+        </div>
+</div>
+</div>
+{/if}
+{/block}

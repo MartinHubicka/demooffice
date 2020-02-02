@@ -1,7 +1,6 @@
 <?php
 namespace App\Model;
 use Nette\Database\Connection;
-use Latte\Engine;
 use Nette\Utils;
 class Adresar extends BaseModel {
 
@@ -75,7 +74,7 @@ if($subjid===NULL){
         $this->result->chyba = false;
         $this->result->zprava = true;
         $this->result->zpravatext = 'Kontakt byl aktualizován';
-        $this->result->data = $recordsUpdated->getRowCount();//pocet ovlivněných řádků           
+        $this->result->data = $recordsUpdated->getRowCount();
     }
     }    
 }
@@ -83,9 +82,9 @@ if($subjid===NULL){
 }   
     
 public function deleteKontakt($aids=[]) {
-    //zde není nutná parent_id protože uživatel mohl označit pouze kontkty které se mu zobrazují
+    //zde není nutná parent_id protože uživatel mohl označit pouze kontakty které se mu zobrazují
     try { 
-    $cnt = $this->db->query('DELETE FROM adresar WHERE ?or', ['aid' => $aids]);    // zajímavý operátor ?or a parametr jako výčet možností u fieldu aid
+    $cnt = $this->db->query('DELETE FROM adresar WHERE ?or', ['aid' => $aids]);   
     $this->result->chyba = false;
     $this->result->zprava = true;
     $this->result->zpravatext = 'Kontakt/y byly vymazány.';
@@ -109,9 +108,14 @@ if($aid !== NULL ){
 } 
     return $this->result;
 }  
+/**
+ * Vyhledá firmu v aresu dle ic
+ * @param string
+ * return stdClass|null
+*/    
 public function getFirmaByIcoAres($ico) {
    
-       $xmldom = new \DOMDocument(); //lomítko je tam proto, aby to nehledal v modelu ale v stanartně v php třídě
+       $xmldom = new \DOMDocument(); //lomítko => aby to nehledal v modelu ale v php třídě
     if($xmldom) {
         if($xmldom->load($this->konstanty['aresurl']."&ico=".$ico)) {
        
@@ -120,12 +124,9 @@ public function getFirmaByIcoAres($ico) {
 
 if($returnCount == 1 ) {
 
-if ($xmldom->getElementsByTagName("ET")->length > 0) { //rejstrik vratil chybu 
-/*
-$chyba=  "Neočekávaná chyba, zkontrolujte správnost zadaného IČ.";
-$json = '{ "CHYBA" : "' .$chyba . '" }' ;
-*/
+if ($xmldom->getElementsByTagName("ET")->length > 0) { // == 0 => rejstrik vratil chybu 
 } else {
+    //todo: předělat na smyčku a konverzi do formátu json
 $json = '{';
 $json .= ($xmldom->getElementsByTagName("OF")->length > 0)  ?  '"FIRMA" : "'. $xmldom->getElementsByTagName("OF")[0]->nodeValue .'"' : "";
 $json .= ", ";
@@ -149,14 +150,20 @@ $json .= ($xmldom->getElementsByTagName("NS")->length > 0)  ?  '"STAT" : "'. $xm
 $json .= '}';
 
 $result =  \Nette\Utils\Json::Decode($json);   
-// vrací object
-//    object(stdClass)#54 (8) { ["FIRMA"]=> string(26) "ThermoWhite Moravia s.r.o." ["DIC"]=> string(10) "CZ07496516" ["ICO"]=> string(8) "07496516" ["ULICECP"]=> string(17) "Havlíčkova 5633" ["MESTO"]=> string(7) "Jihlava" ["MISTO"]=> string(0) "" ["PSC"]=> string(5) "58601" ["STAT"]=> string(17) "Česká republika" }
 }}     
             
             
     }}    
- return $result;   
-}    
+ return (isset($result)) ? $result : NULL;   
+}  
+    
+/**
+ * Vyhledání firmy dle IC, adresar nebo ares
+ * @param int|null
+ * @param int|null
+ * @param string|null
+ * return stdClass|null
+*/    
 public function getFirmaByIco ($subjid=NULL,$ico=NULL, $icofirma=NULL){
 $result = NULL;    
 if($icofirma !== NULL && strlen($icofirma) >=3   && $subjid!==NULL) { //ico nebo část názvu firmy a řetězec má alespoň 3 znaky
@@ -177,6 +184,6 @@ if($ico!==NULL && $result===NULL) {
  $result = $this->getFirmaByIcoAres($ico);
   
 }
-return $result;
+return (isset($result)) ? $result : NULL;   
 }    
 }
